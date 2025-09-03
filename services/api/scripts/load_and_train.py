@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Load sample CSV into dev DB and train ai categorizer for u_demo"""
+from ingest import parse_csv_transactions, dupe_hash
+from db import get_connection, init_db
+from ai_categorizer import train_for_user, model_path, has_model
 import sys
 from pathlib import Path
 
@@ -10,10 +13,6 @@ print('DEBUG repo root:', repo)
 print('DEBUG app_dir:', app_dir)
 # Ensure the local `app` package directory is on sys.path before importing
 sys.path.insert(0, str(app_dir))
-
-from ai_categorizer import train_for_user, model_path, has_model
-from db import get_connection, init_db
-from ingest import parse_csv_transactions, dupe_hash
 
 
 # Prefer an explicitly provided training CSV (new file from user). Try variants in order.

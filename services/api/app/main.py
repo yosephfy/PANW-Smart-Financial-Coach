@@ -254,7 +254,23 @@ async def ingest_csv_with_insights(
         if items:
             upsert_insights(conn, items)
 
-    return {"ingest": ingest_result, "insights": items}
+        # Detect subscriptions from the newly-ingested transactions and upsert
+        try:
+            subs = detect_subscriptions_for_user(conn, user_id)
+            inserted, updated = upsert_subscriptions(conn, user_id, subs)
+            # Convert dataclass objects to serializable dicts
+            subs_list = [s.__dict__ for s in subs]
+            subs_summary = {
+                "detected": len(subs_list),
+                "inserted": inserted,
+                "updated": updated,
+                "sample": subs_list[0] if subs_list else None,
+                "items": subs_list,
+            }
+        except Exception:
+            subs_summary = {"error": "subscription_detection_failed"}
+
+    return {"ingest": ingest_result, "insights": items, "subscriptions": subs_summary}
 
 
 @app.get("/users/{user_id}/transactions", tags=["transactions"])

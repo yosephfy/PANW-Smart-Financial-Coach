@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Badge } from "../../components/Badge";
+import { useUser } from "../../components/Providers";
 import React from "react";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
@@ -33,7 +34,8 @@ function severityVariant(sev?: string) {
 }
 
 export default function InsightsPage() {
-  const [userId, setUserId] = useState("u_demo");
+  const ctx = useUser();
+  const [userId, setUserId] = useState(ctx.userId || "u_demo");
   const [rows, setRows] = useState<Insight[]>([]);
   const [filter, setFilter] = useState<string>("all");
   const [busy, setBusy] = useState(false);
@@ -63,6 +65,7 @@ export default function InsightsPage() {
         body: JSON.stringify({ user_id: userId }),
       });
       await load();
+      ctx.showToast("Insights generated", "success");
     } finally {
       setGenBusy(false);
     }
@@ -77,6 +80,7 @@ export default function InsightsPage() {
         body: JSON.stringify({ user_id: userId, contamination: 0.08 }),
       });
       await load();
+      ctx.showToast("ML detection finished", "success");
     } finally {
       setMlBusy(false);
     }
@@ -95,6 +99,7 @@ export default function InsightsPage() {
         }),
       });
       await load();
+      ctx.showToast("Insight rewritten", "success");
     } finally {
       setRewriteBusy(null);
     }
@@ -113,7 +118,10 @@ export default function InsightsPage() {
           <input
             className="mt-1 rounded border border-slate-600 bg-slate-100 px-2 py-1"
             value={userId}
-            onChange={(e) => setUserId(e.target.value)}
+            onChange={(e) => {
+              setUserId(e.target.value);
+              ctx.setUserId(e.target.value);
+            }}
           />
         </label>
         <button

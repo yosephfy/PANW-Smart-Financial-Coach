@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useUser } from "../../components/Providers";
 import { Badge } from "../../components/Badge";
 import { fmtCurrency, fmtPct } from "../../components/format";
 import {
@@ -26,7 +27,8 @@ type Sub = {
 };
 
 export default function SubscriptionsPage() {
-  const [userId, setUserId] = useState("u_demo");
+  const ctx = useUser();
+  const [userId, setUserId] = useState(ctx.userId || "u_demo");
   const [rows, setRows] = useState<Sub[]>([]);
   const [busy, setBusy] = useState(false);
   const [detecting, setDetecting] = useState(false);
@@ -46,6 +48,8 @@ export default function SubscriptionsPage() {
       );
       const json = await res.json();
       setRows(Array.isArray(json) ? json : []);
+    } catch (err) {
+      ctx.showToast(String(err), "error");
     } finally {
       setBusy(false);
     }
@@ -60,6 +64,7 @@ export default function SubscriptionsPage() {
         body: JSON.stringify({ user_id: userId }),
       });
       await load();
+      ctx.showToast("Subscription detection completed", "success");
     } finally {
       setDetecting(false);
     }
@@ -79,7 +84,10 @@ export default function SubscriptionsPage() {
           <input
             className="mt-1 rounded border border-slate-600 bg-slate-100 px-2 py-1"
             value={userId}
-            onChange={(e) => setUserId(e.target.value)}
+            onChange={(e) => {
+              setUserId(e.target.value);
+              ctx.setUserId(e.target.value);
+            }}
           />
         </label>
         <button
