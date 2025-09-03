@@ -51,3 +51,8 @@ pip-log.txt
 
 # sqlite db files
 *.db
+
+# node_modules
+node_modules/
+
+.next/

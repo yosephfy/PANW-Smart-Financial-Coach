@@ -24,6 +24,19 @@ An AI-powered personal finance coach that turns raw transactions into personaliz
    - `uvicorn app.main:app --reload`
    - Open `http://127.0.0.1:8000/health` for a health check.
 
+## Getting Started (Frontend)
+1) Open a new terminal:
+   - `cd apps/web`
+   - `npm install`
+   - `export NEXT_PUBLIC_API_URL=http://127.0.0.1:8000` (optional; defaults to this)
+   - `npm run dev`
+   - Open `http://localhost:3000`
+
+Pages:
+- `/ingest` upload CSV and ingest
+- `/transactions` list user transactions
+- `/subscriptions` detect + list subscriptions
+
 ## Repo Structure
 ```
 PANW-Smart-Financial-Coach/
