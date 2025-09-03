@@ -314,7 +314,7 @@ def list_subscriptions(user_id: str, limit: int = Query(100, ge=1, le=500)):
     with db_mod.get_connection() as conn:
         rows = conn.execute(
             """
-            SELECT merchant, avg_amount, cadence, last_seen, status, price_change_pct
+            SELECT merchant, avg_amount, cadence, last_seen, status, price_change_pct, COALESCE(trial_converted, 0) as trial_converted
             FROM subscriptions
             WHERE user_id = ?
             ORDER BY avg_amount DESC
@@ -322,7 +322,13 @@ def list_subscriptions(user_id: str, limit: int = Query(100, ge=1, le=500)):
             """,
             (user_id, limit),
         ).fetchall()
-        return [dict(r) for r in rows]
+        out = []
+        for r in rows:
+            d = dict(r)
+            # Normalize SQLite integer boolean to Python bool
+            d["trial_converted"] = bool(d.get("trial_converted"))
+            out.append(d)
+        return out
 
 
 class CategorizationRequest(BaseModel):

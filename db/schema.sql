@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS subscriptions (
   last_seen DATE,
   status TEXT, -- active|paused|canceled
   price_change_pct NUMERIC,
+  trial_converted BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY(user_id) REFERENCES users(id)
 );

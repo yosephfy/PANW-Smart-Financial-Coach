@@ -40,18 +40,29 @@ def init_db() -> None:
     with get_connection() as conn:
         conn.executescript(schema_sql)
         # Lightweight migrations for new columns
+
         def _has_column(table: str, col: str) -> bool:
             cur = conn.execute(f"PRAGMA table_info({table})")
             return any(r[1] == col for r in cur.fetchall())
 
         if not _has_column("transactions", "category_source"):
-            conn.execute("ALTER TABLE transactions ADD COLUMN category_source TEXT;")
+            conn.execute(
+                "ALTER TABLE transactions ADD COLUMN category_source TEXT;")
         if not _has_column("transactions", "category_provenance"):
-            conn.execute("ALTER TABLE transactions ADD COLUMN category_provenance TEXT;")
+            conn.execute(
+                "ALTER TABLE transactions ADD COLUMN category_provenance TEXT;")
         # Insights optional columns for LLM rewrite cache
         if not _has_column("insights", "rewritten_title"):
-            conn.execute("ALTER TABLE insights ADD COLUMN rewritten_title TEXT;")
+            conn.execute(
+                "ALTER TABLE insights ADD COLUMN rewritten_title TEXT;")
         if not _has_column("insights", "rewritten_body"):
-            conn.execute("ALTER TABLE insights ADD COLUMN rewritten_body TEXT;")
+            conn.execute(
+                "ALTER TABLE insights ADD COLUMN rewritten_body TEXT;")
         if not _has_column("insights", "rewritten_at"):
-            conn.execute("ALTER TABLE insights ADD COLUMN rewritten_at TIMESTAMP;")
+            conn.execute(
+                "ALTER TABLE insights ADD COLUMN rewritten_at TIMESTAMP;")
+
+        # Add trial_converted to subscriptions if running against an older DB
+        if not _has_column("subscriptions", "trial_converted"):
+            conn.execute(
+                "ALTER TABLE subscriptions ADD COLUMN trial_converted BOOLEAN DEFAULT 0;")
