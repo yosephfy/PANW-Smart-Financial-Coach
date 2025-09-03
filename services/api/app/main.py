@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 from . import db as db_mod
 from .ingest import parse_csv_transactions, dupe_hash, categorize_with_provenance
@@ -12,6 +13,19 @@ app = FastAPI(title="Smart Financial Coach API", version="0.1.0")
 @app.on_event("startup")
 def on_startup():
     db_mod.init_db()
+
+
+# CORS for local Next.js frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/", tags=["meta"])
