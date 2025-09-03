@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """Ingest the sample CSV and print generated insights (convenience script)."""
-from insights import generate_insights
-from db import get_connection, init_db
-from ingest import parse_csv_transactions
 import sys
 from pathlib import Path
+
+# Compute path to services/api/app so we can import local modules
 repo = Path(__file__).resolve().parents[3]
 app_dir = Path(__file__).resolve().parent.parent / 'app'
 print('DEBUG app_dir:', app_dir)
 sys.path.insert(0, str(app_dir))
+
+from insights import generate_insights
+from db import get_connection, init_db
+from ingest import parse_csv_transactions
 
 
 CSV_PATH = repo / 'data' / 'samples' / 'transactions_sample.csv'
