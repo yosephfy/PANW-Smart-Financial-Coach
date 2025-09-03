@@ -77,3 +77,15 @@ CREATE INDEX IF NOT EXISTS idx_txn_user_date ON transactions(user_id, date);
 CREATE INDEX IF NOT EXISTS idx_txn_user_merchant ON transactions(user_id, merchant);
 CREATE INDEX IF NOT EXISTS idx_txn_user_date_amount_merchant ON transactions(user_id, date, amount, merchant);
 CREATE INDEX IF NOT EXISTS idx_sub_user_merchant ON subscriptions(user_id, merchant);
+
+-- Plaid items: store access tokens per user (hackathon-use only; encrypt in prod)
+CREATE TABLE IF NOT EXISTS plaid_items (
+  id TEXT PRIMARY KEY,         -- sha1(user_id|item_id)
+  user_id TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  access_token TEXT NOT NULL,
+  institution_name TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY(user_id) REFERENCES users(id)
+);
+CREATE INDEX IF NOT EXISTS idx_plaid_user ON plaid_items(user_id);
