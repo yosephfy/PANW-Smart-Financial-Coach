@@ -36,6 +36,16 @@ Pages:
 - `/ingest` upload CSV and ingest
 - `/transactions` list user transactions
 - `/subscriptions` detect + list subscriptions
+- `/plaid` connect Plaid Sandbox, then import transactions
+
+## Plaid Sandbox Setup
+Set environment variables before running the API:
+```
+export PLAID_CLIENT_ID=your_sandbox_client_id
+export PLAID_SECRET=your_sandbox_secret
+export PLAID_HOST=https://sandbox.plaid.com
+```
+Then open the frontend `/plaid` page to connect a sandbox bank and import transactions.
 
 ## Repo Structure
 ```
@@ -58,3 +68,6 @@ PANW-Smart-Financial-Coach/
 - Add CSV ingestion endpoint and normalization
 - Implement categorization heuristics and subscription detection
 - Scaffold Next.js dashboard and insights feed
+
+Contributing: see `CONTRIBUTING.md` for the alignment checklist and PR template to ensure every change maps to the hackathon brief in `CASE_STUDY.md`.
+See the full hackathon brief in `CASE_STUDY.md`. We reference this spec when adding features to ensure alignment with goals (AI-powered insights, personalization, security/trust, and demo readiness).
