@@ -1,0 +1,7 @@
+id,user_id,account_id,date,amount,merchant,description,category,is_recurring,mcc,source
+t1,u_demo,a_checking,2025-07-28,-4.50,Starbucks,STARBUCKS 1234,coffee,false,5814,synthetic
+t2,u_demo,a_checking,2025-07-29,-12.99,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t3,u_demo,a_checking,2025-07-30,-65.20,Uber,UBER TRIP 5678,rideshare,false,4121,synthetic
+t4,u_demo,a_checking,2025-07-31,-85.43,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t5,u_demo,a_checking,2025-08-01,2500.00,Acme Inc.,PAYROLL,Income,true,0000,synthetic
+t6,u_demo,a_credit,2025-08-02,-12.99,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
