@@ -4,6 +4,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -32,7 +33,25 @@ export function useToast() {
 }
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
-  const [userId, setUserId] = useState("u_demo");
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("sfc:userId");
+      if (stored) setUserId(stored);
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (userId) localStorage.setItem("sfc:userId", userId);
+      else localStorage.removeItem("sfc:userId");
+    } catch (e) {
+      // ignore
+    }
+  }, [userId]);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   const showToast = useCallback((message: string, type: ToastType = "info") => {

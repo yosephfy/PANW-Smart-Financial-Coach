@@ -311,6 +311,114 @@ class DetectRequest(BaseModel):
     user_id: str
 
 
+class UserCreateRequest(BaseModel):
+    user_id: str
+
+
+@app.post("/users", tags=["users"])
+def create_user(body: UserCreateRequest):
+    """Create a user (id provided). No password — lightweight for demo use."""
+    with db_mod.get_connection() as conn:
+        conn.execute(
+            "INSERT OR IGNORE INTO users (id) VALUES (?)", (body.user_id,))
+    return {"user_id": body.user_id, "created": True}
+
+
+@app.get("/users", tags=["users"])
+def list_users():
+    with db_mod.get_connection() as conn:
+        rows = conn.execute(
+            "SELECT id, created_at FROM users ORDER BY created_at DESC").fetchall()
+        return [dict(r) for r in rows]
+
+
+class TransactionCreateRequest(BaseModel):
+    date: str
+    amount: float
+    merchant: Optional[str] = None
+    description: Optional[str] = None
+    account_id: Optional[str] = None
+    category: Optional[str] = None
+    is_recurring: Optional[bool] = False
+    mcc: Optional[str] = None
+    source: Optional[str] = "manual"
+
+
+@app.post("/users/{user_id}/transactions", tags=["transactions"])
+def create_transaction(user_id: str, body: TransactionCreateRequest):
+    """Insert a single transaction for a user (used by "Add transaction" UI).
+
+    This follows the same insertion rules as CSV ingest: ensures accounts exist,
+    applies ML categorization fallback when available, and returns the inserted row on success.
+    """
+    import uuid
+
+    tid = uuid.uuid4().hex
+    with db_mod.get_connection() as conn:
+        # ensure user exists
+        conn.execute("INSERT OR IGNORE INTO users (id) VALUES (?)", (user_id,))
+
+        # ensure account exists if provided
+        if body.account_id:
+            conn.execute(
+                "INSERT OR IGNORE INTO accounts (id, user_id, name, type, institution, mask) VALUES (?, ?, ?, ?, ?, ?)",
+                (body.account_id, user_id, "Manual", None, None, None),
+            )
+
+        # prepare row dict for possible ML categorization
+        row = {
+            "id": tid,
+            "user_id": user_id,
+            "account_id": body.account_id,
+            "date": body.date,
+            "amount": body.amount,
+            "merchant": body.merchant,
+            "description": body.description,
+            "category": body.category,
+            "category_source": None,
+            "category_provenance": None,
+            "is_recurring": bool(body.is_recurring),
+            "mcc": body.mcc,
+            "source": body.source or "manual",
+        }
+
+        # ML fallback
+        if AI_AVAILABLE and _has_model(user_id) and not row.get("category"):
+            try:
+                pred = _predict_categorizer(user_id, row.get(
+                    "merchant"), row.get("description"))
+                preds = pred.get("predictions", [])
+                if preds:
+                    top = preds[0]
+                    if float(top.get("prob", 0)) >= 0.7:
+                        row["category"] = top["label"]
+                        row["category_source"] = "ml"
+                        row["category_provenance"] = f"ml:{top['label']}:{float(top['prob']):.2f}"
+            except Exception:
+                pass
+
+        try:
+            conn.execute(
+                """
+                INSERT INTO transactions (id, user_id, account_id, date, amount, merchant, description,
+                    category, category_source, category_provenance, is_recurring, mcc, source)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    row["id"], row["user_id"], row.get(
+                        "account_id"), row["date"], row["amount"],
+                    row.get("merchant"), row.get("description"), row.get(
+                        "category"), row.get("category_source"),
+                    row.get("category_provenance"), int(
+                        bool(row.get("is_recurring", False))), row.get("mcc"), row.get("source"),
+                ),
+            )
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"insert_error: {e}")
+
+    return {"inserted": True, "transaction": row}
+
+
 @app.post("/subscriptions/detect", tags=["subscriptions"])
 def subscriptions_detect(body: DetectRequest):
     with db_mod.get_connection() as conn:

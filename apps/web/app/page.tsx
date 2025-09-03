@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import React from "react";
+import { useUser } from "../components/Providers";
+import Link from "next/link";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
@@ -47,7 +49,7 @@ function sparklineSvg(
 }
 
 export default function Home() {
-  const [userId, setUserId] = useState("u_demo");
+  const { userId } = useUser();
   const [busy, setBusy] = useState(false);
   const [items, setItems] = useState<ForecastItem[]>([]);
   const [historyMap, setHistoryMap] = useState<Record<string, number[]>>({});
@@ -76,8 +78,8 @@ export default function Home() {
   };
 
   useEffect(() => {
-    load();
-  }, []);
+    if (userId) load();
+  }, [userId]);
 
   return (
     <div className="space-y-4">
@@ -89,21 +91,21 @@ export default function Home() {
 
       <div className="border border-slate-700 rounded p-4">
         <div className="flex items-end gap-3 mb-3">
-          <label className="text-sm">
-            <div className="text-slate-300">User ID</div>
-            <input
-              className="mt-1 rounded border border-slate-600 bg-slate-100 px-2 py-1"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-            />
-          </label>
-          <button
-            onClick={load}
-            disabled={busy}
-            className="rounded bg-blue-500 text-white px-3 py-1 disabled:opacity-50"
-          >
-            {busy ? "Loading…" : "Refresh Forecast"}
-          </button>
+          {!userId ? (
+            <div>
+              <Link href="/connect" className="btn">
+                Sign in / Connect data
+              </Link>
+            </div>
+          ) : (
+            <button
+              onClick={load}
+              disabled={busy}
+              className="rounded bg-blue-500 text-white px-3 py-1 disabled:opacity-50"
+            >
+              {busy ? "Loading…" : "Refresh Forecast"}
+            </button>
+          )}
         </div>
         <div className="grid md:grid-cols-3 gap-3">
           {items.map((it) => (
