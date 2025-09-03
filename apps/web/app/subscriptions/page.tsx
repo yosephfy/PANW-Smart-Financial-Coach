@@ -55,8 +55,8 @@ export default function SubscriptionsPage() {
     setDetecting(true);
     try {
       await fetch(`${API}/subscriptions/detect`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: userId }),
       });
       await load();
