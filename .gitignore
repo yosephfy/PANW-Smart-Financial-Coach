@@ -48,3 +48,6 @@ pip-wheel-metadata/
 .pytest_cache/
 *.egg-info/
 pip-log.txt
+
+# sqlite db files
+*.db

@@ -1,7 +1,8 @@
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query
 from typing import Optional
 from . import db as db_mod
-from .ingest import parse_csv_transactions, dupe_hash
+from .ingest import parse_csv_transactions, dupe_hash, categorize_with_provenance
+from pydantic import BaseModel
 
 
 app = FastAPI(title="Smart Financial Coach API", version="0.1.0")
@@ -17,7 +18,12 @@ def root():
     return {
         "name": "Smart Financial Coach API",
         "status": "ok",
-        "endpoints": ["/health", "/ingest/csv", "/users/{user_id}/transactions"],
+        "endpoints": [
+            "/health",
+            "/ingest/csv",
+            "/users/{user_id}/transactions",
+            "/categorization/explain",
+        ],
     }
 
 
@@ -104,13 +110,14 @@ async def ingest_csv(
                     """
                     INSERT OR IGNORE INTO transactions (
                         id, user_id, account_id, date, amount, merchant, description,
-                        category, is_recurring, mcc, source
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        category, category_source, category_provenance,
+                        is_recurring, mcc, source
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         r["id"], r["user_id"], r.get("account_id"), r["date"], r["amount"], r.get("merchant"),
-                        r.get("description"), r.get("category"), r.get("is_recurring", False), r.get("mcc"),
-                        r.get("source", "csv"),
+                        r.get("description"), r.get("category"), r.get("category_source"), r.get("category_provenance"),
+                        r.get("is_recurring", False), r.get("mcc"), r.get("source", "csv"),
                     ),
                 )
                 if conn.total_changes > 0:
@@ -139,7 +146,8 @@ def list_transactions(user_id: str, limit: int = Query(50, ge=1, le=500)):
     with db_mod.get_connection() as conn:
         rows = conn.execute(
             """
-            SELECT id, date, amount, merchant, description, category, is_recurring, mcc, account_id
+            SELECT id, date, amount, merchant, description, category, category_source, category_provenance,
+                   is_recurring, mcc, account_id
             FROM transactions
             WHERE user_id = ?
             ORDER BY date DESC
@@ -148,3 +156,39 @@ def list_transactions(user_id: str, limit: int = Query(50, ge=1, le=500)):
             (user_id, limit),
         ).fetchall()
         return [dict(r) for r in rows]
+
+
+@app.get("/categorization/explain", tags=["categorization"])
+def categorization_explain(
+    merchant: Optional[str] = Query(None),
+    description: Optional[str] = Query(None),
+    mcc: Optional[str] = Query(None),
+):
+    category, source, prov, rule = categorize_with_provenance(merchant, description, mcc, None)
+    return {
+        "input": {"merchant": merchant, "description": description, "mcc": mcc},
+        "category": category,
+        "category_source": source,
+        "category_provenance": prov,
+        "rule": rule,
+    }
+
+
+class CategorizationRequest(BaseModel):
+    merchant: Optional[str] = None
+    description: Optional[str] = None
+    mcc: Optional[str] = None
+
+
+@app.post("/categorization/explain", tags=["categorization"])
+def categorization_explain_post(body: CategorizationRequest):
+    category, source, prov, rule = categorize_with_provenance(
+        body.merchant, body.description, body.mcc, None
+    )
+    return {
+        "input": {"merchant": body.merchant, "description": body.description, "mcc": body.mcc},
+        "category": category,
+        "category_source": source,
+        "category_provenance": prov,
+        "rule": rule,
+    }

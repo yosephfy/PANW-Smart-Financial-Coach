@@ -48,16 +48,17 @@ def _parse_date(s) -> str:
 
 def categorize_with_provenance(
     merchant: Optional[str], description: Optional[str], mcc: Optional[str], provided_category: Optional[str]
-) -> (Optional[str], str, str):
+) -> (Optional[str], str, str, str):
     """
-    Returns: (category, source, provenance)
+    Returns: (category, source, provenance, rule)
       - source: csv|mcc|regex|fallback
       - provenance: a short tag like 'csv:groceries', 'mcc:5411', 'regex:spotify'
+      - rule: coarse rule id like 'csv' | 'mcc' | 'streaming' | 'coffee' | 'fallback'
     """
     # If CSV provides a category, respect it
     if provided_category and str(provided_category).strip():
         cat = str(provided_category).strip()
-        return cat, "csv", f"csv:{cat}"
+        return cat, "csv", f"csv:{cat}", "csv"
 
     text = f"{merchant or ''} {description or ''}".lower()
 
@@ -76,7 +77,7 @@ def categorize_with_provenance(
         "6300": "insurance",
     }
     if mcc and mcc in mcc_map:
-        return mcc_map[mcc], "mcc", f"mcc:{mcc}"
+        return mcc_map[mcc], "mcc", f"mcc:{mcc}", "mcc"
 
     # Merchant/description regex rules with rule ids
     mapping = [
@@ -101,8 +102,8 @@ def categorize_with_provenance(
         m = re.search(pat, text)
         if m:
             token = m.group(1) if m.groups() else m.group(0)
-            return cat, "regex", f"regex:{rule_id}:{token}"
-    return None, "fallback", "none"
+            return cat, "regex", f"regex:{rule_id}:{token}", rule_id
+    return None, "fallback", "none", "fallback"
 
 
 def parse_csv_transactions(
@@ -132,7 +133,7 @@ def parse_csv_transactions(
         merchant = (r_merchant or "").strip() or None
         description = (r_desc or "").strip() or merchant
 
-        category, category_source, category_prov = categorize_with_provenance(merchant, description, r_mcc, r_cat)
+        category, category_source, category_prov, _rule = categorize_with_provenance(merchant, description, r_mcc, r_cat)
         is_recurring = _to_bool(row.get("is_recurring"))
 
         tx_id = (row.get("id") or str(uuid.uuid4()))
