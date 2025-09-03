@@ -62,3 +62,23 @@ Response fields include:
 - category_source: csv | mcc | regex | fallback
 - category_provenance: e.g., csv:groceries | mcc:5411 | regex:streaming:spotify | none
 - rule: matched rule id (e.g., streaming, coffee, mcc, csv, fallback)
+
+## Subscriptions
+Detect recurring subscriptions and list them.
+
+POST `/subscriptions/detect`
+```
+curl -X POST http://127.0.0.1:8000/subscriptions/detect \
+  -H 'Content-Type: application/json' \
+  -d '{"user_id":"u_demo"}'
+```
+
+GET `/users/{user_id}/subscriptions`
+```
+curl http://127.0.0.1:8000/users/u_demo/subscriptions
+```
+
+Heuristics:
+- Groups negative transactions by merchant, checks median interval for weekly (~7d), monthly (~30d), yearly (~365d).
+- Requires 3+ occurrences (monthly) or 4+ (weekly) with reasonable amount consistency.
+- Computes `avg_amount` (median abs), `cadence`, `last_seen`, `status` (active/paused), and `price_change_pct` vs median.

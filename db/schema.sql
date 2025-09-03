@@ -76,3 +76,4 @@ CREATE TABLE IF NOT EXISTS insights (
 CREATE INDEX IF NOT EXISTS idx_txn_user_date ON transactions(user_id, date);
 CREATE INDEX IF NOT EXISTS idx_txn_user_merchant ON transactions(user_id, merchant);
 CREATE INDEX IF NOT EXISTS idx_txn_user_date_amount_merchant ON transactions(user_id, date, amount, merchant);
+CREATE INDEX IF NOT EXISTS idx_sub_user_merchant ON subscriptions(user_id, merchant);

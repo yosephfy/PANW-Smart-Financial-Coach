@@ -3,6 +3,7 @@ from typing import Optional
 from . import db as db_mod
 from .ingest import parse_csv_transactions, dupe_hash, categorize_with_provenance
 from pydantic import BaseModel
+from .subscriptions import detect_subscriptions_for_user, upsert_subscriptions
 
 
 app = FastAPI(title="Smart Financial Coach API", version="0.1.0")
@@ -172,6 +173,40 @@ def categorization_explain(
         "category_provenance": prov,
         "rule": rule,
     }
+
+
+class DetectRequest(BaseModel):
+    user_id: str
+
+
+@app.post("/subscriptions/detect", tags=["subscriptions"])
+def subscriptions_detect(body: DetectRequest):
+    with db_mod.get_connection() as conn:
+        subs = detect_subscriptions_for_user(conn, body.user_id)
+        inserted, updated = upsert_subscriptions(conn, body.user_id, subs)
+    return {
+        "user_id": body.user_id,
+        "detected": len(subs),
+        "inserted": inserted,
+        "updated": updated,
+        "sample": subs[0].__dict__ if subs else None,
+    }
+
+
+@app.get("/users/{user_id}/subscriptions", tags=["subscriptions"])
+def list_subscriptions(user_id: str, limit: int = Query(100, ge=1, le=500)):
+    with db_mod.get_connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT merchant, avg_amount, cadence, last_seen, status, price_change_pct
+            FROM subscriptions
+            WHERE user_id = ?
+            ORDER BY avg_amount DESC
+            LIMIT ?
+            """,
+            (user_id, limit),
+        ).fetchall()
+        return [dict(r) for r in rows]
 
 
 class CategorizationRequest(BaseModel):
