@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0b1220;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #0b1220;
+  color: #f1f5f9;
+}
+
+a {
+  color: #60a5fa;
+}
+
+input, select, button, textarea {
+  color: #0b1220;
+}
+
