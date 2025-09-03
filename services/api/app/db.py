@@ -48,3 +48,10 @@ def init_db() -> None:
             conn.execute("ALTER TABLE transactions ADD COLUMN category_source TEXT;")
         if not _has_column("transactions", "category_provenance"):
             conn.execute("ALTER TABLE transactions ADD COLUMN category_provenance TEXT;")
+        # Insights optional columns for LLM rewrite cache
+        if not _has_column("insights", "rewritten_title"):
+            conn.execute("ALTER TABLE insights ADD COLUMN rewritten_title TEXT;")
+        if not _has_column("insights", "rewritten_body"):
+            conn.execute("ALTER TABLE insights ADD COLUMN rewritten_body TEXT;")
+        if not _has_column("insights", "rewritten_at"):
+            conn.execute("ALTER TABLE insights ADD COLUMN rewritten_at TIMESTAMP;")

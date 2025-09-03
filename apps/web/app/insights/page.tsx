@@ -13,6 +13,9 @@ type Insight = {
   severity: 'info' | 'warn' | 'critical' | string
   data_json?: string
   created_at?: string
+  rewritten_title?: string | null
+  rewritten_body?: string | null
+  rewritten_at?: string | null
 }
 
 function severityVariant(sev?: string) {
@@ -29,6 +32,8 @@ export default function InsightsPage() {
   const [rows, setRows] = useState<Insight[]>([]);
   const [busy, setBusy] = useState(false);
   const [genBusy, setGenBusy] = useState(false);
+  const [mlBusy, setMlBusy] = useState(false);
+  const [rewriteBusy, setRewriteBusy] = useState<string | null>(null);
 
   const load = async () => {
     setBusy(true);
@@ -55,6 +60,34 @@ export default function InsightsPage() {
     }
   }
 
+  const runML = async () => {
+    setMlBusy(true)
+    try {
+      await fetch(`${API}/anomaly/iforest/detect`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, contamination: 0.08 }),
+      })
+      await load()
+    } finally {
+      setMlBusy(false)
+    }
+  }
+
+  const rewrite = async (id: string) => {
+    setRewriteBusy(id)
+    try {
+      await fetch(`${API}/insights/rewrite`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId, insight_id: id, tone: 'friendly' }),
+      })
+      await load()
+    } finally {
+      setRewriteBusy(null)
+    }
+  }
+
   useEffect(() => { load() }, [])
 
   return (
@@ -67,6 +100,7 @@ export default function InsightsPage() {
         </label>
         <button onClick={load} disabled={busy} className="rounded bg-blue-500 text-white px-3 py-1 disabled:opacity-50">{busy ? 'Loading…' : 'Refresh'}</button>
         <button onClick={generate} disabled={genBusy} className="rounded bg-emerald-500 text-white px-3 py-1 disabled:opacity-50">{genBusy ? 'Generating…' : 'Generate'}</button>
+        <button onClick={runML} disabled={mlBusy} className="rounded bg-purple-500 text-white px-3 py-1 disabled:opacity-50">{mlBusy ? 'Detecting…' : 'Run ML Outliers'}</button>
       </div>
 
       <div className="grid gap-3">
@@ -74,10 +108,16 @@ export default function InsightsPage() {
           <div key={r.id} className="border border-slate-700 rounded p-3">
             <div className="flex items-start gap-2">
               <Badge variant={severityVariant(r.severity)}>{r.severity}</Badge>
-              <div className="font-semibold">{r.title}</div>
+              {r.type === 'ml_outlier' && <Badge variant="info">ML</Badge>}
+              <div className="font-semibold">{r.rewritten_title || r.title}</div>
               <div className="ml-auto text-xs text-slate-400">{r.created_at}</div>
             </div>
-            <div className="text-slate-300 mt-1 text-sm">{r.body}</div>
+            <div className="text-slate-300 mt-1 text-sm">{r.rewritten_body || r.body}</div>
+            <div className="mt-2 flex items-center gap-2">
+              <button onClick={() => rewrite(r.id)} disabled={rewriteBusy === r.id} className="rounded bg-slate-600 text-white px-2 py-0.5 text-xs disabled:opacity-50">
+                {rewriteBusy === r.id ? 'Rewriting…' : 'Rewrite'}</button>
+              {r.rewritten_at && <span className="text-xs text-slate-400">rewritten at {r.rewritten_at}</span>}
+            </div>
             {r.data_json && (
               <details className="mt-2">
                 <summary className="cursor-pointer text-xs text-slate-400">Details</summary>
@@ -93,4 +133,3 @@ export default function InsightsPage() {
     </div>
   )
 }
-

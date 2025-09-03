@@ -69,6 +69,9 @@ CREATE TABLE IF NOT EXISTS insights (
   data_json TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   read_at TIMESTAMP,
+  rewritten_title TEXT,
+  rewritten_body TEXT,
+  rewritten_at TIMESTAMP,
   FOREIGN KEY(user_id) REFERENCES users(id)
 );
 

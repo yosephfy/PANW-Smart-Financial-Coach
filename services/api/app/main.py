@@ -324,7 +324,8 @@ def list_insights(user_id: str, limit: int = Query(50, ge=1, le=200)):
     with db_mod.get_connection() as conn:
         rows = conn.execute(
             """
-            SELECT id, type, title, body, severity, data_json, created_at
+            SELECT id, type, title, body, severity, data_json, created_at,
+                   rewritten_title, rewritten_body, rewritten_at
             FROM insights
             WHERE user_id = ?
             ORDER BY created_at DESC
@@ -433,8 +434,27 @@ def insights_rewrite(body: RewriteInsightRequest):
         ).fetchone()
         if not row:
             raise HTTPException(status_code=404, detail="insight_not_found")
-        new_text = rewrite_insight_llm(row["title"], row["body"], row["data_json"], tone=body.tone)
-    return {"insight_id": body.insight_id, "rewritten": new_text}
+        try:
+            new_text = rewrite_insight_llm(row["title"], row["body"], row["data_json"], tone=body.tone)
+        except Exception as e:
+            raise HTTPException(status_code=502, detail=f"llm_error: {e}")
+        conn.execute(
+            """
+            UPDATE insights
+            SET rewritten_title = ?, rewritten_body = ?, rewritten_at = CURRENT_TIMESTAMP
+            WHERE user_id = ? AND id = ?
+            """,
+            (new_text["title"], new_text["body"], body.user_id, body.insight_id),
+        )
+        updated = conn.execute(
+            """
+            SELECT id, type, title, body, severity, data_json, created_at,
+                   rewritten_title, rewritten_body, rewritten_at
+            FROM insights WHERE user_id = ? AND id = ?
+            """,
+            (body.user_id, body.insight_id),
+        ).fetchone()
+    return {"insight_id": body.insight_id, "rewritten": new_text, "insight": dict(updated) if updated else None}
 
 
 class PublicTokenExchangeRequest(BaseModel):
