@@ -82,6 +82,9 @@ def root():
             "/ingest/csv",
             "/users/{user_id}/transactions",
             "/categorization/explain",
+            "/plaid/link/token/create",
+            "/plaid/link/public_token/exchange",
+            "/plaid/transactions/import",
         ],
     }
 
@@ -132,6 +135,20 @@ async def ingest_csv(
 
         # Ensure any referenced accounts exist
         for r in records:
+            # Optionally enhance categorization via ML model if present
+            if AI_AVAILABLE and _has_model(user_id):
+                if not r.get("category") or (r.get("category_source") in (None, "fallback", "regex")):
+                    try:
+                        pred = _predict_categorizer(user_id, r.get("merchant"), r.get("description"))
+                        preds = pred.get("predictions", [])
+                        if preds:
+                            top = preds[0]
+                            if float(top.get("prob", 0)) >= 0.7:
+                                r["category"] = top["label"]
+                                r["category_source"] = "ml"
+                                r["category_provenance"] = f"ml:{top['label']}:{float(top['prob']):.2f}"
+                    except Exception:
+                        pass
             acc_id = r.get("account_id")
             if acc_id:
                 conn.execute(
@@ -165,13 +182,14 @@ async def ingest_csv(
                 continue
 
             try:
+                pre = conn.total_changes
                 conn.execute(
                     """
                     INSERT OR IGNORE INTO transactions (
                         id, user_id, account_id, date, amount, merchant, description,
                         category, category_source, category_provenance,
                         is_recurring, mcc, source
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         r["id"], r["user_id"], r.get("account_id"), r["date"], r["amount"], r.get("merchant"),
@@ -179,7 +197,8 @@ async def ingest_csv(
                         r.get("is_recurring", False), r.get("mcc"), r.get("source", "csv"),
                     ),
                 )
-                if conn.total_changes > 0:
+                post = conn.total_changes
+                if post > pre:
                     inserted += 1
                     seen_hashes.add(h)
                 else:
