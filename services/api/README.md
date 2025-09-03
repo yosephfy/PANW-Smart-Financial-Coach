@@ -82,3 +82,91 @@ Heuristics:
 - Groups negative transactions by merchant, checks median interval for weekly (~7d), monthly (~30d), yearly (~365d).
 - Requires 3+ occurrences (monthly) or 4+ (weekly) with reasonable amount consistency.
 - Computes `avg_amount` (median abs), `cadence`, `last_seen`, `status` (active/paused), and `price_change_pct` vs median.
+
+## Insights
+Generate and list insights (overspend, trending, merchant anomaly, save suggestions):
+
+POST `/insights/generate`
+```
+curl -X POST http://127.0.0.1:8000/insights/generate \
+  -H 'Content-Type: application/json' \
+  -d '{"user_id":"u_demo"}'
+```
+
+GET `/users/{user_id}/insights`
+```
+curl http://127.0.0.1:8000/users/u_demo/insights
+```
+
+Notes:
+- Category overspend/trending compare current 30d vs previous 30d only if the previous window has sufficient signal (>=3 expense tx and >=$50 spend in that category). This avoids false increases when there’s no prior data.
+- Merchant anomaly: last charge vs 90d mean/std; flags >2.5σ.
+- Save suggestions: top discretionary categories with ~20% cut potential.
+
+## Plaid Sandbox
+Enable Plaid with Sandbox credentials as environment variables when running the API:
+
+## Anomaly Detection (IsolationForest)
+Detect personalized outliers using IsolationForest per merchant (6-month window). Detected items are upserted into `insights` as `ml_outlier`.
+
+```
+curl -X POST http://127.0.0.1:8000/anomaly/iforest/detect \
+  -H 'Content-Type: application/json' \
+  -d '{"user_id":"u_demo","contamination":0.08}'
+```
+
+## Forecast (Categories)
+Simple next-month forecast per category using weighted recent months.
+
+```
+curl -X POST http://127.0.0.1:8000/forecast/categories \
+  -H 'Content-Type: application/json' \
+  -d '{"user_id":"u_demo","months_history":6,"top_k":8}'
+```
+
+## LLM Insight Rewriter (Optional)
+Rewrite an insight’s title/body to a friendlier tone using OpenAI. Requires `OPENAI_API_KEY` set and `openai` installed.
+
+```
+export OPENAI_API_KEY=sk-...
+curl -X POST http://127.0.0.1:8000/insights/rewrite \
+  -H 'Content-Type: application/json' \
+  -d '{"user_id":"u_demo","insight_id":"<id-from-insights>","tone":"friendly"}'
+```
+
+## AI Categorizer (ML)
+Optional TF‑IDF + Logistic Regression model to categorize merchants/descriptions. The API runs without it; install deps and train to enable.
+
+Install deps (already in requirements.txt) and train on your user’s existing transactions:
+```
+pip install -r requirements.txt
+curl -X POST http://127.0.0.1:8000/ai/categorizer/train \
+  -H 'Content-Type: application/json' \
+  -d '{"user_id":"u_demo","min_per_class":5}'
+```
+
+Predict for a text snippet:
+```
+curl -X POST http://127.0.0.1:8000/ai/categorizer/predict \
+  -H 'Content-Type: application/json' \
+  -d '{"user_id":"u_demo","merchant":"Starbucks","description":"STARBUCKS 1234","top_k":3}'
+```
+
+Auto-use during ingestion:
+- If a trained model exists for the `user_id`, ingestion will apply the model when the heuristic category is missing/low-signal (fallback/regex). If model confidence ≥ 0.7, it sets `category_source=ml` and `category_provenance=ml:<label>:<prob>`.
+```
+export PLAID_CLIENT_ID=your_sandbox_client_id
+export PLAID_SECRET=your_sandbox_secret
+export PLAID_HOST=https://sandbox.plaid.com
+uvicorn app.main:app --reload
+```
+
+Endpoints:
+- POST `/plaid/link/token/create` { user_id }
+- POST `/plaid/link/public_token/exchange` { user_id, public_token }
+- POST `/plaid/transactions/import` { user_id, start_date?, end_date? }
+
+Flow:
+1) Frontend calls link/token/create to obtain `link_token` and launches Plaid Link.
+2) On success, frontend sends `public_token` to `public_token/exchange` which stores access token + item for the user.
+3) Call `/plaid/transactions/import` to fetch transactions and persist them (category mapped with provenance; expenses negative; income positive).

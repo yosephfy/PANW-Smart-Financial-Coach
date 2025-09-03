@@ -4,7 +4,51 @@ from typing import Optional
 from . import db as db_mod
 from .ingest import parse_csv_transactions, dupe_hash, categorize_with_provenance
 from pydantic import BaseModel
+from .insights import generate_insights, upsert_insights
 from .subscriptions import detect_subscriptions_for_user, upsert_subscriptions
+from .anomaly import detect_iforest_insights
+from .forecast import forecast_categories
+try:
+    from .llm import rewrite_insight_llm
+    LLM_AVAILABLE = True
+except Exception:
+    LLM_AVAILABLE = False
+
+# Make Plaid optional so the API can start without plaid-python installed
+try:
+    from .plaid_integration import (
+        create_link_token as _create_link_token,
+        exchange_public_token as _exchange_public_token,
+        import_transactions_for_user as _import_transactions_for_user,
+    )
+    PLAID_AVAILABLE = True
+except Exception:
+    PLAID_AVAILABLE = False
+    def _unavailable(*_args, **_kwargs):
+        raise HTTPException(
+            status_code=503,
+            detail="Plaid integration unavailable. Install plaid-python and set PLAID_CLIENT_ID/PLAID_SECRET.",
+        )
+    _create_link_token = _unavailable
+    _exchange_public_token = _unavailable
+    _import_transactions_for_user = _unavailable
+
+# Optional ML categorizer (AI)
+try:
+    from .ai_categorizer import (
+        train_for_user as _train_categorizer,
+        predict_for_user as _predict_categorizer,
+        has_model as _has_model,
+    )
+    AI_AVAILABLE = True
+except Exception:
+    AI_AVAILABLE = False
+    def _ai_unavailable(*_args, **_kwargs):
+        raise HTTPException(status_code=503, detail="AI categorizer unavailable. Install scikit-learn and train a model.")
+    _train_categorizer = _ai_unavailable
+    _predict_categorizer = _ai_unavailable
+    def _has_model(_user_id: str) -> bool:
+        return False
 
 
 app = FastAPI(title="Smart Financial Coach API", version="0.1.0")
