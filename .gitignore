@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.js
 
@@ -52,7 +52,12 @@ pip-log.txt
 # sqlite db files
 *.db
 
+# models
+models/
+
 # node_modules
 node_modules/
 
 .next/
+CASE_STUDY.md
+CONTRIBUTING.md
