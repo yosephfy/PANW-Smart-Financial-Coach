@@ -136,7 +136,11 @@ def parse_csv_transactions(
         category, category_source, category_prov, _rule = categorize_with_provenance(merchant, description, r_mcc, r_cat)
         is_recurring = _to_bool(row.get("is_recurring"))
 
-        tx_id = (row.get("id") or str(uuid.uuid4()))
+        # Generate a stable natural ID to avoid collisions from CSV-provided ids
+        # Use user_id|account_id|date|amount_cents|merchant|description
+        cents = int(round(norm_amount * 100))
+        natural_key = f"{user_id}|{r_acc or ''}|{norm_date}|{cents}|{(merchant or '').lower()}|{(description or '').lower()}"
+        tx_id = hashlib.sha1(natural_key.encode("utf-8")).hexdigest()
 
         rec: Dict = {
             "id": tx_id,
