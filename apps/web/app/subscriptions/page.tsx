@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Badge } from '../../components/Badge';
+import { fmtCurrency, fmtPct } from '../../components/format';
+import { ResponsiveContainer, BarChart, XAxis, YAxis, Tooltip, Bar, Cell } from 'recharts';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
@@ -18,6 +21,11 @@ export default function SubscriptionsPage() {
   const [rows, setRows] = useState<Sub[]>([]);
   const [busy, setBusy] = useState(false);
   const [detecting, setDetecting] = useState(false);
+
+  const chartData = useMemo(() => {
+    return rows.map(r => ({ name: r.merchant, value: r.avg_amount }))
+      .sort((a,b) => b.value - a.value).slice(0, 10)
+  }, [rows])
 
   const load = async () => {
     setBusy(true);
@@ -61,7 +69,30 @@ export default function SubscriptionsPage() {
         <button onClick={detect} disabled={detecting} className="rounded bg-emerald-500 text-white px-3 py-1 disabled:opacity-50">{detecting ? 'Detecting…' : 'Run Detection'}</button>
       </div>
 
-      <div className="overflow-auto border border-slate-700 rounded">
+      {!!chartData.length && (
+        <div className="border border-slate-700 rounded p-3">
+          <div className="flex items-center justify-between mb-2">
+            <div className="font-semibold">Top Subscriptions</div>
+            <div className="text-xs text-slate-400">By average amount</div>
+          </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <XAxis dataKey="name" tick={{ fill: '#cbd5e1', fontSize: 12 }} interval={0} angle={-15} textAnchor="end" height={60} />
+                <YAxis tick={{ fill: '#cbd5e1', fontSize: 12 }} tickFormatter={(v) => `$${Math.round(v)}`}/>
+                <Tooltip formatter={(v: number) => fmtCurrency(v)} contentStyle={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8 }} labelStyle={{ color: '#cbd5e1' }} />
+                <Bar dataKey="value" radius={[4,4,0,0]}>
+                  {chartData.map((_, i) => (
+                    <Cell key={i} fill={["#60a5fa","#34d399","#f59e0b","#f97316","#c084fc","#f472b6","#22d3ee","#a3e635"][i % 8]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      <div className="overflow-auto border border-slate-700 rounded mt-4">
         <table className="min-w-full text-sm">
           <thead className="bg-slate-800/60">
             <tr className="text-left">
@@ -77,11 +108,17 @@ export default function SubscriptionsPage() {
             {rows.map((r) => (
               <tr key={`${r.merchant}-${r.cadence}`} className="border-t border-slate-700/60">
                 <td className="px-3 py-2">{r.merchant}</td>
-                <td className="px-3 py-2">-${r.avg_amount.toFixed(2)}</td>
-                <td className="px-3 py-2">{r.cadence}</td>
+                <td className="px-3 py-2 text-amber-200">-{fmtCurrency(r.avg_amount)}</td>
+                <td className="px-3 py-2">
+                  <Badge variant="info">{r.cadence}</Badge>
+                </td>
                 <td className="px-3 py-2">{r.last_seen}</td>
-                <td className="px-3 py-2">{r.status}</td>
-                <td className={`px-3 py-2 ${r.price_change_pct && r.price_change_pct > 0 ? 'text-amber-300' : 'text-slate-300'}`}>{r.price_change_pct ?? '-'}</td>
+                <td className="px-3 py-2">
+                  <Badge variant={r.status === 'active' ? 'success' : 'warning'}>{r.status}</Badge>
+                </td>
+                <td className={`px-3 py-2 ${r.price_change_pct && r.price_change_pct > 0 ? 'text-amber-300' : 'text-slate-300'}`}>{
+                  r.price_change_pct != null ? fmtPct(r.price_change_pct) : '-'
+                }</td>
               </tr>
             ))}
             {rows.length === 0 && (
@@ -95,4 +132,3 @@ export default function SubscriptionsPage() {
     </div>
   );
 }
-
