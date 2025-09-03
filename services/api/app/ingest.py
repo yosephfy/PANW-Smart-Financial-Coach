@@ -81,17 +81,25 @@ def categorize_with_provenance(
 
     # Merchant/description regex rules with rule ids
     mapping = [
-        (r"\b(spotify|netflix|hulu|apple\s*music|disney\+|prime\s*video|hbo|max|youtube\s*premium|paramount)\b", "subscriptions", "streaming"),
-        (r"\b(starbucks|dunkin|philz|blue\s*bottle|peet'?s|coffee\s*shop)\b", "coffee", "coffee"),
-        (r"\b(uber\s*eats|doordash|grubhub|postmates)\b", "food_delivery", "food_delivery"),
+        (r"\b(spotify|netflix|hulu|apple\s*music|disney\+|prime\s*video|hbo|max|youtube\s*premium|paramount)\b",
+         "subscriptions", "streaming"),
+        (r"\b(starbucks|dunkin|philz|blue\s*bottle|peet'?s|coffee\s*shop)\b",
+         "coffee", "coffee"),
+        (r"\b(uber\s*eats|doordash|grubhub|postmates)\b",
+         "food_delivery", "food_delivery"),
         (r"\b(uber|lyft)\b", "rideshare", "rideshare"),
-        (r"\b(whole\s*foods|trader\s*joe'?s?|safeway|kroger|aldi|costco|walmart\s*market|grocer|grocery)\b", "groceries", "groceries"),
-        (r"\b(chipotle|mcdonald'?s?|wendy'?s?|taco\s*bell|kfc|popeyes|panera|subway|shake\s*shack|five\s*guys)\b", "fast_food", "fast_food"),
-        (r"\b(airbnb|marriott|hilton|hyatt|booking\.com|expedia)\b", "travel", "lodging_travel"),
+        (r"\b(whole\s*foods|trader\s*joe'?s?|safeway|kroger|aldi|costco|walmart\s*market|grocer|grocery)\b",
+         "groceries", "groceries"),
+        (r"\b(chipotle|mcdonald'?s?|wendy'?s?|taco\s*bell|kfc|popeyes|panera|subway|shake\s*shack|five\s*guys)\b",
+         "fast_food", "fast_food"),
+        (r"\b(airbnb|marriott|hilton|hyatt|booking\.com|expedia)\b",
+         "travel", "lodging_travel"),
         (r"\b(aa\s*|delta|united|southwest|jetblue|alaska\s*air)\b", "airfare", "airlines"),
         (r"\b(shell|chevron|exxon|bp|speedway|valero)\b", "gas", "gas"),
-        (r"\b(comcast|xfinity|verizon|att|t-?mobile|spectrum)\b", "utilities", "telecom_utilities"),
-        (r"\b(gym|fitness|planet\s*fitness|equino?x|orange\s*theory)\b", "fitness", "fitness"),
+        (r"\b(comcast|xfinity|verizon|att|t-?mobile|spectrum)\b",
+         "utilities", "telecom_utilities"),
+        (r"\b(gym|fitness|planet\s*fitness|equino?x|orange\s*theory)\b",
+         "fitness", "fitness"),
         (r"\b(amazon|amzn)\b", "shopping", "amazon"),
         (r"\b(pharmacy|walgreens|cvs|rite\s*aid)\b", "pharmacy", "pharmacy"),
         (r"\b(rent|landlord|property\s*management)\b", "rent", "rent"),
@@ -114,10 +122,13 @@ def parse_csv_transactions(
     out: List[Dict] = []
     for row in reader:
         # Field mapping and normalization
-        r_date = row.get("date") or row.get("transaction_date") or row.get("posted_date")
-        r_amount = row.get("amount") or row.get("transaction_amount") or row.get("debit") or row.get("credit")
+        r_date = row.get("date") or row.get(
+            "transaction_date") or row.get("posted_date")
+        r_amount = row.get("amount") or row.get(
+            "transaction_amount") or row.get("debit") or row.get("credit")
         r_merchant = row.get("merchant") or row.get("name") or ""
-        r_desc = row.get("description") or row.get("details") or row.get("memo") or r_merchant
+        r_desc = row.get("description") or row.get(
+            "details") or row.get("memo") or r_merchant
         r_cat = row.get("category")
         r_mcc = row.get("mcc")
         r_acc = row.get("account_id") or default_account_id

@@ -34,7 +34,7 @@ def _parse_date(d: str) -> date:
 
 
 def _intervals_in_days(dates: List[date]) -> List[int]:
-    return [ (dates[i] - dates[i-1]).days for i in range(1, len(dates)) ]
+    return [(dates[i] - dates[i-1]).days for i in range(1, len(dates))]
 
 
 def _amounts_stats(amounts: List[float]) -> Tuple[float, float]:
