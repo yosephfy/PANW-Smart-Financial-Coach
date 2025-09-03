@@ -133,8 +133,55 @@ def parse_csv_transactions(
         merchant = (r_merchant or "").strip() or None
         description = (r_desc or "").strip() or merchant
 
-        category, category_source, category_prov, _rule = categorize_with_provenance(merchant, description, r_mcc, r_cat)
-        is_recurring = _to_bool(row.get("is_recurring"))
+        category, category_source, category_prov, _rule = categorize_with_provenance(
+            merchant, description, r_mcc, r_cat)
+
+        # If CSV did not provide a category, try the trained ML categorizer (if available)
+        # and only accept its top prediction when confidence >= 0.7 to preserve heuristics.
+        try:
+            if (not r_cat or not str(r_cat).strip()):
+                # import locally to avoid hard importing sklearn when not needed
+                from ai_categorizer import has_model, predict_for_user
+
+                if has_model(user_id):
+                    preds = predict_for_user(
+                        user_id, merchant, description, top_k=1)
+                    tops = preds.get("predictions") or []
+                    if tops:
+                        top = tops[0]
+                        prob = float(top.get("prob", 0.0))
+                        if prob >= 0.7:
+                            category = top.get("label")
+                            category_source = "ml"
+                            category_prov = f"ml:{category}:{prob:.2f}"
+        except Exception:
+            # If ML is not available or prediction fails, fall back to the existing mapping
+            pass
+
+        # If CSV didn't provide is_recurring, apply a small heuristic to detect subscriptions
+        # (streaming/known vendors or keywords). This is a lightweight fallback when there's
+        # no explicit column; for stronger detection one could add a trained model later.
+        if row.get("is_recurring") is None:
+            rec_keywords = [
+                r"subscription", r"monthly", r"annual", r"recurring", r"renewal", r"membership",
+            ]
+            rec_vendors = [
+                "spotify", "netflix", "hulu", "apple music", "prime video", "amazon", "patreon",
+            ]
+            text_low = (f"{merchant or ''} {description or ''}".lower())
+            is_rec = False
+            for kw in rec_keywords:
+                if re.search(kw, text_low):
+                    is_rec = True
+                    break
+            if not is_rec:
+                for v in rec_vendors:
+                    if v in text_low:
+                        is_rec = True
+                        break
+            is_recurring = bool(is_rec)
+        else:
+            is_recurring = _to_bool(row.get("is_recurring"))
 
         # Generate a stable natural ID to avoid collisions from CSV-provided ids
         # Use user_id|account_id|date|amount_cents|merchant|description
