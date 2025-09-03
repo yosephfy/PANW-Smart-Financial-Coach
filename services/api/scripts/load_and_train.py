@@ -1,20 +1,36 @@
 #!/usr/bin/env python3
 """Load sample CSV into dev DB and train ai categorizer for u_demo"""
-from ai_categorizer import train_for_user, model_path, has_model
-from db import get_connection, init_db
-from ingest import parse_csv_transactions, dupe_hash
 import sys
 from pathlib import Path
+
 # Compute path to services/api/app so we can import modules directly
 repo = Path(__file__).resolve().parents[3]
 app_dir = Path(__file__).resolve().parent.parent / 'app'
 print('DEBUG repo root:', repo)
 print('DEBUG app_dir:', app_dir)
+# Ensure the local `app` package directory is on sys.path before importing
 sys.path.insert(0, str(app_dir))
 
+from ai_categorizer import train_for_user, model_path, has_model
+from db import get_connection, init_db
+from ingest import parse_csv_transactions, dupe_hash
 
-CSV_PATH = repo / 'data' / 'samples' / 'transactions_sample.csv'
-CSV_PATH = CSV_PATH.resolve()
+
+# Prefer an explicitly provided training CSV (new file from user). Try variants in order.
+CSV_CANDIDATES = [
+    repo / 'data' / 'samples' / 'transactions_training_2024-2025.csv',
+    repo / 'data' / 'samples' / 'transactions_training_2024_2025.csv',
+    repo / 'data' / 'samples' / 'transactions_sample.csv',
+]
+CSV_PATH = None
+for p in CSV_CANDIDATES:
+    if p.exists():
+        CSV_PATH = p.resolve()
+        break
+if CSV_PATH is None:
+    # fallback to default sample path (keeps prior behavior)
+    CSV_PATH = (repo / 'data' / 'samples' /
+                'transactions_sample.csv').resolve()
 USER_ID = 'u_demo'
 
 if __name__ == '__main__':
