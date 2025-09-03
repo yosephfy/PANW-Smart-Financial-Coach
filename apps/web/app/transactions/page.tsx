@@ -122,6 +122,7 @@ export default function TransactionsPage() {
         >
           {busy ? "Loading…" : "Refresh"}
         </button>
+        <AddTransactionButton userId={userId} onAdded={() => load()} />
       </div>
 
       {!!categoryData.length && (
@@ -303,6 +304,109 @@ export default function TransactionsPage() {
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+function AddTransactionButton({
+  userId,
+  onAdded,
+}: {
+  userId: string;
+  onAdded?: () => void;
+}) {
+  const ctx = useUser();
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState("");
+  const [amount, setAmount] = useState("");
+  const [merchant, setMerchant] = useState("");
+  const [desc, setDesc] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const submit = async () => {
+    if (!date || !amount) return;
+    setBusy(true);
+    try {
+      const res = await fetch(
+        `${API}/users/${encodeURIComponent(ctx.userId)}/transactions`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            date,
+            amount: parseFloat(amount),
+            merchant,
+            description: desc,
+          }),
+        }
+      );
+      const json = await res.json();
+      ctx.showToast("Transaction added", "success");
+      setOpen(false);
+      if (onAdded) onAdded();
+    } catch (e) {
+      ctx.showToast(String(e), "error");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div>
+      <button
+        onClick={() => setOpen(true)}
+        className="rounded bg-emerald-500 text-white px-3 py-1"
+      >
+        Add transaction
+      </button>
+      {open && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-40">
+          <div className="bg-slate-900 border border-slate-700 p-4 rounded w-[480px]">
+            <h3 className="font-semibold mb-2">Add Transaction</h3>
+            <div className="grid gap-2">
+              <input
+                className="px-2 py-1 rounded bg-slate-100"
+                placeholder="YYYY-MM-DD"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+              <input
+                className="px-2 py-1 rounded bg-slate-100"
+                placeholder="Amount (use negative for expense)"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+              <input
+                className="px-2 py-1 rounded bg-slate-100"
+                placeholder="Merchant"
+                value={merchant}
+                onChange={(e) => setMerchant(e.target.value)}
+              />
+              <input
+                className="px-2 py-1 rounded bg-slate-100"
+                placeholder="Description"
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+              />
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={submit}
+                  disabled={busy}
+                  className="rounded bg-blue-500 text-white px-3 py-1"
+                >
+                  {busy ? "Adding…" : "Add"}
+                </button>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="rounded bg-slate-600 text-white px-3 py-1"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

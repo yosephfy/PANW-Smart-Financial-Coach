@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { useUser } from "../../components/Providers";
+import UserLogin from "../../components/UserLogin";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 export default function IngestPage() {
   const ctx = useUser();
-  const [userId, setUserId] = useState(ctx.userId || "u_demo");
+  const [userId, setUserId] = useState(ctx.userId || "");
   const [accountId, setAccountId] = useState("a_checking");
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<any>(null);
@@ -21,7 +22,7 @@ export default function IngestPage() {
     try {
       const form = new FormData();
       form.append("file", file);
-      form.append("user_id", userId);
+      form.append("user_id", ctx.userId || userId);
       if (accountId) form.append("default_account_id", accountId);
       const res = await fetch(`${API}/ingest/csv/insights`, {
         method: "POST",
@@ -47,17 +48,9 @@ export default function IngestPage() {
         className="space-y-3 border border-slate-700 p-4 rounded"
       >
         <div className="grid md:grid-cols-3 gap-4">
-          <label className="block text-sm">
-            <span className="text-slate-300">User ID</span>
-            <input
-              className="mt-1 w-full rounded border border-slate-600 bg-slate-100 px-2 py-1"
-              value={userId}
-              onChange={(e) => {
-                setUserId(e.target.value);
-                ctx.setUserId(e.target.value);
-              }}
-            />
-          </label>
+          <div className="md:col-span-3">
+            <UserLogin />
+          </div>
           <label className="block text-sm">
             <span className="text-slate-300">Default Account ID</span>
             <input
