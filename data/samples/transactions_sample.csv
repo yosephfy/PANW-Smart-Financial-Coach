@@ -1,45 +1,45 @@
-id,user_id,account_id,date,amount,merchant,description,category,is_recurring,mcc,source
-t1,u_demo,a_checking,2025-07-28,-4.50,Starbucks,STARBUCKS 1234,coffee,false,5814,synthetic
-t2,u_demo,a_checking,2025-07-29,-12.99,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
-t3,u_demo,a_checking,2025-07-30,-65.20,Uber,UBER TRIP 5678,rideshare,false,4121,synthetic
-t4,u_demo,a_checking,2025-07-31,-85.43,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
-t5,u_demo,a_checking,2025-08-01,2500.00,Acme Inc.,PAYROLL,Income,true,0000,synthetic
-t6,u_demo,a_credit,2025-08-02,-12.99,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
-t7,u_demo,a_checking,2025-08-03,-45.67,Shell,SHELL OIL 4521,gas,false,5541,synthetic
-t8,u_demo,a_credit,2025-08-04,-120.15,Amazon,AMZN Mktp US*H23D4,shopping,false,5942,synthetic
-t9,u_demo,a_checking,2025-08-05,-1500.00,Landlord,MONTHLY RENT,housing,true,6513,synthetic
-t10,u_demo,a_credit,2025-08-06,-7.99,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
-t11,u_demo,a_checking,2025-08-07,-22.35,Chipotle,CHIPOTLE 4477,restaurants,false,5812,synthetic
-t12,u_demo,a_checking,2025-08-08,-98.40,Target,TARGET #1287,shopping,false,5311,synthetic
-t13,u_demo,a_credit,2025-08-09,-15.75,Apple,APPLE.COM/BILL,itunes,false,5734,synthetic
-t14,u_demo,a_checking,2025-08-10,200.00,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
-t15,u_demo,a_checking,2025-08-11,-135.60,Kaiser,Kaiser Permanente,healthcare,false,8011,synthetic
-t16,u_demo,a_credit,2025-08-12,-56.80,Delta Airlines,DL 32874521,travel,false,4511,synthetic
-t17,u_demo,a_checking,2025-08-13,-42.99,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
-t18,u_demo,a_checking,2025-08-14,-18.25,Panera Bread,PANERA BREAD 8221,restaurants,false,5812,synthetic
-t19,u_demo,a_checking,2025-08-15,100.00,Venmo,VENMO CASHIN,transfer,false,6011,synthetic
-t20,u_demo,a_checking,2025-08-16,-220.50,Best Buy,BESTBUY #9981,electronics,false,5732,synthetic
-t21,u_demo,a_checking,2025-08-20,-85.43,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
-t22,u_demo,a_credit,2025-08-25,-350.00,Delta Airlines,DL 5674321,travel,false,4511,synthetic
-t23,u_demo,a_checking,2025-09-01,2500.00,Acme Inc.,PAYROLL,Income,true,0000,synthetic
-t24,u_demo,a_checking,2025-09-02,-1500.00,Landlord,MONTHLY RENT,housing,true,6513,synthetic
-t25,u_demo,a_credit,2025-09-05,-12.99,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
-t26,u_demo,a_credit,2025-09-06,-7.99,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
-t27,u_demo,a_checking,2025-09-08,-95.10,Target,TARGET #1287,shopping,false,5311,synthetic
-t28,u_demo,a_checking,2025-09-10,-42.15,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
-t29,u_demo,a_credit,2025-09-15,-320.00,United Airlines,UA 745382,travel,false,4511,synthetic
-t30,u_demo,a_checking,2025-09-18,-65.23,Uber,UBER TRIP 9831,rideshare,false,4121,synthetic
-t31,u_demo,a_checking,2025-09-22,-21.75,Chipotle,CHIPOTLE 7712,restaurants,false,5812,synthetic
-t32,u_demo,a_checking,2025-09-27,-60.00,Gas Station,GAS PUMP 5623,gas,false,5541,synthetic
-t33,u_demo,a_checking,2025-10-01,2500.00,Acme Inc.,PAYROLL,Income,true,0000,synthetic
-t34,u_demo,a_checking,2025-10-02,-1500.00,Landlord,MONTHLY RENT,housing,true,6513,synthetic
-t35,u_demo,a_credit,2025-10-03,-12.99,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
-t36,u_demo,a_credit,2025-10-04,-7.99,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
-t37,u_demo,a_checking,2025-10-06,-105.43,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
-t38,u_demo,a_checking,2025-10-09,-180.75,Best Buy,BESTBUY #9981,electronics,false,5732,synthetic
-t39,u_demo,a_checking,2025-10-12,-45.10,Shell,SHELL OIL 7821,gas,false,5541,synthetic
-t40,u_demo,a_checking,2025-10-15,-22.85,Panera Bread,PANERA BREAD 1991,restaurants,false,5812,synthetic
-t41,u_demo,a_credit,2025-10-18,-425.00,American Airlines,AA 432189,travel,false,4511,synthetic
-t42,u_demo,a_checking,2025-10-20,-92.65,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
-t43,u_demo,a_checking,2025-10-25,150.00,Venmo,VENMO CASHIN,transfer,false,6011,synthetic
-t44,u_demo,a_checking,2025-10-28,-18.50,Starbucks,STARBUCKS 5678,coffee,false,5814,synthetic
+id,user_id,account_id,date,amount,merchant,description,mcc,source
+t1,u_demo,a_checking,2025-07-28,-4.50,Starbucks,STARBUCKS 1234,5814,synthetic
+t2,u_demo,a_checking,2025-07-29,-12.99,Spotify,SPOTIFY P123,5815,synthetic
+t3,u_demo,a_checking,2025-07-30,-65.20,Uber,UBER TRIP 5678,4121,synthetic
+t4,u_demo,a_checking,2025-07-31,-85.43,GrocerMart,GROCERY STORE,5411,synthetic
+t5,u_demo,a_checking,2025-08-01,2500.00,Acme Inc.,PAYROLL,0000,synthetic
+t6,u_demo,a_credit,2025-08-02,-12.99,Spotify,SPOTIFY P123,5815,synthetic
+t7,u_demo,a_checking,2025-08-03,-45.67,Shell,SHELL OIL 4521,5541,synthetic
+t8,u_demo,a_credit,2025-08-04,-120.15,Amazon,AMZN Mktp US*H23D4,5942,synthetic
+t9,u_demo,a_checking,2025-08-05,-1500.00,Landlord,MONTHLY RENT,6513,synthetic
+t10,u_demo,a_credit,2025-08-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic
+t11,u_demo,a_checking,2025-08-07,-22.35,Chipotle,CHIPOTLE 4477,5812,synthetic
+t12,u_demo,a_checking,2025-08-08,-98.40,Target,TARGET #1287,5311,synthetic
+t13,u_demo,a_credit,2025-08-09,-15.75,Apple,APPLE.COM/BILL,5734,synthetic
+t14,u_demo,a_checking,2025-08-10,200.00,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic
+t15,u_demo,a_checking,2025-08-11,-135.60,Kaiser,Kaiser Permanente,8011,synthetic
+t16,u_demo,a_credit,2025-08-12,-56.80,Delta Airlines,DL 32874521,4511,synthetic
+t17,u_demo,a_checking,2025-08-13,-42.99,Whole Foods,WHOLEFDS #1045,5411,synthetic
+t18,u_demo,a_checking,2025-08-14,-18.25,Panera Bread,PANERA BREAD 8221,5812,synthetic
+t19,u_demo,a_checking,2025-08-15,100.00,Venmo,VENMO CASHIN,6011,synthetic
+t20,u_demo,a_checking,2025-08-16,-220.50,Best Buy,BESTBUY #9981,5732,synthetic
+t21,u_demo,a_checking,2025-08-20,-85.43,GrocerMart,GROCERY STORE,5411,synthetic
+t22,u_demo,a_credit,2025-08-25,-350.00,Delta Airlines,DL 5674321,4511,synthetic
+t23,u_demo,a_checking,2025-09-01,2500.00,Acme Inc.,PAYROLL,0000,synthetic
+t24,u_demo,a_checking,2025-09-02,-1500.00,Landlord,MONTHLY RENT,6513,synthetic
+t25,u_demo,a_credit,2025-09-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic
+t26,u_demo,a_credit,2025-09-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic
+t27,u_demo,a_checking,2025-09-08,-95.10,Target,TARGET #1287,5311,synthetic
+t28,u_demo,a_checking,2025-09-10,-42.15,Whole Foods,WHOLEFDS #1045,5411,synthetic
+t29,u_demo,a_credit,2025-09-15,-320.00,United Airlines,UA 745382,4511,synthetic
+t30,u_demo,a_checking,2025-09-18,-65.23,Uber,UBER TRIP 9831,4121,synthetic
+t31,u_demo,a_checking,2025-09-22,-21.75,Chipotle,CHIPOTLE 7712,5812,synthetic
+t32,u_demo,a_checking,2025-09-27,-60.00,Gas Station,GAS PUMP 5623,5541,synthetic
+t33,u_demo,a_checking,2025-10-01,2500.00,Acme Inc.,PAYROLL,0000,synthetic
+t34,u_demo,a_checking,2025-10-02,-1500.00,Landlord,MONTHLY RENT,6513,synthetic
+t35,u_demo,a_credit,2025-10-03,-12.99,Spotify,SPOTIFY P123,5815,synthetic
+t36,u_demo,a_credit,2025-10-04,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic
+t37,u_demo,a_checking,2025-10-06,-105.43,GrocerMart,GROCERY STORE,5411,synthetic
+t38,u_demo,a_checking,2025-10-09,-180.75,Best Buy,BESTBUY #9981,5732,synthetic
+t39,u_demo,a_checking,2025-10-12,-45.10,Shell,SHELL OIL 7821,5541,synthetic
+t40,u_demo,a_checking,2025-10-15,-22.85,Panera Bread,PANERA BREAD 1991,5812,synthetic
+t41,u_demo,a_credit,2025-10-18,-425.00,American Airlines,AA 432189,4511,synthetic
+t42,u_demo,a_checking,2025-10-20,-92.65,Whole Foods,WHOLEFDS #1045,5411,synthetic
+t43,u_demo,a_checking,2025-10-25,150.00,Venmo,VENMO CASHIN,6011,synthetic
+t44,u_demo,a_checking,2025-10-28,-18.50,Starbucks,STARBUCKS 5678,5814,synthetic
