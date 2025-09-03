@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
+import { useUser } from "../../components/Providers";
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+const API = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 export default function IngestPage() {
-  const [userId, setUserId] = useState('u_demo');
-  const [accountId, setAccountId] = useState('a_checking');
+  const ctx = useUser();
+  const [userId, setUserId] = useState(ctx.userId || "u_demo");
+  const [accountId, setAccountId] = useState("a_checking");
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<any>(null);
   const [busy, setBusy] = useState(false);
@@ -18,17 +20,20 @@ export default function IngestPage() {
     setResult(null);
     try {
       const form = new FormData();
-      form.append('file', file);
-      form.append('user_id', userId);
-      if (accountId) form.append('default_account_id', accountId);
-      const res = await fetch(`${API}/ingest/csv`, {
-        method: 'POST',
+      form.append("file", file);
+      form.append("user_id", userId);
+      if (accountId) form.append("default_account_id", accountId);
+      const res = await fetch(`${API}/ingest/csv/insights`, {
+        method: "POST",
         body: form,
       });
       const json = await res.json();
       setResult(json);
+      ctx.setUserId(userId);
+      ctx.showToast("CSV ingested", "success");
     } catch (err) {
       setResult({ error: String(err) });
+      ctx.showToast(String(err), "error");
     } finally {
       setBusy(false);
     }
@@ -37,30 +42,94 @@ export default function IngestPage() {
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">CSV Ingestion</h2>
-      <form onSubmit={submit} className="space-y-3 border border-slate-700 p-4 rounded">
+      <form
+        onSubmit={submit}
+        className="space-y-3 border border-slate-700 p-4 rounded"
+      >
         <div className="grid md:grid-cols-3 gap-4">
           <label className="block text-sm">
             <span className="text-slate-300">User ID</span>
-            <input className="mt-1 w-full rounded border border-slate-600 bg-slate-100 px-2 py-1" value={userId} onChange={(e) => setUserId(e.target.value)} />
+            <input
+              className="mt-1 w-full rounded border border-slate-600 bg-slate-100 px-2 py-1"
+              value={userId}
+              onChange={(e) => {
+                setUserId(e.target.value);
+                ctx.setUserId(e.target.value);
+              }}
+            />
           </label>
           <label className="block text-sm">
             <span className="text-slate-300">Default Account ID</span>
-            <input className="mt-1 w-full rounded border border-slate-600 bg-slate-100 px-2 py-1" value={accountId} onChange={(e) => setAccountId(e.target.value)} />
+            <input
+              className="mt-1 w-full rounded border border-slate-600 bg-slate-100 px-2 py-1"
+              value={accountId}
+              onChange={(e) => setAccountId(e.target.value)}
+            />
           </label>
           <label className="block text-sm">
             <span className="text-slate-300">CSV File</span>
-            <input className="mt-1 w-full text-slate-200" type="file" accept=".csv" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+            <input
+              className="mt-1 w-full text-slate-200"
+              type="file"
+              accept=".csv"
+              onChange={(e) => setFile(e.target.files?.[0] || null)}
+            />
           </label>
         </div>
-        <button disabled={busy || !file} className="rounded bg-blue-500 text-white px-3 py-1 disabled:opacity-50">
-          {busy ? 'Uploading…' : 'Upload & Ingest'}
+        <button
+          disabled={busy || !file}
+          className="rounded bg-blue-500 text-white px-3 py-1 disabled:opacity-50"
+        >
+          {busy ? "Uploading…" : "Upload & Ingest"}
         </button>
       </form>
 
       {result && (
-        <pre className="text-xs bg-slate-900/70 p-3 rounded overflow-auto">{JSON.stringify(result, null, 2)}</pre>
+        <div className="space-y-3">
+          <pre className="text-xs bg-slate-900/70 p-3 rounded overflow-auto">
+            {JSON.stringify(result.ingest || result, null, 2)}
+          </pre>
+          {result.subscriptions && (
+            <div className="border border-slate-700 p-3 rounded">
+              <div className="text-sm font-semibold">
+                Detected Subscriptions ({result.subscriptions.detected})
+              </div>
+              <div className="text-xs text-slate-400">
+                Inserted: {result.subscriptions.inserted} Updated:{" "}
+                {result.subscriptions.updated}
+              </div>
+              {result.subscriptions.items &&
+                result.subscriptions.items.length > 0 && (
+                  <table className="w-full text-xs mt-2">
+                    <thead>
+                      <tr className="text-left text-slate-400">
+                        <th>Merchant</th>
+                        <th>Cadence</th>
+                        <th>Avg</th>
+                        <th>Last seen</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {result.subscriptions.items.map((s: any) => (
+                        <tr
+                          key={s.merchant}
+                          className="border-t border-slate-800"
+                        >
+                          <td className="py-1">{s.merchant}</td>
+                          <td>{s.cadence}</td>
+                          <td>${s.avg_amount}</td>
+                          <td>{s.last_seen}</td>
+                          <td>{s.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
 }
-

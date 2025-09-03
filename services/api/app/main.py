@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from .insights import generate_insights, upsert_insights
 from .subscriptions import detect_subscriptions_for_user, upsert_subscriptions
 from .anomaly import detect_iforest_insights
+from .goals import create_goal, list_goals, evaluate_goal
 from .forecast import forecast_categories
 try:
     from .llm import rewrite_insight_llm
@@ -24,6 +25,7 @@ try:
     PLAID_AVAILABLE = True
 except Exception:
     PLAID_AVAILABLE = False
+
     def _unavailable(*_args, **_kwargs):
         raise HTTPException(
             status_code=503,
@@ -43,15 +45,20 @@ try:
     AI_AVAILABLE = True
 except Exception:
     AI_AVAILABLE = False
+
     def _ai_unavailable(*_args, **_kwargs):
-        raise HTTPException(status_code=503, detail="AI categorizer unavailable. Install scikit-learn and train a model.")
+        raise HTTPException(
+            status_code=503, detail="AI categorizer unavailable. Install scikit-learn and train a model.")
     _train_categorizer = _ai_unavailable
     _predict_categorizer = _ai_unavailable
+
     def _has_model(_user_id: str) -> bool:
         return False
 
 
 app = FastAPI(title="Smart Financial Coach API", version="0.1.0")
+
+# Goals: create/list/evaluate
 
 
 @app.on_event("startup")
@@ -60,12 +67,14 @@ def on_startup():
 
 
 # CORS for local Next.js frontend
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
     ],
+
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -75,6 +84,7 @@ app.add_middleware(
 @app.get("/", tags=["meta"])
 def root():
     return {
+
         "name": "Smart Financial Coach API",
         "status": "ok",
         "endpoints": [
@@ -112,7 +122,8 @@ async def ingest_csv(
 
     content = await file.read()
     try:
-        records = parse_csv_transactions(content, user_id=user_id, default_account_id=default_account_id)
+        records = parse_csv_transactions(
+            content, user_id=user_id, default_account_id=default_account_id)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"parse_error: {e}")
 
@@ -139,7 +150,8 @@ async def ingest_csv(
             if AI_AVAILABLE and _has_model(user_id):
                 if not r.get("category") or (r.get("category_source") in (None, "fallback", "regex")):
                     try:
-                        pred = _predict_categorizer(user_id, r.get("merchant"), r.get("description"))
+                        pred = _predict_categorizer(
+                            user_id, r.get("merchant"), r.get("description"))
                         preds = pred.get("predictions", [])
                         if preds:
                             top = preds[0]
@@ -153,7 +165,8 @@ async def ingest_csv(
             if acc_id:
                 conn.execute(
                     "INSERT OR IGNORE INTO accounts (id, user_id, name, type, institution, mask) VALUES (?, ?, ?, ?, ?, ?)",
-                    (acc_id, user_id, r.get("account_name") or "Imported", None, None, None),
+                    (acc_id, user_id, r.get("account_name")
+                     or "Imported", None, None, None),
                 )
 
         for r in records:
@@ -192,9 +205,12 @@ async def ingest_csv(
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
-                        r["id"], r["user_id"], r.get("account_id"), r["date"], r["amount"], r.get("merchant"),
-                        r.get("description"), r.get("category"), r.get("category_source"), r.get("category_provenance"),
-                        r.get("is_recurring", False), r.get("mcc"), r.get("source", "csv"),
+                        r["id"], r["user_id"], r.get(
+                            "account_id"), r["date"], r["amount"], r.get("merchant"),
+                        r.get("description"), r.get("category"), r.get(
+                            "category_source"), r.get("category_provenance"),
+                        r.get("is_recurring", False), r.get(
+                            "mcc"), r.get("source", "csv"),
                     ),
                 )
                 post = conn.total_changes
@@ -217,6 +233,44 @@ async def ingest_csv(
         "total_rows": len(records),
         "sample": sample,
     }
+
+
+@app.post("/ingest/csv/insights", tags=["ingestion"])
+async def ingest_csv_with_insights(
+    file: UploadFile = File(...),
+    user_id: str = Form(...),
+    default_account_id: Optional[str] = Form(None),
+):
+    """Ingest a CSV and immediately generate/upsert insights for the user.
+
+    Returns the ingestion result and the generated insights.
+    """
+    # Reuse existing ingest implementation
+    ingest_result = await ingest_csv(file, user_id, default_account_id)
+
+    # Generate insights based on the newly-ingested data
+    with db_mod.get_connection() as conn:
+        items = generate_insights(conn, user_id)
+        if items:
+            upsert_insights(conn, items)
+
+        # Detect subscriptions from the newly-ingested transactions and upsert
+        try:
+            subs = detect_subscriptions_for_user(conn, user_id)
+            inserted, updated = upsert_subscriptions(conn, user_id, subs)
+            # Convert dataclass objects to serializable dicts
+            subs_list = [s.__dict__ for s in subs]
+            subs_summary = {
+                "detected": len(subs_list),
+                "inserted": inserted,
+                "updated": updated,
+                "sample": subs_list[0] if subs_list else None,
+                "items": subs_list,
+            }
+        except Exception:
+            subs_summary = {"error": "subscription_detection_failed"}
+
+    return {"ingest": ingest_result, "insights": items, "subscriptions": subs_summary}
 
 
 @app.get("/users/{user_id}/transactions", tags=["transactions"])
@@ -242,7 +296,8 @@ def categorization_explain(
     description: Optional[str] = Query(None),
     mcc: Optional[str] = Query(None),
 ):
-    category, source, prov, rule = categorize_with_provenance(merchant, description, mcc, None)
+    category, source, prov, rule = categorize_with_provenance(
+        merchant, description, mcc, None)
     return {
         "input": {"merchant": merchant, "description": description, "mcc": mcc},
         "category": category,
@@ -275,7 +330,7 @@ def list_subscriptions(user_id: str, limit: int = Query(100, ge=1, le=500)):
     with db_mod.get_connection() as conn:
         rows = conn.execute(
             """
-            SELECT merchant, avg_amount, cadence, last_seen, status, price_change_pct
+            SELECT merchant, avg_amount, cadence, last_seen, status, price_change_pct, COALESCE(trial_converted, 0) as trial_converted
             FROM subscriptions
             WHERE user_id = ?
             ORDER BY avg_amount DESC
@@ -283,7 +338,13 @@ def list_subscriptions(user_id: str, limit: int = Query(100, ge=1, le=500)):
             """,
             (user_id, limit),
         ).fetchall()
-        return [dict(r) for r in rows]
+        out = []
+        for r in rows:
+            d = dict(r)
+            # Normalize SQLite integer boolean to Python bool
+            d["trial_converted"] = bool(d.get("trial_converted"))
+            out.append(d)
+        return out
 
 
 class CategorizationRequest(BaseModel):
@@ -324,7 +385,8 @@ def list_insights(user_id: str, limit: int = Query(50, ge=1, le=200)):
     with db_mod.get_connection() as conn:
         rows = conn.execute(
             """
-            SELECT id, type, title, body, severity, data_json, created_at
+            SELECT id, type, title, body, severity, data_json, created_at,
+                   rewritten_title, rewritten_body, rewritten_at
             FROM insights
             WHERE user_id = ?
             ORDER BY created_at DESC
@@ -348,7 +410,8 @@ class TrainCategorizerRequest(BaseModel):
 def ai_categorizer_train(body: TrainCategorizerRequest):
     with db_mod.get_connection() as conn:
         try:
-            info = _train_categorizer(conn, body.user_id, min_per_class=body.min_per_class or 5)
+            info = _train_categorizer(
+                conn, body.user_id, min_per_class=body.min_per_class or 5)
             # Convert Counter to dict if present
             counts = info.get("counts")
             if counts is not None and hasattr(counts, "items"):
@@ -395,7 +458,8 @@ class IForestDetectRequest(BaseModel):
 @app.post("/anomaly/iforest/detect", tags=["ai"])
 def iforest_detect(body: IForestDetectRequest):
     with db_mod.get_connection() as conn:
-        items = detect_iforest_insights(conn, body.user_id, contamination=body.contamination or 0.08)
+        items = detect_iforest_insights(
+            conn, body.user_id, contamination=body.contamination or 0.08)
         if items:
             upsert_insights(conn, items)
     return {"user_id": body.user_id, "count": len(items) if items else 0, "sample": items[0] if items else None}
@@ -411,7 +475,8 @@ class ForecastRequest(BaseModel):
 @app.post("/forecast/categories", tags=["forecast"])
 def categories_forecast(body: ForecastRequest):
     with db_mod.get_connection() as conn:
-        out = forecast_categories(conn, body.user_id, months_history=body.months_history or 6, top_k=body.top_k or 8)
+        out = forecast_categories(
+            conn, body.user_id, months_history=body.months_history or 6, top_k=body.top_k or 8)
     return out
 
 
@@ -425,7 +490,8 @@ class RewriteInsightRequest(BaseModel):
 @app.post("/insights/rewrite", tags=["ai"])
 def insights_rewrite(body: RewriteInsightRequest):
     if not LLM_AVAILABLE:
-        raise HTTPException(status_code=503, detail="LLM unavailable. Set OPENAI_API_KEY and install dependencies.")
+        raise HTTPException(
+            status_code=503, detail="LLM unavailable. Set OPENAI_API_KEY and install dependencies.")
     with db_mod.get_connection() as conn:
         row = conn.execute(
             "SELECT id, title, body, data_json FROM insights WHERE user_id = ? AND id = ?",
@@ -433,8 +499,29 @@ def insights_rewrite(body: RewriteInsightRequest):
         ).fetchone()
         if not row:
             raise HTTPException(status_code=404, detail="insight_not_found")
-        new_text = rewrite_insight_llm(row["title"], row["body"], row["data_json"], tone=body.tone)
-    return {"insight_id": body.insight_id, "rewritten": new_text}
+        try:
+            new_text = rewrite_insight_llm(
+                row["title"], row["body"], row["data_json"], tone=body.tone)
+        except Exception as e:
+            raise HTTPException(status_code=502, detail=f"llm_error: {e}")
+        conn.execute(
+            """
+            UPDATE insights
+            SET rewritten_title = ?, rewritten_body = ?, rewritten_at = CURRENT_TIMESTAMP
+            WHERE user_id = ? AND id = ?
+            """,
+            (new_text["title"], new_text["body"],
+             body.user_id, body.insight_id),
+        )
+        updated = conn.execute(
+            """
+            SELECT id, type, title, body, severity, data_json, created_at,
+                   rewritten_title, rewritten_body, rewritten_at
+            FROM insights WHERE user_id = ? AND id = ?
+            """,
+            (body.user_id, body.insight_id),
+        ).fetchone()
+    return {"insight_id": body.insight_id, "rewritten": new_text, "insight": dict(updated) if updated else None}
 
 
 class PublicTokenExchangeRequest(BaseModel):

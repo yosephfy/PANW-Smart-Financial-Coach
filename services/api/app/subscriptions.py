@@ -16,6 +16,7 @@ class SubscriptionCandidate:
     avg_amount: float
     last_seen: str  # ISO date
     price_change_pct: Optional[float]
+    trial_converted: bool
     status: str  # active|paused
 
 
@@ -33,7 +34,7 @@ def _parse_date(d: str) -> date:
 
 
 def _intervals_in_days(dates: List[date]) -> List[int]:
-    return [ (dates[i] - dates[i-1]).days for i in range(1, len(dates)) ]
+    return [(dates[i] - dates[i-1]).days for i in range(1, len(dates))]
 
 
 def _amounts_stats(amounts: List[float]) -> Tuple[float, float]:
@@ -132,6 +133,18 @@ def detect_subscriptions_for_user(conn: sqlite3.Connection, user_id: str) -> Lis
         pchg = _price_change_pct(med_abs, last_abs)
         last_seen = dates[-1]
         status = _status_for(cad, last_seen)
+        # Heuristic: detect possible free-trial conversion.
+        # If the first charge is much smaller than the median (or near zero)
+        # and the interval to the next charge is longer than ~14 days, mark trial_converted.
+        trial = False
+        try:
+            first_abs = abs(amts[0])
+            if len(intervals) >= 1 and intervals[0] >= 14:
+                # If first charge was small relative to typical amount
+                if first_abs <= 0.5 * med_abs or med_abs >= 3 * first_abs:
+                    trial = True
+        except Exception:
+            trial = False
         candidates.append(
             SubscriptionCandidate(
                 merchant=m,
@@ -139,6 +152,7 @@ def detect_subscriptions_for_user(conn: sqlite3.Connection, user_id: str) -> Lis
                 avg_amount=round(med_abs, 2),
                 last_seen=last_seen.isoformat(),
                 price_change_pct=pchg,
+                trial_converted=trial,
                 status=status,
             )
         )
@@ -166,17 +180,18 @@ def upsert_subscriptions(conn: sqlite3.Connection, user_id: str, subs: List[Subs
                 SET avg_amount = ?, cadence = ?, last_seen = ?, status = ?, price_change_pct = ?
                 WHERE id = ?
                 """,
-                (s.avg_amount, s.cadence, s.last_seen, s.status, s.price_change_pct, sid),
+                (s.avg_amount, s.cadence, s.last_seen,
+                 s.status, s.price_change_pct, sid),
             )
             updated += 1
         else:
             conn.execute(
                 """
-                INSERT INTO subscriptions (id, user_id, merchant, avg_amount, cadence, last_seen, status, price_change_pct)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO subscriptions (id, user_id, merchant, avg_amount, cadence, last_seen, status, price_change_pct, trial_converted)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
-                (sid, user_id, s.merchant, s.avg_amount, s.cadence, s.last_seen, s.status, s.price_change_pct),
+                (sid, user_id, s.merchant, s.avg_amount, s.cadence, s.last_seen,
+                 s.status, s.price_change_pct, int(bool(s.trial_converted))),
             )
             inserted += 1
     return inserted, updated
-

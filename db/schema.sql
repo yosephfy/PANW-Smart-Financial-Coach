@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS subscriptions (
   last_seen DATE,
   status TEXT, -- active|paused|canceled
   price_change_pct NUMERIC,
+  trial_converted BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY(user_id) REFERENCES users(id)
 );
@@ -69,6 +70,9 @@ CREATE TABLE IF NOT EXISTS insights (
   data_json TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   read_at TIMESTAMP,
+  rewritten_title TEXT,
+  rewritten_body TEXT,
+  rewritten_at TIMESTAMP,
   FOREIGN KEY(user_id) REFERENCES users(id)
 );
 

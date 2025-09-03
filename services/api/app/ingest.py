@@ -81,17 +81,25 @@ def categorize_with_provenance(
 
     # Merchant/description regex rules with rule ids
     mapping = [
-        (r"\b(spotify|netflix|hulu|apple\s*music|disney\+|prime\s*video|hbo|max|youtube\s*premium|paramount)\b", "subscriptions", "streaming"),
-        (r"\b(starbucks|dunkin|philz|blue\s*bottle|peet'?s|coffee\s*shop)\b", "coffee", "coffee"),
-        (r"\b(uber\s*eats|doordash|grubhub|postmates)\b", "food_delivery", "food_delivery"),
+        (r"\b(spotify|netflix|hulu|apple\s*music|disney\+|prime\s*video|hbo|max|youtube\s*premium|paramount)\b",
+         "subscriptions", "streaming"),
+        (r"\b(starbucks|dunkin|philz|blue\s*bottle|peet'?s|coffee\s*shop)\b",
+         "coffee", "coffee"),
+        (r"\b(uber\s*eats|doordash|grubhub|postmates)\b",
+         "food_delivery", "food_delivery"),
         (r"\b(uber|lyft)\b", "rideshare", "rideshare"),
-        (r"\b(whole\s*foods|trader\s*joe'?s?|safeway|kroger|aldi|costco|walmart\s*market|grocer|grocery)\b", "groceries", "groceries"),
-        (r"\b(chipotle|mcdonald'?s?|wendy'?s?|taco\s*bell|kfc|popeyes|panera|subway|shake\s*shack|five\s*guys)\b", "fast_food", "fast_food"),
-        (r"\b(airbnb|marriott|hilton|hyatt|booking\.com|expedia)\b", "travel", "lodging_travel"),
+        (r"\b(whole\s*foods|trader\s*joe'?s?|safeway|kroger|aldi|costco|walmart\s*market|grocer|grocery)\b",
+         "groceries", "groceries"),
+        (r"\b(chipotle|mcdonald'?s?|wendy'?s?|taco\s*bell|kfc|popeyes|panera|subway|shake\s*shack|five\s*guys)\b",
+         "fast_food", "fast_food"),
+        (r"\b(airbnb|marriott|hilton|hyatt|booking\.com|expedia)\b",
+         "travel", "lodging_travel"),
         (r"\b(aa\s*|delta|united|southwest|jetblue|alaska\s*air)\b", "airfare", "airlines"),
         (r"\b(shell|chevron|exxon|bp|speedway|valero)\b", "gas", "gas"),
-        (r"\b(comcast|xfinity|verizon|att|t-?mobile|spectrum)\b", "utilities", "telecom_utilities"),
-        (r"\b(gym|fitness|planet\s*fitness|equino?x|orange\s*theory)\b", "fitness", "fitness"),
+        (r"\b(comcast|xfinity|verizon|att|t-?mobile|spectrum)\b",
+         "utilities", "telecom_utilities"),
+        (r"\b(gym|fitness|planet\s*fitness|equino?x|orange\s*theory)\b",
+         "fitness", "fitness"),
         (r"\b(amazon|amzn)\b", "shopping", "amazon"),
         (r"\b(pharmacy|walgreens|cvs|rite\s*aid)\b", "pharmacy", "pharmacy"),
         (r"\b(rent|landlord|property\s*management)\b", "rent", "rent"),
@@ -114,10 +122,13 @@ def parse_csv_transactions(
     out: List[Dict] = []
     for row in reader:
         # Field mapping and normalization
-        r_date = row.get("date") or row.get("transaction_date") or row.get("posted_date")
-        r_amount = row.get("amount") or row.get("transaction_amount") or row.get("debit") or row.get("credit")
+        r_date = row.get("date") or row.get(
+            "transaction_date") or row.get("posted_date")
+        r_amount = row.get("amount") or row.get(
+            "transaction_amount") or row.get("debit") or row.get("credit")
         r_merchant = row.get("merchant") or row.get("name") or ""
-        r_desc = row.get("description") or row.get("details") or row.get("memo") or r_merchant
+        r_desc = row.get("description") or row.get(
+            "details") or row.get("memo") or r_merchant
         r_cat = row.get("category")
         r_mcc = row.get("mcc")
         r_acc = row.get("account_id") or default_account_id
@@ -133,8 +144,55 @@ def parse_csv_transactions(
         merchant = (r_merchant or "").strip() or None
         description = (r_desc or "").strip() or merchant
 
-        category, category_source, category_prov, _rule = categorize_with_provenance(merchant, description, r_mcc, r_cat)
-        is_recurring = _to_bool(row.get("is_recurring"))
+        category, category_source, category_prov, _rule = categorize_with_provenance(
+            merchant, description, r_mcc, r_cat)
+
+        # If CSV did not provide a category, try the trained ML categorizer (if available)
+        # and only accept its top prediction when confidence >= 0.7 to preserve heuristics.
+        try:
+            if (not r_cat or not str(r_cat).strip()):
+                # import locally to avoid hard importing sklearn when not needed
+                from ai_categorizer import has_model, predict_for_user
+
+                if has_model(user_id):
+                    preds = predict_for_user(
+                        user_id, merchant, description, top_k=1)
+                    tops = preds.get("predictions") or []
+                    if tops:
+                        top = tops[0]
+                        prob = float(top.get("prob", 0.0))
+                        if prob >= 0.7:
+                            category = top.get("label")
+                            category_source = "ml"
+                            category_prov = f"ml:{category}:{prob:.2f}"
+        except Exception:
+            # If ML is not available or prediction fails, fall back to the existing mapping
+            pass
+
+        # If CSV didn't provide is_recurring, apply a small heuristic to detect subscriptions
+        # (streaming/known vendors or keywords). This is a lightweight fallback when there's
+        # no explicit column; for stronger detection one could add a trained model later.
+        if row.get("is_recurring") is None:
+            rec_keywords = [
+                r"subscription", r"monthly", r"annual", r"recurring", r"renewal", r"membership",
+            ]
+            rec_vendors = [
+                "spotify", "netflix", "hulu", "apple music", "prime video", "amazon", "patreon",
+            ]
+            text_low = (f"{merchant or ''} {description or ''}".lower())
+            is_rec = False
+            for kw in rec_keywords:
+                if re.search(kw, text_low):
+                    is_rec = True
+                    break
+            if not is_rec:
+                for v in rec_vendors:
+                    if v in text_low:
+                        is_rec = True
+                        break
+            is_recurring = bool(is_rec)
+        else:
+            is_recurring = _to_bool(row.get("is_recurring"))
 
         # Generate a stable natural ID to avoid collisions from CSV-provided ids
         # Use user_id|account_id|date|amount_cents|merchant|description
