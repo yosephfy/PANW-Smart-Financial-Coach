@@ -18,6 +18,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <a href="/ingest" className="hover:underline">CSV Ingest</a>
               <a href="/transactions" className="hover:underline">Transactions</a>
               <a href="/subscriptions" className="hover:underline">Subscriptions</a>
+              <a href="/plaid" className="hover:underline">Plaid</a>
+              <a href="/insights" className="hover:underline">Insights</a>
             </nav>
             <span className="ml-auto text-xs text-slate-400">API: {process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'}</span>
           </div>
@@ -27,4 +29,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
-
