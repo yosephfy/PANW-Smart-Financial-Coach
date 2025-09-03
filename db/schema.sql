@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS transactions (
   merchant TEXT,
   description TEXT,
   category TEXT,
+  category_source TEXT, -- csv|mcc|regex|fallback
+  category_provenance TEXT, -- e.g., mcc:5411 or regex:spotify
   is_recurring BOOLEAN DEFAULT FALSE,
   mcc TEXT,
   source TEXT, -- csv|plaid|synthetic
@@ -70,3 +72,7 @@ CREATE TABLE IF NOT EXISTS insights (
   FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
+-- Helpful indexes
+CREATE INDEX IF NOT EXISTS idx_txn_user_date ON transactions(user_id, date);
+CREATE INDEX IF NOT EXISTS idx_txn_user_merchant ON transactions(user_id, merchant);
+CREATE INDEX IF NOT EXISTS idx_txn_user_date_amount_merchant ON transactions(user_id, date, amount, merchant);

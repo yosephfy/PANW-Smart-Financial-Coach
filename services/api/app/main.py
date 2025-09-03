@@ -1,7 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query
+from typing import Optional
+from . import db as db_mod
+from .ingest import parse_csv_transactions, dupe_hash
 
 
 app = FastAPI(title="Smart Financial Coach API", version="0.1.0")
+
+
+@app.on_event("startup")
+def on_startup():
+    db_mod.init_db()
 
 
 @app.get("/", tags=["meta"])
@@ -9,11 +17,134 @@ def root():
     return {
         "name": "Smart Financial Coach API",
         "status": "ok",
-        "endpoints": ["/health"],
+        "endpoints": ["/health", "/ingest/csv", "/users/{user_id}/transactions"],
     }
 
 
 @app.get("/health", tags=["meta"])
 def health():
+    # Basic DB connectivity check
+    try:
+        with db_mod.get_connection() as conn:
+            conn.execute("SELECT 1").fetchone()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"db_error: {e}")
     return {"status": "healthy"}
 
+
+@app.post("/ingest/csv", tags=["ingestion"])
+async def ingest_csv(
+    file: UploadFile = File(...),
+    user_id: str = Form(...),
+    default_account_id: Optional[str] = Form(None),
+):
+    if file.content_type not in ("text/csv", "application/vnd.ms-excel", "application/csv"):
+        # Allow anyway, as some browsers send application/octet-stream for CSV
+        pass
+
+    content = await file.read()
+    try:
+        records = parse_csv_transactions(content, user_id=user_id, default_account_id=default_account_id)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"parse_error: {e}")
+
+    if not records:
+        return {"inserted": 0, "skipped": 0, "total_rows": 0}
+
+    inserted = 0
+    skipped = 0
+    seen_hashes = set()
+    with db_mod.get_connection() as conn:
+        # Ensure user exists
+        conn.execute("INSERT OR IGNORE INTO users (id) VALUES (?)", (user_id,))
+
+        # Ensure default account exists if provided
+        if default_account_id:
+            conn.execute(
+                "INSERT OR IGNORE INTO accounts (id, user_id, name, type, institution, mask) VALUES (?, ?, ?, ?, ?, ?)",
+                (default_account_id, user_id, "Default Account", None, None, None),
+            )
+
+        # Ensure any referenced accounts exist
+        for r in records:
+            acc_id = r.get("account_id")
+            if acc_id:
+                conn.execute(
+                    "INSERT OR IGNORE INTO accounts (id, user_id, name, type, institution, mask) VALUES (?, ?, ?, ?, ?, ?)",
+                    (acc_id, user_id, r.get("account_name") or "Imported", None, None, None),
+                )
+
+        for r in records:
+            # Duplicate detection: hash(date, amount, merchant) per user
+            h = dupe_hash(user_id, r["date"], r["amount"], r.get("merchant"))
+            if h in seen_hashes:
+                skipped += 1
+                continue
+
+            # Check DB for existing row with same key
+            merchant_norm = (r.get("merchant") or "").strip().lower()
+            amount_cents = int(round(float(r["amount"]) * 100))
+            exists = conn.execute(
+                """
+                SELECT 1 FROM transactions
+                WHERE user_id = ? AND date = ?
+                  AND CAST(ROUND(amount * 100) AS INTEGER) = ?
+                  AND LOWER(COALESCE(merchant, '')) = ?
+                LIMIT 1
+                """,
+                (user_id, r["date"], amount_cents, merchant_norm),
+            ).fetchone()
+
+            if exists:
+                skipped += 1
+                continue
+
+            try:
+                conn.execute(
+                    """
+                    INSERT OR IGNORE INTO transactions (
+                        id, user_id, account_id, date, amount, merchant, description,
+                        category, is_recurring, mcc, source
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        r["id"], r["user_id"], r.get("account_id"), r["date"], r["amount"], r.get("merchant"),
+                        r.get("description"), r.get("category"), r.get("is_recurring", False), r.get("mcc"),
+                        r.get("source", "csv"),
+                    ),
+                )
+                if conn.total_changes > 0:
+                    inserted += 1
+                    seen_hashes.add(h)
+                else:
+                    skipped += 1
+            except Exception:
+                skipped += 1
+
+    sample = records[0] if records else None
+    # Hide possibly verbose fields in sample
+    if sample and "raw" in sample:
+        sample.pop("raw", None)
+
+    return {
+        "inserted": inserted,
+        "skipped": skipped,
+        "total_rows": len(records),
+        "sample": sample,
+    }
+
+
+@app.get("/users/{user_id}/transactions", tags=["transactions"])
+def list_transactions(user_id: str, limit: int = Query(50, ge=1, le=500)):
+    with db_mod.get_connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT id, date, amount, merchant, description, category, is_recurring, mcc, account_id
+            FROM transactions
+            WHERE user_id = ?
+            ORDER BY date DESC
+            LIMIT ?
+            """,
+            (user_id, limit),
+        ).fetchall()
+        return [dict(r) for r in rows]
