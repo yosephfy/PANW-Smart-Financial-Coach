@@ -236,7 +236,7 @@ def generate_transaction_insights(conn: sqlite3.Connection, user_id: str, transa
             "SELECT monthly_budget FROM category_budgets WHERE user_id = ? AND LOWER(category) = ?",
             (user_id, tx_category)
         ).fetchone()
-        
+
         # Check month-to-date spending in this category
         month_start = date.fromisoformat(tx_date).replace(day=1).isoformat()
         month_total = conn.execute(
@@ -251,12 +251,12 @@ def generate_transaction_insights(conn: sqlite3.Connection, user_id: str, transa
 
         if month_total and month_total["total"]:
             mtd_total = float(month_total["total"])
-            
+
             if budget_row and budget_row["monthly_budget"]:
                 # User has a budget set for this category
                 budget = float(budget_row["monthly_budget"])
                 usage_pct = (mtd_total / budget) * 100 if budget > 0 else 0
-                
+
                 if usage_pct >= 90:
                     # Budget-based alert
                     status = "over" if usage_pct >= 100 else "near"
@@ -281,7 +281,7 @@ def generate_transaction_insights(conn: sqlite3.Connection, user_id: str, transa
                     insights.append({
                         "id": _transaction_insight_id(user_id, "budget_progress", tx_category, tx_id),
                         "user_id": user_id,
-                        "type": "budget_progress", 
+                        "type": "budget_progress",
                         "title": f"{tx_category} budget progress",
                         "body": f"${mtd_total:.0f} of ${budget:.0f} used ({usage_pct:.0f}%). ${budget - mtd_total:.0f} remaining this month.",
                         "severity": "info",
@@ -311,7 +311,7 @@ def generate_transaction_insights(conn: sqlite3.Connection, user_id: str, transa
                     """,
                     (user_id, tx_category, prev_month_start, prev_month_end),
                 ).fetchone()
-                
+
                 prev_total = float(
                     prev_month_total["total"]) if prev_month_total and prev_month_total["total"] else 0
 
@@ -540,7 +540,7 @@ def generate_budget_overage_insights(conn: sqlite3.Connection, user_id: str) -> 
     today = _today()
     start, end = _month_start_end(today)
     out: List[Dict] = []
-    
+
     for b in budgets:
         cat = (b["category"] or "").lower()
         mbud = float(b["monthly_budget"]
@@ -556,20 +556,21 @@ def generate_budget_overage_insights(conn: sqlite3.Connection, user_id: str) -> 
             (user_id, cat, start, end),
         ).fetchone()
         mtd = float(row["spend"] or 0.0)
-        
+
         # Enhanced budget insights with more granular feedback
         usage_pct = (mtd / mbud) * 100 if mbud > 0 else 0
-        days_in_month = (date.fromisoformat(end) - date.fromisoformat(start)).days + 1
+        days_in_month = (date.fromisoformat(end) -
+                         date.fromisoformat(start)).days + 1
         current_day = today.day
         expected_usage = (current_day / days_in_month) * 100
-        
+
         if usage_pct >= 100:  # Over budget
             status = "over_budget"
             title = f"{cat} budget exceeded"
             body = f"${mtd:.0f} spent vs ${mbud:.0f} budget ({usage_pct:.0f}%). Consider adjusting spending this month."
             severity = "critical"
         elif usage_pct >= 90:  # Near budget limit
-            status = "near_budget" 
+            status = "near_budget"
             title = f"{cat} budget nearly exhausted"
             body = f"${mtd:.0f} of ${mbud:.0f} budget used ({usage_pct:.0f}%). Only ${mbud - mtd:.0f} remaining."
             severity = "warn"
@@ -585,7 +586,7 @@ def generate_budget_overage_insights(conn: sqlite3.Connection, user_id: str) -> 
             severity = "info"
         else:
             continue  # No insight needed for normal spending
-            
+
         out.append({
             "id": _insight_id(user_id, "budget", cat + "_" + start + "_" + status),
             "user_id": user_id,
@@ -617,11 +618,11 @@ def generate_budget_suggestion_insights(conn: sqlite3.Connection, user_id: str) 
     ).fetchall()
     for row in budget_rows:
         existing_budgets.add(row["category"])
-    
+
     # Get spending by category in last 90 days
     three_months_ago = (date.today() - timedelta(days=90)).isoformat()
     today = date.today().isoformat()
-    
+
     category_spending = conn.execute(
         """
         SELECT LOWER(COALESCE(category,'')) as category,
@@ -636,20 +637,21 @@ def generate_budget_suggestion_insights(conn: sqlite3.Connection, user_id: str) 
         """,
         (user_id, three_months_ago, today),
     ).fetchall()
-    
+
     insights = []
     for row in category_spending[:5]:  # Top 5 spending categories
         category = row["category"] or "uncategorized"
         if category in existing_budgets or category == "":
             continue
-            
+
         total_spend = float(row["total_spend"])
         transaction_count = int(row["transaction_count"])
         avg_amount = float(row["avg_amount"])
-        
+
         # Suggest a monthly budget based on 90-day average + 10% buffer
-        monthly_suggestion = round((total_spend / 3) * 1.1, -1)  # Round to nearest $10
-        
+        monthly_suggestion = round(
+            (total_spend / 3) * 1.1, -1)  # Round to nearest $10
+
         insights.append({
             "id": _insight_id(user_id, "budget_suggestion", category),
             "user_id": user_id,
@@ -665,7 +667,7 @@ def generate_budget_suggestion_insights(conn: sqlite3.Connection, user_id: str) 
                 "suggested_monthly_budget": monthly_suggestion,
             }),
         })
-    
+
     return insights
 
 

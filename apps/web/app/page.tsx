@@ -115,7 +115,7 @@ export default function Home() {
               checkingAccounts: accountJson?.checking?.accounts?.length || 0,
               creditAccounts: accountJson?.credit?.accounts?.length || 0,
               checkingTotal: accountJson?.checking?.total,
-              creditTotal: accountJson?.credit?.total
+              creditTotal: accountJson?.credit?.total,
             });
             if (accountJson && accountJson.combined) {
               setAccountData(accountJson);
@@ -135,79 +135,104 @@ export default function Home() {
             if (fallbackR.ok) {
               const fallbackData = await fallbackR.json();
               console.log("Fallback data:", fallbackData);
-              
+
               // Try to get actual account data from transactions endpoint
               try {
-                const txnR = await fetch(`${API}/users/${userId}/transactions?limit=50`);
+                const txnR = await fetch(
+                  `${API}/users/${userId}/transactions?limit=50`
+                );
                 if (txnR.ok) {
                   const txnData = await txnR.json();
                   console.log("Transaction data sample:", txnData?.slice(0, 3));
-                  
+
                   // Group transactions by account to get real account balances
-                  const accountBalances: Record<string, { balance: number; name: string; latestDate: string }> = {};
-                  
+                  const accountBalances: Record<
+                    string,
+                    { balance: number; name: string; latestDate: string }
+                  > = {};
+
                   for (const txn of txnData) {
-                    const accountId = txn.account_id || 'unknown';
-                    console.log(`Transaction - accountId: ${accountId}, balance: ${txn.balance}, amount: ${txn.amount}, merchant: ${txn.merchant}, date: ${txn.date}`);
-                    
+                    const accountId = txn.account_id || "unknown";
+                    console.log(
+                      `Transaction - accountId: ${accountId}, balance: ${txn.balance}, amount: ${txn.amount}, merchant: ${txn.merchant}, date: ${txn.date}`
+                    );
+
                     if (txn.balance !== null && txn.balance !== undefined) {
                       // Only keep the latest balance per account (assuming sorted by date desc)
-                      if (!accountBalances[accountId] || txn.date > accountBalances[accountId].latestDate) {
+                      if (
+                        !accountBalances[accountId] ||
+                        txn.date > accountBalances[accountId].latestDate
+                      ) {
                         accountBalances[accountId] = {
                           balance: parseFloat(txn.balance),
                           name: txn.account_name || accountId,
-                          latestDate: txn.date
+                          latestDate: txn.date,
                         };
                       }
                     }
                   }
-                  
-                  console.log("Account balances from transactions:", accountBalances);
-                  
+
+                  console.log(
+                    "Account balances from transactions:",
+                    accountBalances
+                  );
+
                   // Separate checking vs credit accounts
                   const checkingAccounts: AccountInfo[] = [];
                   const creditAccounts: AccountInfo[] = [];
                   let checkingTotal = 0;
                   let creditTotal = 0;
-                  
-                  Object.entries(accountBalances).forEach(([accountId, data]) => {
-                    // Credit detection based on your pattern: x_credit, or _credit suffix, or large debt
-                    const hasCredit = accountId.toLowerCase().includes('_credit') || accountId.toLowerCase().includes('credit');
-                    const hasLargeDebt = data.balance < -1000; // Likely credit card debt
-                    const isCredit = hasCredit || hasLargeDebt;
-                    
-                    const balance = data.balance;
-                    
-                    console.log(`Processing account: ${accountId}, balance: ${balance}, hasCredit: ${hasCredit}, hasLargeDebt: ${hasLargeDebt}, isCredit: ${isCredit}`);
-                    
-                    const accountInfo: AccountInfo = {
-                      id: accountId,
-                      name: data.name,
-                      balance: balance,
-                      threshold: isCredit ? -1000 : -100,
-                      is_low: balance < (isCredit ? -1000 : -100),
-                      type: isCredit ? 'credit' : 'checking'
-                    };
-                    
-                    if (isCredit) {
-                      creditAccounts.push(accountInfo);
-                      creditTotal += balance;
-                      console.log(`Added to credit: ${balance}, creditTotal now: ${creditTotal}`);
-                    } else {
-                      checkingAccounts.push(accountInfo);
-                      checkingTotal += balance;
-                      console.log(`Added to checking: ${balance}, checkingTotal now: ${checkingTotal}`);
+
+                  Object.entries(accountBalances).forEach(
+                    ([accountId, data]) => {
+                      // Credit detection based on your pattern: x_credit, or _credit suffix, or large debt
+                      const hasCredit =
+                        accountId.toLowerCase().includes("_credit") ||
+                        accountId.toLowerCase().includes("credit");
+                      const hasLargeDebt = data.balance < -1000; // Likely credit card debt
+                      const isCredit = hasCredit || hasLargeDebt;
+
+                      const balance = data.balance;
+
+                      console.log(
+                        `Processing account: ${accountId}, balance: ${balance}, hasCredit: ${hasCredit}, hasLargeDebt: ${hasLargeDebt}, isCredit: ${isCredit}`
+                      );
+
+                      const accountInfo: AccountInfo = {
+                        id: accountId,
+                        name: data.name,
+                        balance: balance,
+                        threshold: isCredit ? -1000 : -100,
+                        is_low: balance < (isCredit ? -1000 : -100),
+                        type: isCredit ? "credit" : "checking",
+                      };
+
+                      if (isCredit) {
+                        creditAccounts.push(accountInfo);
+                        creditTotal += balance;
+                        console.log(
+                          `Added to credit: ${balance}, creditTotal now: ${creditTotal}`
+                        );
+                      } else {
+                        checkingAccounts.push(accountInfo);
+                        checkingTotal += balance;
+                        console.log(
+                          `Added to checking: ${balance}, checkingTotal now: ${checkingTotal}`
+                        );
+                      }
                     }
-                  });
-                  
-                  console.log(`Final totals - Checking: ${checkingTotal}, Credit: ${creditTotal}`);
-                  
+                  );
+
+                  console.log(
+                    `Final totals - Checking: ${checkingTotal}, Credit: ${creditTotal}`
+                  );
+
                   // If we didn't find any accounts, something is wrong with the data
                   if (Object.keys(accountBalances).length === 0) {
                     console.error("No accounts found in transaction data!");
                     throw new Error("No account data found");
                   }
-                  
+
                   const convertedData: SafeToSpendData = {
                     user_id: userId,
                     days: 14,
@@ -236,8 +261,11 @@ export default function Home() {
                     next_pay_date: fallbackData.next_pay_date || null,
                     days_to_pay: fallbackData.days_to_pay || 14,
                   };
-                  
-                  console.log("Converted data with real accounts:", convertedData);
+
+                  console.log(
+                    "Converted data with real accounts:",
+                    convertedData
+                  );
                   setAccountData(convertedData);
                 } else {
                   throw new Error("Failed to get transactions");
@@ -247,33 +275,40 @@ export default function Home() {
                 // Ultimate fallback - use the old simple conversion
                 const currentBalance = fallbackData.current_balance || 0;
                 const safeToSpend = fallbackData.safe_to_spend || 0;
-                
+
                 const convertedData: SafeToSpendData = {
                   user_id: userId,
                   days: 14,
                   checking: {
-                    accounts: [{
-                      id: "main_account",
-                      name: "Main Account",
-                      balance: currentBalance > 0 ? currentBalance : 0,
-                      threshold: -100,
-                      is_low: false,
-                      type: "checking"
-                    }],
+                    accounts: [
+                      {
+                        id: "main_account",
+                        name: "Main Account",
+                        balance: currentBalance > 0 ? currentBalance : 0,
+                        threshold: -100,
+                        is_low: false,
+                        type: "checking",
+                      },
+                    ],
                     total: currentBalance > 0 ? currentBalance : 0,
                     count: currentBalance > 0 ? 1 : 0,
                     safe_to_spend: safeToSpend,
                     buffer: 100,
                   },
                   credit: {
-                    accounts: currentBalance < 0 ? [{
-                      id: "main_credit",
-                      name: "Credit Card",
-                      balance: currentBalance,
-                      threshold: -1000,
-                      is_low: currentBalance < -1000,
-                      type: "credit"
-                    }] : [],
+                    accounts:
+                      currentBalance < 0
+                        ? [
+                            {
+                              id: "main_credit",
+                              name: "Credit Card",
+                              balance: currentBalance,
+                              threshold: -1000,
+                              is_low: currentBalance < -1000,
+                              type: "credit",
+                            },
+                          ]
+                        : [],
                     total: currentBalance < 0 ? currentBalance : 0,
                     count: currentBalance < 0 ? 1 : 0,
                     available_credit: 0,

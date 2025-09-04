@@ -8,6 +8,7 @@ from .api import categorization as categorization_router
 from .api import goals as goals_router
 from .api import subscriptions as subscriptions_router
 from .api import insights as insights_router
+from .api import transactions as transactions_router
 import os
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -86,6 +87,7 @@ app.include_router(anomaly_router.router)
 app.include_router(plaid_router.router)
 app.include_router(budgets_router.router)
 app.include_router(cash_router.router)
+app.include_router(transactions_router.router)
 
 """
 Cookie session auth: issue an HMAC-signed token as HttpOnly cookie.

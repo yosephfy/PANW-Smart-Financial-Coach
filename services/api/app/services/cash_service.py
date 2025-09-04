@@ -104,7 +104,7 @@ def safe_to_spend(conn: sqlite3.Connection, user_id: str, account_id: Optional[s
     avg_spend = _avg_daily_spend(conn, user_id, 30)
     per_day_rec = _per_day_recurring(conn, user_id)
 
-    next_pay_date, cycle_days = _estimate_pay_cycle(conn, user_id)
+    next_pay_date, cycle_days = _estimate_pay_cycle(user_id)
     today = date.today()
     days_to_pay = (next_pay_date - today).days if next_pay_date else days
 
@@ -139,7 +139,7 @@ def safe_to_spend_by_account_type(conn: sqlite3.Connection, user_id: str, days: 
     Different thresholds for checking vs credit accounts.
     """
     print(f"[DEBUG] safe_to_spend_by_account_type called for user: {user_id}")
-    
+
     account_data = get_account_balances_by_type(conn, user_id)
     print(f"[DEBUG] Account data from utils: {account_data}")
 
@@ -156,7 +156,7 @@ def safe_to_spend_by_account_type(conn: sqlite3.Connection, user_id: str, days: 
     # Calculate safe-to-spend for each account type
     checking_data = account_data["checking"]
     credit_data = account_data["credit"]
-    
+
     print(f"[DEBUG] Checking data: {checking_data}")
     print(f"[DEBUG] Credit data: {credit_data}")
 

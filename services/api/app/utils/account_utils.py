@@ -32,7 +32,7 @@ def get_account_balances_by_type(conn: sqlite3.Connection, user_id: str) -> Dict
     Returns dict with 'checking' and 'credit' keys containing account info.
     """
     print(f"[DEBUG] get_account_balances_by_type called for user: {user_id}")
-    
+
     # Get latest balance per account
     rows = conn.execute(
         """
@@ -51,7 +51,8 @@ def get_account_balances_by_type(conn: sqlite3.Connection, user_id: str) -> Dict
     print(f"[DEBUG] Raw account rows from database: {len(rows)} rows")
     for i, r in enumerate(rows):
         name_val = r["name"] if r["name"] is not None else "None"
-        print(f"[DEBUG] Row {i}: account_id={r['account_id']}, balance={r['balance']}, name={name_val}")
+        print(
+            f"[DEBUG] Row {i}: account_id={r['account_id']}, balance={r['balance']}, name={name_val}")
 
     checking_accounts = []
     credit_accounts = []
@@ -63,7 +64,8 @@ def get_account_balances_by_type(conn: sqlite3.Connection, user_id: str) -> Dict
         account_type = get_account_type(account_id)
         threshold = get_account_threshold(account_id)
 
-        print(f"[DEBUG] Processing account: {account_id}, balance: {balance}, type: {account_type}, threshold: {threshold}")
+        print(
+            f"[DEBUG] Processing account: {account_id}, balance: {balance}, type: {account_type}, threshold: {threshold}")
 
         account_info = {
             "id": account_id,
@@ -84,9 +86,11 @@ def get_account_balances_by_type(conn: sqlite3.Connection, user_id: str) -> Dict
     # Calculate totals
     checking_total = sum(acc["balance"] for acc in checking_accounts)
     credit_total = sum(acc["balance"] for acc in credit_accounts)
-    
-    print(f"[DEBUG] Final totals - checking: {checking_total}, credit: {credit_total}")
-    print(f"[DEBUG] Account counts - checking: {len(checking_accounts)}, credit: {len(credit_accounts)}")
+
+    print(
+        f"[DEBUG] Final totals - checking: {checking_total}, credit: {credit_total}")
+    print(
+        f"[DEBUG] Account counts - checking: {len(checking_accounts)}, credit: {len(credit_accounts)}")
 
     result = {
         "checking": {
@@ -102,7 +106,7 @@ def get_account_balances_by_type(conn: sqlite3.Connection, user_id: str) -> Dict
         # Credit balances are negative for debt
         "net_worth": checking_total + credit_total
     }
-    
+
     print(f"[DEBUG] Final result: {result}")
     return result
 
