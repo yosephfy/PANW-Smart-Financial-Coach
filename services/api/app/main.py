@@ -1,3 +1,5 @@
+from .api import cash as cash_router
+from .api import budgets as budgets_router
 from .api import plaid as plaid_router
 from .api import anomaly as anomaly_router
 from .api import forecast as forecast_router
@@ -11,14 +13,17 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query, Reque
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 from . import db as db_mod
-from .ingest import parse_csv_transactions
+from .ingest import parse_csv_transactions, categorize_with_provenance
 from pydantic import BaseModel
 from .services.ingestion_service import ingest_records as _ingest_records, AIHooks as _AIHooks, RecHooks as _RecHooks
 from .utils import auth as auth_utils
 from .insights import generate_insights, upsert_insights
+from .services.llm_service import LLM_AVAILABLE
+from .services.insights_service import generate_and_upsert as insights_generate_and_upsert
 from .repositories import transactions_repo as _txrepo
 from .subscriptions import detect_subscriptions_for_user, upsert_subscriptions
 from .is_recurring_model import has_model as has_rec_model
+from .llm import rewrite_insight_llm
 try:
     from .is_recurring_model import train_for_user as train_rec_model, predict_for_user as predict_rec_model
     ISREC_AVAILABLE = True
@@ -79,8 +84,8 @@ app.include_router(ai_router.router)
 app.include_router(forecast_router.router)
 app.include_router(anomaly_router.router)
 app.include_router(plaid_router.router)
-from .api import budgets as budgets_router
 app.include_router(budgets_router.router)
+app.include_router(cash_router.router)
 
 """
 Cookie session auth: issue an HMAC-signed token as HttpOnly cookie.
@@ -92,7 +97,8 @@ SESSION_COOKIE = "sfc_session"
 
 
 def _sign(data: str) -> str:
-    import hmac, hashlib
+    import hmac
+    import hashlib
     return hmac.new(AUTH_SECRET.encode(), data.encode(), hashlib.sha256).hexdigest()
 
 
@@ -136,7 +142,8 @@ def _current_user(request: Request, provided: Optional[str] = None) -> Optional[
 
 def _set_session(resp: Response, username: str):
     token = _make_token(username)
-    resp.set_cookie(key=SESSION_COOKIE, value=token, httponly=True, samesite="none", secure=False)
+    resp.set_cookie(key=SESSION_COOKIE, value=token,
+                    httponly=True, samesite="none", secure=False)
 
 
 def _clear_session(resp: Response):
@@ -285,19 +292,18 @@ async def ingest_csv_with_insights(
 ):
     """Ingest a CSV and immediately generate/upsert insights for the user.
 
-    Returns the ingestion result and the generated insights.
+    Returns the ingestion result and the generated insights with LLM rewrites.
     """
     # Validate user_id and reuse existing ingest implementation
     if not user_id:
         raise HTTPException(status_code=400, detail="missing_user_id")
     ingest_result = await ingest_csv(request, file, user_id, default_account_id)
 
-    # Generate insights based on the newly-ingested data
+    # Generate insights using the new insights service with threaded LLM rewrites
     u = user_id
     with db_mod.get_connection() as conn:
-        items = generate_insights(conn, u)
-        if items:
-            upsert_insights(conn, items)
+        # Use the new insights service function that includes threaded LLM rewrites
+        items = insights_generate_and_upsert(conn, u)
 
         # Detect subscriptions from the newly-ingested transactions and upsert
         try:
@@ -433,8 +439,52 @@ def create_transaction(user_id: str, body: TransactionCreateRequest, request: Re
             )
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"insert_error: {e}")
+        # After a successful insert, generate transaction-specific insights and check subscriptions
+        insights_count = 0
+        subscription_updates = None
 
-    return {"inserted": True, "transaction": row}
+        try:
+            from .services.insights_service import generate_transaction_insights_and_upsert
+            tx_insights = generate_transaction_insights_and_upsert(
+                conn, user_id, row)
+            insights_count += len(tx_insights)
+        except Exception as e:
+            # Log the error but don't fail the transaction creation
+            print(f"Failed to generate transaction insights: {e}")
+
+        # Check for subscription updates
+        try:
+            from .services.transaction_subscription_service import (
+                detect_transaction_subscription_updates,
+                generate_subscription_insights_for_transaction
+            )
+
+            subscription_updates = detect_transaction_subscription_updates(
+                conn, user_id, row)
+
+            # Generate subscription-related insights if any subscription changes occurred
+            if subscription_updates.get("action") != "none":
+                sub_insights = generate_subscription_insights_for_transaction(
+                    conn, user_id, row, subscription_updates)
+                if sub_insights:
+                    from .insights import upsert_insights
+                    # Apply LLM rewrites to subscription insights too
+                    if LLM_AVAILABLE:
+                        from .services.llm_service import threaded_llm_service
+                        sub_insights = threaded_llm_service.rewrite_insights_batch(
+                            sub_insights, tone="friendly")
+                    upsert_insights(conn, sub_insights)
+                    insights_count += len(sub_insights)
+
+        except Exception as e:
+            print(f"Failed to check subscription updates: {e}")
+
+    return {
+        "inserted": True,
+        "transaction": row,
+        "insights_generated": insights_count,
+        "subscription_update": subscription_updates
+    }
 
 
 class CategorizationRequest(BaseModel):
@@ -486,5 +536,20 @@ class PredictRecurringRequest(BaseModel):
 def api_is_recurring_predict(body: PredictRecurringRequest):
     try:
         return predict_rec_model(body.user_id, body.merchant, body.description, body.amount, body.date)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+class RewriteInsightRequest(BaseModel):
+    title: str
+    body: str
+    data_json: str
+    tone: str
+
+
+@app.post("/insights/rewrite", tags=["insights"])
+def api_insights_rewrite(body: RewriteInsightRequest):
+    try:
+        return rewrite_insight_llm(body.title, body.body, body.data_json, body.tone)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

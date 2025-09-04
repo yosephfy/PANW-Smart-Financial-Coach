@@ -66,9 +66,275 @@ def _mean_std(vals: List[float]) -> Tuple[float, float]:
     return (mean, std)
 
 
-def _insight_id(user_id: str, kind: str, key: str) -> str:
-    raw = f"{user_id}|{kind}|{key}|{_today().isoformat()}"
+def _insight_id(user_id: str, kind: str, key: str, suffix: str = "") -> str:
+    raw = f"{user_id}|{kind}|{key}|{_today().isoformat()}{suffix}"
     return hashlib.sha1(raw.encode("utf-8")).hexdigest()
+
+
+def _transaction_insight_id(user_id: str, kind: str, key: str, transaction_id: str) -> str:
+    """Generate insight ID for transaction-specific insights"""
+    raw = f"{user_id}|{kind}|{key}|tx:{transaction_id}"
+    return hashlib.sha1(raw.encode("utf-8")).hexdigest()
+
+
+def generate_transaction_insights(conn: sqlite3.Connection, user_id: str, transaction: Dict) -> List[Dict]:
+    """Generate insights specifically for a newly added transaction."""
+    insights: List[Dict] = []
+
+    # Extract transaction info
+    tx_id = transaction["id"]
+    tx_amount = float(transaction["amount"])
+    tx_date = transaction["date"]
+    tx_merchant = transaction.get("merchant", "").lower(
+    ) if transaction.get("merchant") else ""
+    tx_category = transaction.get("category", "").lower(
+    ) if transaction.get("category") else ""
+
+    # Only generate insights for expenses
+    if tx_amount >= 0:
+        return insights
+
+    expense_amount = abs(tx_amount)
+
+    # 1. Sudden Expense Spike Detection
+    # Check if this transaction is unusually large compared to recent transactions in the same category
+    if tx_category and expense_amount >= 20:
+        # Get recent transactions in same category (last 30 days, excluding today)
+        yesterday = (date.fromisoformat(tx_date) -
+                     timedelta(days=1)).isoformat()
+        thirty_days_ago = (date.fromisoformat(tx_date) -
+                           timedelta(days=30)).isoformat()
+
+        recent_amounts = conn.execute(
+            """
+            SELECT amount FROM transactions
+            WHERE user_id = ? AND LOWER(COALESCE(category,'')) = ? 
+            AND date BETWEEN ? AND ? AND amount < 0
+            """,
+            (user_id, tx_category, thirty_days_ago, yesterday),
+        ).fetchall()
+
+        if len(recent_amounts) >= 3:  # Need some history for comparison
+            amounts = [abs(float(r["amount"])) for r in recent_amounts]
+            mean_amount = sum(amounts) / len(amounts)
+
+            # If current transaction is 2x the average or >$50 more than average
+            if expense_amount >= max(mean_amount * 2.0, mean_amount + 50.0):
+                insights.append({
+                    "id": _transaction_insight_id(user_id, "expense_spike", tx_category, tx_id),
+                    "user_id": user_id,
+                    "type": "expense_spike",
+                    "title": f"Unusually high {tx_category} expense",
+                    "body": f"${expense_amount:.0f} at {tx_merchant or 'merchant'} is {expense_amount/mean_amount:.1f}x your avg ${mean_amount:.0f} in this category.",
+                    "severity": "warn" if expense_amount < mean_amount * 3 else "critical",
+                    "data_json": json.dumps({
+                        "transaction_id": tx_id,
+                        "category": tx_category,
+                        "amount": expense_amount,
+                        "average_amount": mean_amount,
+                        "spike_ratio": expense_amount / mean_amount,
+                        "merchant": tx_merchant,
+                    }),
+                })
+
+    # 2. Merchant Spending Spike Detection
+    if tx_merchant and expense_amount >= 20:
+        # Check spending at this merchant in last 90 days
+        ninety_days_ago = (date.fromisoformat(tx_date) -
+                           timedelta(days=90)).isoformat()
+        yesterday = (date.fromisoformat(tx_date) -
+                     timedelta(days=1)).isoformat()
+
+        merchant_history = conn.execute(
+            """
+            SELECT amount FROM transactions
+            WHERE user_id = ? AND LOWER(COALESCE(merchant,'')) = ? 
+            AND date BETWEEN ? AND ? AND amount < 0
+            """,
+            (user_id, tx_merchant, ninety_days_ago, yesterday),
+        ).fetchall()
+
+        if len(merchant_history) >= 2:  # Need some history
+            amounts = [abs(float(r["amount"])) for r in merchant_history]
+            mean_amount = sum(amounts) / len(amounts)
+            max_amount = max(amounts)
+
+            # If this is significantly higher than usual at this merchant
+            if expense_amount >= max(mean_amount * 2.5, max_amount * 1.2):
+                insights.append({
+                    "id": _transaction_insight_id(user_id, "merchant_spike", tx_merchant.replace(" ", "_"), tx_id),
+                    "user_id": user_id,
+                    "type": "merchant_spike",
+                    "title": f"Higher than usual at {tx_merchant.title()}",
+                    "body": f"${expense_amount:.0f} vs typical ${mean_amount:.0f} (previous max: ${max_amount:.0f}).",
+                    "severity": "info",
+                    "data_json": json.dumps({
+                        "transaction_id": tx_id,
+                        "merchant": tx_merchant,
+                        "amount": expense_amount,
+                        "average_amount": mean_amount,
+                        "previous_max": max_amount,
+                    }),
+                })
+
+    # 3. Daily Spending Alert
+    # Check if today's total spending is high
+    today_total = conn.execute(
+        """
+        SELECT SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END) as total
+        FROM transactions
+        WHERE user_id = ? AND date = ? AND amount < 0
+        """,
+        (user_id, tx_date),
+    ).fetchone()
+
+    if today_total and today_total["total"]:
+        total_today = float(today_total["total"])
+
+        # Get average daily spending over last 30 days
+        thirty_days_ago = (date.fromisoformat(tx_date) -
+                           timedelta(days=30)).isoformat()
+        yesterday = (date.fromisoformat(tx_date) -
+                     timedelta(days=1)).isoformat()
+
+        daily_totals = conn.execute(
+            """
+            SELECT date, SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END) as daily_total
+            FROM transactions
+            WHERE user_id = ? AND date BETWEEN ? AND ? AND amount < 0
+            GROUP BY date
+            HAVING daily_total > 0
+            """,
+            (user_id, thirty_days_ago, yesterday),
+        ).fetchall()
+
+        if len(daily_totals) >= 10:  # Need reasonable history
+            avg_daily = sum(float(r["daily_total"])
+                            for r in daily_totals) / len(daily_totals)
+
+            # If today is 2x average daily spend and >$100
+            if total_today >= max(avg_daily * 2.0, 100.0) and total_today >= avg_daily + 50:
+                insights.append({
+                    "id": _transaction_insight_id(user_id, "daily_spend_high", tx_date, tx_id),
+                    "user_id": user_id,
+                    "type": "daily_spend_high",
+                    "title": "High spending day",
+                    "body": f"${total_today:.0f} spent today vs your avg ${avg_daily:.0f}/day. This transaction brought you over the threshold.",
+                    "severity": "info",
+                    "data_json": json.dumps({
+                        "transaction_id": tx_id,
+                        "date": tx_date,
+                        "total_today": total_today,
+                        "average_daily": avg_daily,
+                    }),
+                })
+
+    # 4. Enhanced Budget Category Warning
+    if tx_category and expense_amount >= 15:
+        # First check if there's a budget for this category
+        budget_row = conn.execute(
+            "SELECT monthly_budget FROM category_budgets WHERE user_id = ? AND LOWER(category) = ?",
+            (user_id, tx_category)
+        ).fetchone()
+        
+        # Check month-to-date spending in this category
+        month_start = date.fromisoformat(tx_date).replace(day=1).isoformat()
+        month_total = conn.execute(
+            """
+            SELECT SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END) as total
+            FROM transactions
+            WHERE user_id = ? AND LOWER(COALESCE(category,'')) = ? 
+            AND date BETWEEN ? AND ? AND amount < 0
+            """,
+            (user_id, tx_category, month_start, tx_date),
+        ).fetchone()
+
+        if month_total and month_total["total"]:
+            mtd_total = float(month_total["total"])
+            
+            if budget_row and budget_row["monthly_budget"]:
+                # User has a budget set for this category
+                budget = float(budget_row["monthly_budget"])
+                usage_pct = (mtd_total / budget) * 100 if budget > 0 else 0
+                
+                if usage_pct >= 90:
+                    # Budget-based alert
+                    status = "over" if usage_pct >= 100 else "near"
+                    insights.append({
+                        "id": _transaction_insight_id(user_id, "budget_alert", tx_category, tx_id),
+                        "user_id": user_id,
+                        "type": "budget_alert",
+                        "title": f"{tx_category} budget {status} limit",
+                        "body": f"This ${expense_amount:.0f} transaction brings you to ${mtd_total:.0f} of ${budget:.0f} budget ({usage_pct:.0f}%).",
+                        "severity": "critical" if usage_pct >= 100 else "warn",
+                        "data_json": json.dumps({
+                            "transaction_id": tx_id,
+                            "category": tx_category,
+                            "amount": expense_amount,
+                            "mtd_total": mtd_total,
+                            "budget": budget,
+                            "usage_percentage": round(usage_pct, 1),
+                        }),
+                    })
+                elif usage_pct >= 75:
+                    # Budget progress alert
+                    insights.append({
+                        "id": _transaction_insight_id(user_id, "budget_progress", tx_category, tx_id),
+                        "user_id": user_id,
+                        "type": "budget_progress", 
+                        "title": f"{tx_category} budget progress",
+                        "body": f"${mtd_total:.0f} of ${budget:.0f} used ({usage_pct:.0f}%). ${budget - mtd_total:.0f} remaining this month.",
+                        "severity": "info",
+                        "data_json": json.dumps({
+                            "transaction_id": tx_id,
+                            "category": tx_category,
+                            "amount": expense_amount,
+                            "mtd_total": mtd_total,
+                            "budget": budget,
+                            "remaining": budget - mtd_total,
+                            "usage_percentage": round(usage_pct, 1),
+                        }),
+                    })
+            elif tx_category in DISCRETIONARY_CATEGORIES:
+                # No budget set, but compare to previous month for discretionary categories
+                prev_month_start = (date.fromisoformat(tx_date).replace(
+                    day=1) - timedelta(days=1)).replace(day=1).isoformat()
+                prev_month_end = (date.fromisoformat(tx_date).replace(
+                    day=1) - timedelta(days=1)).isoformat()
+
+                prev_month_total = conn.execute(
+                    """
+                    SELECT SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END) as total
+                    FROM transactions
+                    WHERE user_id = ? AND LOWER(COALESCE(category,'')) = ? 
+                    AND date BETWEEN ? AND ? AND amount < 0
+                    """,
+                    (user_id, tx_category, prev_month_start, prev_month_end),
+                ).fetchone()
+                
+                prev_total = float(
+                    prev_month_total["total"]) if prev_month_total and prev_month_total["total"] else 0
+
+                # If we're already spending 80% of last month's total
+                if prev_total > 0 and mtd_total >= prev_total * 0.8:
+                    insights.append({
+                        "id": _transaction_insight_id(user_id, "category_budget_alert", tx_category, tx_id),
+                        "user_id": user_id,
+                        "type": "category_budget_alert",
+                        "title": f"High {tx_category} spending this month",
+                        "body": f"${mtd_total:.0f} spent on {tx_category} this month (${prev_total:.0f} last month). Consider setting a budget or slowing down.",
+                        "severity": "warn",
+                        "data_json": json.dumps({
+                            "transaction_id": tx_id,
+                            "category": tx_category,
+                            "month_to_date": mtd_total,
+                            "previous_month": prev_total,
+                            "percentage_of_prev": (mtd_total / prev_total) * 100 if prev_total > 0 else 0,
+                            "suggest_budget": True,
+                        }),
+                    })
+
+    return insights
 
 
 def generate_insights(conn: sqlite3.Connection, user_id: str) -> List[Dict]:
@@ -274,9 +540,11 @@ def generate_budget_overage_insights(conn: sqlite3.Connection, user_id: str) -> 
     today = _today()
     start, end = _month_start_end(today)
     out: List[Dict] = []
+    
     for b in budgets:
         cat = (b["category"] or "").lower()
-        mbud = float(b["monthly_budget"]) if b["monthly_budget"] is not None else 0.0
+        mbud = float(b["monthly_budget"]
+                     ) if b["monthly_budget"] is not None else 0.0
         if mbud <= 0:
             continue
         row = conn.execute(
@@ -288,24 +556,189 @@ def generate_budget_overage_insights(conn: sqlite3.Connection, user_id: str) -> 
             (user_id, cat, start, end),
         ).fetchone()
         mtd = float(row["spend"] or 0.0)
-        if mtd >= mbud * 0.9:  # warn when over 90% or exceeded
-            status = "over_budget" if mtd > mbud else "near_budget"
-            title = f"{cat} budget {status.replace('_',' ')}"
-            body = f"MTD ${mtd:.0f} vs budget ${mbud:.0f}. Consider trimming to stay on track."
-            out.append({
-                "id": _insight_id(user_id, "budget", cat + start),
-                "user_id": user_id,
-                "type": "budget",
-                "title": title,
-                "body": body,
-                "severity": "warn" if status == "near_budget" else "critical",
-                "data_json": json.dumps({
-                    "category": cat,
-                    "mtd_spend": mtd,
-                    "budget": mbud,
-                    "month_start": start,
-                }),
-            })
+        
+        # Enhanced budget insights with more granular feedback
+        usage_pct = (mtd / mbud) * 100 if mbud > 0 else 0
+        days_in_month = (date.fromisoformat(end) - date.fromisoformat(start)).days + 1
+        current_day = today.day
+        expected_usage = (current_day / days_in_month) * 100
+        
+        if usage_pct >= 100:  # Over budget
+            status = "over_budget"
+            title = f"{cat} budget exceeded"
+            body = f"${mtd:.0f} spent vs ${mbud:.0f} budget ({usage_pct:.0f}%). Consider adjusting spending this month."
+            severity = "critical"
+        elif usage_pct >= 90:  # Near budget limit
+            status = "near_budget" 
+            title = f"{cat} budget nearly exhausted"
+            body = f"${mtd:.0f} of ${mbud:.0f} budget used ({usage_pct:.0f}%). Only ${mbud - mtd:.0f} remaining."
+            severity = "warn"
+        elif usage_pct > expected_usage + 20:  # Spending too fast
+            status = "ahead_of_pace"
+            title = f"{cat} spending ahead of pace"
+            body = f"{usage_pct:.0f}% of budget used but only {expected_usage:.0f}% through the month. Consider slowing down."
+            severity = "warn"
+        elif usage_pct < expected_usage - 15 and current_day > 10:  # Under-spending significantly
+            status = "under_budget"
+            title = f"{cat} budget on track"
+            body = f"Great job! Only {usage_pct:.0f}% of budget used ({expected_usage:.0f}% expected). You have ${mbud - mtd:.0f} remaining."
+            severity = "info"
+        else:
+            continue  # No insight needed for normal spending
+            
+        out.append({
+            "id": _insight_id(user_id, "budget", cat + "_" + start + "_" + status),
+            "user_id": user_id,
+            "type": "budget",
+            "title": title,
+            "body": body,
+            "severity": severity,
+            "data_json": json.dumps({
+                "category": cat,
+                "mtd_spend": mtd,
+                "budget": mbud,
+                "usage_percentage": round(usage_pct, 1),
+                "expected_usage_percentage": round(expected_usage, 1),
+                "remaining": mbud - mtd,
+                "status": status,
+                "month_start": start,
+            }),
+        })
+    return out
+
+
+def generate_budget_suggestion_insights(conn: sqlite3.Connection, user_id: str) -> List[Dict]:
+    """Suggest budgets for categories where user spends regularly but has no budget set."""
+    # Get existing budgets
+    existing_budgets = set()
+    budget_rows = conn.execute(
+        "SELECT LOWER(category) as category FROM category_budgets WHERE user_id = ?",
+        (user_id,),
+    ).fetchall()
+    for row in budget_rows:
+        existing_budgets.add(row["category"])
+    
+    # Get spending by category in last 90 days
+    three_months_ago = (date.today() - timedelta(days=90)).isoformat()
+    today = date.today().isoformat()
+    
+    category_spending = conn.execute(
+        """
+        SELECT LOWER(COALESCE(category,'')) as category,
+               SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END) as total_spend,
+               COUNT(CASE WHEN amount < 0 THEN 1 END) as transaction_count,
+               AVG(CASE WHEN amount < 0 THEN -amount END) as avg_amount
+        FROM transactions
+        WHERE user_id = ? AND date BETWEEN ? AND ? AND amount < 0
+        GROUP BY LOWER(COALESCE(category,''))
+        HAVING total_spend >= 100 AND transaction_count >= 3
+        ORDER BY total_spend DESC
+        """,
+        (user_id, three_months_ago, today),
+    ).fetchall()
+    
+    insights = []
+    for row in category_spending[:5]:  # Top 5 spending categories
+        category = row["category"] or "uncategorized"
+        if category in existing_budgets or category == "":
+            continue
+            
+        total_spend = float(row["total_spend"])
+        transaction_count = int(row["transaction_count"])
+        avg_amount = float(row["avg_amount"])
+        
+        # Suggest a monthly budget based on 90-day average + 10% buffer
+        monthly_suggestion = round((total_spend / 3) * 1.1, -1)  # Round to nearest $10
+        
+        insights.append({
+            "id": _insight_id(user_id, "budget_suggestion", category),
+            "user_id": user_id,
+            "type": "budget_suggestion",
+            "title": f"Consider setting a {category} budget",
+            "body": f"You've spent ${total_spend:.0f} on {category} in 90 days ({transaction_count} transactions). Consider setting a ${monthly_suggestion:.0f}/month budget.",
+            "severity": "info",
+            "data_json": json.dumps({
+                "category": category,
+                "last_90_days_spend": total_spend,
+                "transaction_count": transaction_count,
+                "average_transaction": avg_amount,
+                "suggested_monthly_budget": monthly_suggestion,
+            }),
+        })
+    
+    return insights
+
+
+def generate_low_balance_insights(conn: sqlite3.Connection, user_id: str, lookback_days: int = 30) -> List[Dict]:
+    """Generate insights for accounts with low balances using account type-specific thresholds."""
+    from .utils.account_utils import get_low_balance_accounts
+
+    insights: List[Dict] = []
+    low_accounts = get_low_balance_accounts(conn, user_id, lookback_days)
+
+    for acc in low_accounts:
+        account_id = acc["account_id"]
+        balance = acc["balance"]
+        threshold = acc["threshold"]
+        account_type = acc["account_type"]
+        date_str = acc["date"]
+
+        if account_type == "credit":
+            # Credit card over limit
+            title = f"Credit card approaching limit"
+            body = f"Your {account_type} account {account_id} balance is ${balance:.2f}, approaching the recommended limit of ${threshold:.2f}."
+        else:
+            # Checking account low balance
+            title = f"Low balance alert"
+            body = f"Your {account_type} account {account_id} balance is ${balance:.2f}, below the safety threshold of ${threshold:.2f}."
+
+        insights.append({
+            "id": _insight_id(user_id, f"low_balance_{account_type}", account_id),
+            "user_id": user_id,
+            "type": f"low_balance_{account_type}",
+            "title": title,
+            "body": body,
+            "severity": "warn",
+            "data_json": json.dumps({
+                "account_id": account_id,
+                "account_type": account_type,
+                "balance": balance,
+                "threshold": threshold,
+                "date": date_str
+            }),
+        })
+
+    return insights
+    """Emit insights when any recorded balance drops below a threshold in the lookback window."""
+    rows = conn.execute(
+        """
+        SELECT date, account_id, balance FROM transactions
+        WHERE user_id = ? AND balance IS NOT NULL AND date >= DATE('now', ?)
+          AND balance < ?
+        ORDER BY date DESC
+        """,
+        (user_id, f"-{lookback_days} day", threshold),
+    ).fetchall()
+    out: List[Dict] = []
+    for r in rows:
+        bal = float(r["balance"] or 0.0)
+        acc = r["account_id"] or ""
+        title = "Low balance warning"
+        body = f"Balance ${bal:.0f} fell below ${threshold:.0f} on {r['date']} (acct {acc or '—'})."
+        out.append({
+            "id": _insight_id(user_id, "low_balance", f"{r['date']}|{acc}|{bal:.2f}"),
+            "user_id": user_id,
+            "type": "low_balance",
+            "title": title,
+            "body": body,
+            "severity": "critical",
+            "data_json": json.dumps({
+                "date": r["date"],
+                "account_id": acc,
+                "balance": bal,
+                "threshold": threshold,
+            }),
+        })
     return out
 
 
@@ -313,11 +746,17 @@ def upsert_insights(conn: sqlite3.Connection, items: List[Dict]):
     for x in items:
         conn.execute(
             """
-            INSERT OR REPLACE INTO insights (id, user_id, type, title, body, severity, data_json)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT OR REPLACE INTO insights (
+                id, user_id, type, title, body, severity, data_json,
+                rewritten_title, rewritten_body, rewritten_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
-                x["id"], x["user_id"], x["type"], x["title"], x["body"], x["severity"], x.get(
-                    "data_json"),
+                x["id"], x["user_id"], x["type"], x["title"], x["body"], x["severity"],
+                x.get("data_json"),
+                x.get("rewritten_title"),
+                x.get("rewritten_body"),
+                x.get("rewritten_at"),
             ),
         )

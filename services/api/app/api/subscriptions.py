@@ -33,6 +33,34 @@ def list_subscriptions(user_id: str, limit: int = Query(100, ge=1, le=500)):
 # Removed cookie-based "me" route; use /users/{user_id}/subscriptions
 
 
+class TransactionSubscriptionRequest(BaseModel):
+    user_id: str
+    transaction_id: str
+
+
+@router.post("/subscriptions/transaction/check")
+def check_transaction_subscription_impact(body: TransactionSubscriptionRequest):
+    """Check if a specific transaction impacts subscription detection."""
+    with db_mod.get_connection() as conn:
+        # Get the transaction
+        tx = conn.execute(
+            """
+            SELECT id, user_id, account_id, date, amount, merchant, description,
+                   category, category_source, category_provenance, is_recurring, mcc, source
+            FROM transactions
+            WHERE user_id = ? AND id = ?
+            """,
+            (body.user_id, body.transaction_id),
+        ).fetchone()
+
+        if not tx:
+            raise HTTPException(
+                status_code=404, detail="transaction_not_found")
+
+        from ..services.transaction_subscription_service import detect_transaction_subscription_updates
+        return detect_transaction_subscription_updates(conn, body.user_id, dict(tx))
+
+
 class SubscriptionUpdateRequest(BaseModel):
     status: str
     user_id: str
@@ -49,5 +77,6 @@ def update_subscription_status(merchant: str, request: Request, body: Subscripti
     with db_mod.get_connection() as conn:
         changed = svc.update_status(conn, u, merchant, status)
         if changed == 0:
-            raise HTTPException(status_code=404, detail="subscription_not_found")
+            raise HTTPException(
+                status_code=404, detail="subscription_not_found")
     return {"merchant": merchant.strip().lower(), "status": status}

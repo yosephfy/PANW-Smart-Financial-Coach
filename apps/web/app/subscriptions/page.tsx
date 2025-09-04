@@ -48,7 +48,14 @@ export default function SubscriptionsPage() {
         `${API}/users/${encodeURIComponent(ctx.userId)}/subscriptions`
       );
       const json = await res.json();
-      setRows(Array.isArray(json) ? json : []);
+      const subscriptions = Array.isArray(json) ? json : [];
+      setRows(subscriptions);
+
+      // If no subscriptions found, automatically run detection
+      if (subscriptions.length === 0) {
+        console.log("No subscriptions found, running automatic detection...");
+        await detect(false); // Don't show toast for automatic detection
+      }
     } catch (err) {
       ctx.showToast(String(err), "error");
     } finally {
@@ -56,17 +63,33 @@ export default function SubscriptionsPage() {
     }
   };
 
-  const detect = async () => {
+  const detect = async (showToast = true) => {
     setDetecting(true);
     try {
       if (!ctx.userId) return;
-      await fetch(`${API}/subscriptions/detect`, {
+      const res = await fetch(`${API}/subscriptions/detect`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: ctx.userId }),
       });
-      await load();
-      ctx.showToast("Subscription detection completed", "success");
+      const json = await res.json();
+
+      // Reload subscriptions after detection
+      const subsRes = await fetch(
+        `${API}/users/${encodeURIComponent(ctx.userId)}/subscriptions`
+      );
+      const subsJson = await subsRes.json();
+      setRows(Array.isArray(subsJson) ? subsJson : []);
+
+      if (showToast) {
+        const detected = json.detected || 0;
+        ctx.showToast(
+          detected > 0
+            ? `Found ${detected} subscription${detected > 1 ? "s" : ""}`
+            : "No subscriptions detected",
+          detected > 0 ? "success" : "info"
+        );
+      }
     } finally {
       setDetecting(false);
     }
@@ -77,23 +100,29 @@ export default function SubscriptionsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ctx.userId]);
 
-  const setStatus = async (merchant: string, status: 'active'|'paused'|'canceled') => {
+  const setStatus = async (
+    merchant: string,
+    status: "active" | "paused" | "canceled"
+  ) => {
     if (!ctx.userId) return;
     setUpdating(merchant);
     try {
-      const res = await fetch(`${API}/subscriptions/${encodeURIComponent(merchant)}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: ctx.userId, status }),
-      });
+      const res = await fetch(
+        `${API}/subscriptions/${encodeURIComponent(merchant)}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: ctx.userId, status }),
+        }
+      );
       if (!res.ok) {
-        const j = await res.json().catch(()=>null);
-        throw new Error(j?.detail || 'Update failed');
+        const j = await res.json().catch(() => null);
+        throw new Error(j?.detail || "Update failed");
       }
       await load();
-      ctx.showToast(`Marked ${merchant} as ${status}`,'success');
-    } catch (e:any) {
-      ctx.showToast(e?.message || String(e), 'error');
+      ctx.showToast(`Marked ${merchant} as ${status}`, "success");
+    } catch (e: any) {
+      ctx.showToast(e?.message || String(e), "error");
     } finally {
       setUpdating(null);
     }
@@ -111,7 +140,7 @@ export default function SubscriptionsPage() {
           {busy ? "Loading…" : "Refresh"}
         </button>
         <button
-          onClick={detect}
+          onClick={() => detect(true)}
           disabled={detecting}
           className="rounded bg-emerald-500 text-white px-3 py-1 disabled:opacity-50"
         >
@@ -202,13 +231,39 @@ export default function SubscriptionsPage() {
                 </td>
                 <td className="px-3 py-2">{r.last_seen}</td>
                 <td className="px-3 py-2">
-                  <Badge variant={r.status === "active" ? "success" : r.status === 'canceled' ? 'danger' : 'warning'}>
+                  <Badge
+                    variant={
+                      r.status === "active"
+                        ? "success"
+                        : r.status === "canceled"
+                        ? "danger"
+                        : "warning"
+                    }
+                  >
                     {r.status}
                   </Badge>
                   <div className="inline-flex gap-1 ml-2">
-                    <button disabled={updating===r.merchant} onClick={()=>setStatus(r.merchant,'active')} className="px-2 py-0.5 rounded bg-slate-700">Active</button>
-                    <button disabled={updating===r.merchant} onClick={()=>setStatus(r.merchant,'paused')} className="px-2 py-0.5 rounded bg-slate-700">Pause</button>
-                    <button disabled={updating===r.merchant} onClick={()=>setStatus(r.merchant,'canceled')} className="px-2 py-0.5 rounded bg-red-700">Cancel</button>
+                    <button
+                      disabled={updating === r.merchant}
+                      onClick={() => setStatus(r.merchant, "active")}
+                      className="px-2 py-0.5 rounded bg-slate-700"
+                    >
+                      Active
+                    </button>
+                    <button
+                      disabled={updating === r.merchant}
+                      onClick={() => setStatus(r.merchant, "paused")}
+                      className="px-2 py-0.5 rounded bg-slate-700"
+                    >
+                      Pause
+                    </button>
+                    <button
+                      disabled={updating === r.merchant}
+                      onClick={() => setStatus(r.merchant, "canceled")}
+                      className="px-2 py-0.5 rounded bg-red-700"
+                    >
+                      Cancel
+                    </button>
                   </div>
                 </td>
                 <td className="px-3 py-2">

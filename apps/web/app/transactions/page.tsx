@@ -75,7 +75,9 @@ export default function TransactionsPage() {
     try {
       if (!ctx.userId) return;
       const res = await fetch(
-        `${API}/users/${encodeURIComponent(ctx.userId)}/transactions?limit=${limit}`
+        `${API}/users/${encodeURIComponent(
+          ctx.userId
+        )}/transactions?limit=${limit}`
       );
       const json = await res.json();
       setRows(Array.isArray(json) ? json : []);
@@ -111,7 +113,7 @@ export default function TransactionsPage() {
         >
           {busy ? "Loading…" : "Refresh"}
         </button>
-        <AddTransactionButton onAdded={() => load()} />
+        <AddTransactionButton onAdded={() => load()} userId={""} />
       </div>
 
       {!!categoryData.length && (
@@ -321,7 +323,7 @@ function AddTransactionButton({
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          credentials: 'include',
+          credentials: "include",
           body: JSON.stringify({
             date,
             amount: parseFloat(amount),
@@ -331,7 +333,30 @@ function AddTransactionButton({
         }
       );
       const json = await res.json();
-      ctx.showToast("Transaction added", "success");
+
+      // Show insights and subscription notifications if any were generated
+      const insightsCount = json.insights_generated || 0;
+      const subUpdate = json.subscription_update;
+
+      let message = "Transaction added";
+      if (insightsCount > 0) {
+        message += ` with ${insightsCount} insight${
+          insightsCount > 1 ? "s" : ""
+        }`;
+      }
+
+      if (subUpdate && subUpdate.action !== "none") {
+        const subAction = subUpdate.action;
+        if (subAction === "detected") {
+          message += `. New subscription detected for ${subUpdate.merchant}!`;
+        } else if (subAction === "amount_updated") {
+          message += `. Subscription price change detected for ${subUpdate.merchant}.`;
+        } else if (subAction === "updated") {
+          message += `. Subscription updated for ${subUpdate.merchant}.`;
+        }
+      }
+
+      ctx.showToast(message, "success");
       setOpen(false);
       if (onAdded) onAdded();
     } catch (e) {

@@ -76,6 +76,15 @@ export default function GoalsPage() {
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">Goals</h2>
+      {ctx.userId && (
+        <div className="flex gap-3">
+          <button
+            onClick={async()=>{ try { await fetch(`${API}/goals/fund/auto`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ user_id: ctx.userId }) }); await load(); ctx.showToast('Funded with STS', 'success'); } catch(e:any){ ctx.showToast(e?.message||String(e), 'error'); } }}
+            className="rounded bg-blue-500 text-white px-3 py-1"
+          >Fund with STS</button>
+          <button type="button" className="rounded bg-slate-600 text-white px-3 py-1 disabled:opacity-50" disabled={busy} onClick={load}>{busy ? 'Loading…' : 'Refresh'}</button>
+        </div>
+      )}
       <form onSubmit={createGoal} className="border border-slate-700 rounded p-4 space-y-3">
         <div className="grid md:grid-cols-3 gap-3">
           <label className="text-sm md:col-span-2">
@@ -130,6 +139,7 @@ export default function GoalsPage() {
                 className="px-2 py-0.5 rounded bg-red-700"
               >Cancel</button>
             </div>
+            <Milestones goalId={g.id} />
             {g.plan && (
               <div className="mt-2 grid md:grid-cols-4 gap-3 text-sm">
                 <div className="rounded border border-slate-600 p-2">
@@ -179,6 +189,24 @@ export default function GoalsPage() {
         {goals.length === 0 && (
           <div className="text-center text-slate-400 border border-slate-700 rounded py-10">No goals yet</div>
         )}
+      </div>
+    </div>
+  )
+}
+
+function Milestones({ goalId }: { goalId: string }){
+  const [rows, setRows] = useState<{id:string; name:string; target_amount:number; hit_at?:string|null}[]>([])
+  useEffect(()=>{ (async()=>{ try { const r = await fetch(`${API}/goals/${encodeURIComponent(goalId)}/milestones`); const j = await r.json(); if (Array.isArray(j)) setRows(j); } catch {} })() },[goalId])
+  if (!rows.length) return null;
+  return (
+    <div className="mt-2 text-xs">
+      <div className="text-slate-400 mb-1">Milestones</div>
+      <div className="flex gap-2 flex-wrap">
+        {rows.map(m => (
+          <span key={m.id} className={`px-2 py-0.5 rounded border ${m.hit_at ? 'border-emerald-600 text-emerald-300' : 'border-slate-600 text-slate-300'}`}>
+            {m.name || `$${m.target_amount}`} {m.hit_at ? '✓' : ''}
+          </span>
+        ))}
       </div>
     </div>
   )

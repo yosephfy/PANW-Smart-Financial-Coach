@@ -25,6 +25,9 @@ export default function Header() {
           <Link href="/subscriptions" className="hover:underline">
             Subscriptions
           </Link>
+          <Link href="/budgets" className="hover:underline">
+            Budgets
+          </Link>
           <Link href="/plaid" className="hover:underline">
             Plaid
           </Link>
@@ -50,7 +53,7 @@ export default function Header() {
                   setUserId("");
                 }}
               >
-                Sign out
+                <label className="text-blue-600">Sign out</label>
               </button>
             </>
           ) : (

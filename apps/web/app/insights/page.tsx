@@ -40,13 +40,15 @@ export default function InsightsPage() {
   const [busy, setBusy] = useState(false);
   const [genBusy, setGenBusy] = useState(false);
   const [mlBusy, setMlBusy] = useState(false);
-  const [rewriteBusy, setRewriteBusy] = useState<string | null>(null);
+  // Rewrite no longer needed; server rewrites on generation
 
   const load = async () => {
     setBusy(true);
     try {
       if (!ctx.userId) return;
-      const res = await fetch(`${API}/users/${encodeURIComponent(ctx.userId)}/insights`);
+      const res = await fetch(
+        `${API}/users/${encodeURIComponent(ctx.userId)}/insights`
+      );
       const json = await res.json();
       setRows(Array.isArray(json) ? json : []);
     } finally {
@@ -86,21 +88,7 @@ export default function InsightsPage() {
     }
   };
 
-  const rewrite = async (id: string) => {
-    setRewriteBusy(id);
-    try {
-      if (!ctx.userId) return;
-      await fetch(`${API}/insights/rewrite`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: ctx.userId, insight_id: id, tone: "friendly" }),
-      });
-      await load();
-      ctx.showToast("Insight rewritten", "success");
-    } finally {
-      setRewriteBusy(null);
-    }
-  };
+  // no-op
 
   useEffect(() => {
     if (ctx.userId) load();
@@ -135,12 +123,28 @@ export default function InsightsPage() {
 
       <div className="flex gap-2 items-center">
         <div className="text-sm text-slate-300">Filter</div>
-        <div className="flex gap-2">
-          {["all", "overspend", "trending", "ml_outlier"].map((t) => (
+        <div className="flex gap-2 flex-wrap">
+          {[
+            "all",
+            "overspend",
+            "trending",
+            "ml_outlier",
+            "expense_spike",
+            "merchant_spike",
+            "daily_spend_high",
+            "category_budget_alert",
+            "budget",
+            "budget_alert",
+            "budget_progress",
+            "budget_suggestion",
+            "subscription_detected",
+            "subscription_price_change",
+            "trial_converted",
+          ].map((t) => (
             <button
               key={t}
               onClick={() => setFilter(t)}
-              className={`text-xs px-2 py-0.5 rounded ${
+              className={`text-xs px-2 py-0.5 rounded whitespace-nowrap ${
                 filter === t
                   ? "bg-slate-700 text-white"
                   : "bg-transparent text-slate-300 border border-slate-700"
@@ -168,6 +172,42 @@ export default function InsightsPage() {
                 {r.type === "trending" && (
                   <Badge variant="success">Trending</Badge>
                 )}
+                {r.type === "expense_spike" && (
+                  <Badge variant="warning">Expense Spike</Badge>
+                )}
+                {r.type === "merchant_spike" && (
+                  <Badge variant="info">Merchant Spike</Badge>
+                )}
+                {r.type === "daily_spend_high" && (
+                  <Badge variant="warning">High Daily Spend</Badge>
+                )}
+                {r.type === "category_budget_alert" && (
+                  <Badge variant="warning">Budget Alert</Badge>
+                )}
+                {r.type === "budget" && (
+                  <Badge variant="warning">Budget</Badge>
+                )}
+                {r.type === "budget_alert" && (
+                  <Badge variant="danger">Budget Exceeded</Badge>
+                )}
+                {r.type === "budget_progress" && (
+                  <Badge variant="info">Budget Progress</Badge>
+                )}
+                {r.type === "budget_suggestion" && (
+                  <Badge variant="success">Budget Suggestion</Badge>
+                )}
+                {r.type === "subscription_detected" && (
+                  <Badge variant="success">New Subscription</Badge>
+                )}
+                {r.type === "subscription_price_change" && (
+                  <Badge variant="warning">Price Change</Badge>
+                )}
+                {r.type === "trial_converted" && (
+                  <Badge variant="info">Trial Ended</Badge>
+                )}
+                {r.rewritten_title && (
+                  <Badge variant="info">✨ AI Enhanced</Badge>
+                )}
                 <div className="font-semibold">
                   {r.rewritten_title || r.title}
                 </div>
@@ -178,20 +218,7 @@ export default function InsightsPage() {
               <div className="text-slate-300 mt-1 text-sm">
                 {r.rewritten_body || r.body}
               </div>
-              <div className="mt-2 flex items-center gap-2">
-                <button
-                  onClick={() => rewrite(r.id)}
-                  disabled={rewriteBusy === r.id}
-                  className="rounded bg-slate-600 text-white px-2 py-0.5 text-xs disabled:opacity-50"
-                >
-                  {rewriteBusy === r.id ? "Rewriting…" : "Rewrite"}
-                </button>
-                {r.rewritten_at && (
-                  <span className="text-xs text-slate-400">
-                    rewritten at {r.rewritten_at}
-                  </span>
-                )}
-              </div>
+              {/* Rewrite controls removed */}
               {r.data_json && (
                 <details className="mt-2">
                   <summary className="cursor-pointer text-xs text-slate-400">

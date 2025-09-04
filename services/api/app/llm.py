@@ -22,6 +22,8 @@ def _client() -> OpenAI:
 SYSTEM = (
     "You are a helpful, concise financial coach. Rewrite insights to be friendly, "
     "non-judgmental, and action-oriented. Include concrete numbers from provided data."
+    "format title and body separate lines."
+    "no bullet points. no lists. no asterisks. no bold. no words like 'Title' and 'Body'"
 )
 
 
@@ -51,4 +53,3 @@ def rewrite_insight_llm(title: str, body: str, data_json: str | None = None, ton
     new_title = parts[0].strip() if parts else title
     new_body = " ".join(p.strip() for p in parts[1:] if p.strip()) or text
     return {"title": new_title[:80], "body": new_body[:240]}
-

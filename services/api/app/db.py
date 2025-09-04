@@ -92,3 +92,34 @@ def init_db() -> None:
             )
         except Exception:
             pass
+
+        # Goals contributions and milestones
+        try:
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS goal_contributions (
+                  id TEXT PRIMARY KEY,
+                  goal_id TEXT NOT NULL,
+                  date DATE NOT NULL,
+                  amount NUMERIC NOT NULL,
+                  FOREIGN KEY(goal_id) REFERENCES goals(id)
+                )
+                """
+            )
+            # achieved_at on goals
+            if not _has_column("goals", "achieved_at"):
+                conn.execute("ALTER TABLE goals ADD COLUMN achieved_at TIMESTAMP;")
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS goal_milestones (
+                  id TEXT PRIMARY KEY,
+                  goal_id TEXT NOT NULL,
+                  name TEXT,
+                  target_amount NUMERIC NOT NULL,
+                  hit_at TIMESTAMP,
+                  FOREIGN KEY(goal_id) REFERENCES goals(id)
+                )
+                """
+            )
+        except Exception:
+            pass
