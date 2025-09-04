@@ -5,25 +5,27 @@ The app ingests CSV files or connects to Plaid, categorizes spending, detects re
 
 This hackathon project targets **students, young adults, freelancers and anyone who wants better money visibility**.
 
-
 ## VIDEO PRESENTATION LINK:
+
 <<<<<<< HEAD
 <<<<<<< HEAD
 (https://vimeo.com/1115991923?share=copy)
 
-
 ## Interactive DEMO:
-[https://77f083019ea3.ngrok-free.app](https://77f083019ea3.ngrok-free.app)
-=======
-[https://vimeo.com/1115981585?share=copy](https://vimeo.com/1115981585?share=copy)
-=======
+
+# [https://77f083019ea3.ngrok-free.app](https://77f083019ea3.ngrok-free.app)
+
+# [https://vimeo.com/1115981585?share=copy](https://vimeo.com/1115981585?share=copy)
+
 [https://vimeo.com/1115981585?share=copy](https://vimeo.com/1115981585?share=copy)](https://vimeo.com/1115991923?share=copy)
->>>>>>> c9d39d8 (Fix video presentation link in README)
 
+> > > > > > > c9d39d8 (Fix video presentation link in README)
 
 ## Interactive DEMO:
+
 [https://e31edb5d3763.ngrok-free.app](https://e31edb5d3763.ngrok-free.app)
->>>>>>> 061b22b (Add video presentation and demo links to README)
+
+> > > > > > > 061b22b (Add video presentation and demo links to README)
 
 ---
 
