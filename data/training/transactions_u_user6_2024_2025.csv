@@ -1,0 +1,811 @@
+id,user_id,account_id,date,amount,merchant,description,category,is_recurring,mcc,source
+t1,u_user6,a_checking,2024-01-01,2598.64,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t23,u_user6,a_checking,2024-01-01,-18.34,Panera Bread,PANERA BREAD 5510,restaurants,false,5812,synthetic
+t26,u_user6,a_checking,2024-01-02,-3.62,Starbucks,STARBUCKS 8807,coffee,false,5814,synthetic
+t3,u_user6,a_checking,2024-01-02,-1517.34,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t7,u_user6,a_credit,2024-01-05,-12.99,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t8,u_user6,a_credit,2024-01-06,-7.92,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t9,u_user6,a_credit,2024-01-07,-2.96,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t17,u_user6,a_checking,2024-01-08,-31.34,Chevron,CHEVRON OIL 6524,gas,false,5541,synthetic
+t36,u_user6,a_credit,2024-01-08,-43.27,Amazon,AMZN Mktp US*C6690,shopping,false,5942,synthetic
+t12,u_user6,a_checking,2024-01-09,-91.83,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t20,u_user6,a_checking,2024-01-09,-11.82,Local Diner,,restaurants,false,5812,synthetic
+t4,u_user6,a_checking,2024-01-10,-76.73,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t10,u_user6,a_checking,2024-01-12,-53.65,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t5,u_user6,a_checking,2024-01-12,-61.11,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t21,u_user6,a_checking,2024-01-13,-22.97,Local Diner,,restaurants,false,5812,synthetic
+t32,u_user6,a_checking,2024-01-13,-66.19,Lyft,,rideshare,false,4121,synthetic
+t13,u_user6,a_checking,2024-01-14,-135.22,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t16,u_user6,a_checking,2024-01-14,-53.03,Shell,SHELL OIL 6775,gas,false,5541,synthetic
+t6,u_user6,a_checking,2024-01-14,-45.29,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t18,u_user6,a_checking,2024-01-15,-53.96,Chevron,CHEVRON OIL 3905,gas,false,5541,synthetic
+t2,u_user6,a_checking,2024-01-15,2556.35,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t35,u_user6,a_credit,2024-01-16,-188.42,Target,TARGET #8798,shopping,false,5311,synthetic
+t28,u_user6,a_checking,2024-01-17,-4.05,Starbucks,STARBUCKS 4970,coffee,false,5814,synthetic
+t30,u_user6,a_checking,2024-01-17,-5.89,Starbucks,STARBUCKS 8379,coffee,false,5814,synthetic
+t14,u_user6,a_checking,2024-01-19,-135.26,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t33,u_user6,a_checking,2024-01-21,-40.89,Lyft,LYFT TRIP 5806,rideshare,false,4121,synthetic
+t25,u_user6,a_checking,2024-01-23,-32.53,Chipotle,,restaurants,false,5812,synthetic
+t31,u_user6,a_checking,2024-01-23,-6.58,Starbucks,STARBUCKS 4636,coffee,false,5814,synthetic
+t22,u_user6,a_checking,2024-01-24,-34.27,Panera Bread,PANERA BREAD 2368,restaurants,false,5812,synthetic
+t29,u_user6,a_checking,2024-01-26,-7.04,Starbucks,STARBUCKS 9644,coffee,false,5814,synthetic
+t34,u_user6,a_credit,2024-01-26,-141.23,Amazon,AMZN Mktp US*B5735,shopping,false,5942,synthetic
+t15,u_user6,a_checking,2024-01-29,-90.76,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t11,u_user6,a_checking,2024-01-30,-54.72,GrocerMart,,groceries,false,5411,synthetic
+t24,u_user6,a_checking,2024-01-30,-36.66,Panera Bread,PANERA BREAD 7871,restaurants,false,5812,synthetic
+t19,u_user6,a_checking,2024-01-31,-37.24,Chevron,CHEVRON OIL 4624,gas,false,5541,synthetic
+t27,u_user6,a_checking,2024-01-31,-7.83,Starbucks,STARBUCKS 9331,coffee,false,5814,synthetic
+t37,u_user6,a_checking,2024-01-31,-79.14,Venmo,VENMO CASHOUT,transfer,false,6011,synthetic
+t38,u_user6,a_checking,2024-02-01,2593.89,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t40,u_user6,a_checking,2024-02-02,-1520.23,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t47,u_user6,a_checking,2024-02-03,-140.17,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t50,u_user6,a_checking,2024-02-03,-120.92,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t60,u_user6,a_checking,2024-02-04,-21.77,Chipotle,CHIPOTLE 8660,restaurants,false,5812,synthetic
+t44,u_user6,a_credit,2024-02-05,-12.39,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t45,u_user6,a_credit,2024-02-06,-7.88,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t46,u_user6,a_credit,2024-02-07,-2.85,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t62,u_user6,a_checking,2024-02-07,-4.65,Starbucks,STARBUCKS 6259,coffee,false,5814,synthetic
+t61,u_user6,a_checking,2024-02-08,-35.18,Panera Bread,PANERA BREAD 1180,restaurants,false,5812,synthetic
+t72,u_user6,a_credit,2024-02-09,-468.85,United Airlines,UA 142044,travel,false,4511,synthetic
+t41,u_user6,a_checking,2024-02-10,-82.51,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t58,u_user6,a_checking,2024-02-10,-34.65,Panera Bread,PANERA BREAD 1333,restaurants,false,5812,synthetic
+t42,u_user6,a_checking,2024-02-12,-57.78,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t43,u_user6,a_checking,2024-02-14,-46.9,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t67,u_user6,a_checking,2024-02-14,-42.62,Lyft,LYFT TRIP 3364,rideshare,false,4121,synthetic
+t39,u_user6,a_checking,2024-02-15,2557.31,Acme Inc.,,Income,true,0,synthetic
+t48,u_user6,a_checking,2024-02-15,-114.93,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t52,u_user6,a_checking,2024-02-16,-85.87,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t59,u_user6,a_checking,2024-02-16,-17.99,Panera Bread,PANERA BREAD 8502,restaurants,false,5812,synthetic
+t54,u_user6,a_checking,2024-02-17,-68.01,Shell,,gas,false,5541,synthetic
+t55,u_user6,a_checking,2024-02-17,-46.18,Chevron,CHEVRON OIL 5447,gas,false,5541,synthetic
+t63,u_user6,a_checking,2024-02-17,-4.12,Starbucks,STARBUCKS 6973,coffee,false,5814,synthetic
+t73,u_user6,a_checking,2024-02-17,-233.89,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t56,u_user6,a_checking,2024-02-18,-26.61,Chipotle,CHIPOTLE 6942,restaurants,false,5812,synthetic
+t70,u_user6,a_credit,2024-02-20,-37.06,Amazon,AMZN Mktp US*C4411,shopping,false,5942,synthetic
+t53,u_user6,a_checking,2024-02-21,-42.87,Chevron,CHEVRON OIL 2297,gas,false,5541,synthetic
+t65,u_user6,a_checking,2024-02-21,-3.43,Starbucks,STARBUCKS 9949,coffee,false,5814,synthetic
+t66,u_user6,a_checking,2024-02-22,-4.98,Starbucks,STARBUCKS 7829,coffee,false,5814,synthetic
+t57,u_user6,a_checking,2024-02-23,-30.05,Local Diner,LOCAL DINER 9051,restaurants,false,5812,synthetic
+t49,u_user6,a_checking,2024-02-24,-105.93,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t51,u_user6,a_checking,2024-02-27,-89.18,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t69,u_user6,a_checking,2024-02-27,-49.72,Uber,UBER TRIP 3270,rideshare,false,4121,synthetic
+t64,u_user6,a_checking,2024-02-29,-5.31,Starbucks,STARBUCKS 7504,coffee,false,5814,synthetic
+t68,u_user6,a_checking,2024-02-29,-55.1,Lyft,,rideshare,false,4121,synthetic
+t71,u_user6,a_credit,2024-02-29,-190.38,Amazon,AMZN Mktp US*E1988,shopping,false,5942,synthetic
+t74,u_user6,a_checking,2024-03-01,2447.47,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t76,u_user6,a_checking,2024-03-02,-1478.23,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t97,u_user6,a_checking,2024-03-03,-5.32,Starbucks,,coffee,false,5814,synthetic
+t80,u_user6,a_credit,2024-03-05,-12.84,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t88,u_user6,a_checking,2024-03-05,-60.47,Shell,SHELL OIL 5691,gas,false,5541,synthetic
+t89,u_user6,a_checking,2024-03-05,-79.43,Chevron,CHEVRON OIL 3661,gas,false,5541,synthetic
+t81,u_user6,a_credit,2024-03-06,-8.36,Netflix,,subscription,true,5815,synthetic
+t86,u_user6,a_checking,2024-03-06,-56.93,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t96,u_user6,a_checking,2024-03-06,-28.72,Local Diner,,restaurants,false,5812,synthetic
+t106,u_user6,a_credit,2024-03-07,-177.61,Best Buy,BESTBUY #2982,electronics,false,5732,synthetic
+t82,u_user6,a_credit,2024-03-07,-3.11,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t94,u_user6,a_checking,2024-03-07,-38.04,Panera Bread,PANERA BREAD 3400,restaurants,false,5812,synthetic
+t99,u_user6,a_checking,2024-03-07,-3.6,Starbucks,STARBUCKS 6188,coffee,false,5814,synthetic
+t77,u_user6,a_checking,2024-03-10,-78.95,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t105,u_user6,a_checking,2024-03-12,-56.78,Uber,UBER TRIP 3030,rideshare,false,4121,synthetic
+t78,u_user6,a_checking,2024-03-12,-62.77,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t103,u_user6,a_checking,2024-03-13,-3.74,Starbucks,,coffee,false,5814,synthetic
+t107,u_user6,a_credit,2024-03-13,-45.77,Target,TARGET #1526,shopping,false,5311,synthetic
+t79,u_user6,a_checking,2024-03-14,-45.96,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t75,u_user6,a_checking,2024-03-15,2575.3,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t91,u_user6,a_checking,2024-03-15,-21.35,Chipotle,CHIPOTLE 5698,restaurants,false,5812,synthetic
+t92,u_user6,a_checking,2024-03-15,-20.71,Chipotle,CHIPOTLE 5313,restaurants,false,5812,synthetic
+t87,u_user6,a_checking,2024-03-16,-32.23,Shell,SHELL OIL 4415,gas,false,5541,synthetic
+t90,u_user6,a_checking,2024-03-16,-34.69,Chevron,CHEVRON OIL 7501,gas,false,5541,synthetic
+t95,u_user6,a_checking,2024-03-16,-29.93,Panera Bread,PANERA BREAD 5306,restaurants,false,5812,synthetic
+t83,u_user6,a_checking,2024-03-19,-80.14,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t98,u_user6,a_checking,2024-03-19,-4.02,Starbucks,STARBUCKS 9191,coffee,false,5814,synthetic
+t104,u_user6,a_checking,2024-03-23,-21.11,Uber,UBER TRIP 3225,rideshare,false,4121,synthetic
+t108,u_user6,a_credit,2024-03-23,-572.66,American Airlines,AA 624209,travel,false,4511,synthetic
+t85,u_user6,a_checking,2024-03-24,-72.71,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t100,u_user6,a_checking,2024-03-26,-3.64,Starbucks,STARBUCKS 6043,coffee,false,5814,synthetic
+t101,u_user6,a_checking,2024-03-28,-4.34,Starbucks,STARBUCKS 9428,coffee,false,5814,synthetic
+t84,u_user6,a_checking,2024-03-29,-73.26,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t102,u_user6,a_checking,2024-03-30,-5.36,Starbucks,STARBUCKS 9356,coffee,false,5814,synthetic
+t109,u_user6,a_checking,2024-03-30,136.34,Venmo,VENMO CASHIN,transfer,false,6011,synthetic
+t93,u_user6,a_checking,2024-03-30,-26.31,Local Diner,LOCAL DINER 5033,restaurants,false,5812,synthetic
+t110,u_user6,a_checking,2024-04-01,2579.97,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t131,u_user6,a_checking,2024-04-01,-20.53,Chipotle,CHIPOTLE 6479,restaurants,false,5812,synthetic
+t133,u_user6,a_checking,2024-04-01,-3.22,Starbucks,STARBUCKS 3921,coffee,false,5814,synthetic
+t112,u_user6,a_checking,2024-04-02,-1511.01,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t144,u_user6,a_checking,2024-04-02,-133.88,Kaiser,Kaiser Permanente,healthcare,false,8011,synthetic
+t120,u_user6,a_checking,2024-04-03,-98.15,Whole Foods,,groceries,false,5411,synthetic
+t139,u_user6,a_checking,2024-04-03,-2.98,Starbucks,,coffee,false,5814,synthetic
+t116,u_user6,a_credit,2024-04-05,-12.65,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t125,u_user6,a_checking,2024-04-05,-39.24,Chevron,CHEVRON OIL 9862,gas,false,5541,synthetic
+t128,u_user6,a_checking,2024-04-05,-22.7,Panera Bread,PANERA BREAD 9710,restaurants,false,5812,synthetic
+t140,u_user6,a_checking,2024-04-05,-4.96,Starbucks,STARBUCKS 1955,coffee,false,5814,synthetic
+t117,u_user6,a_credit,2024-04-06,-7.79,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t134,u_user6,a_checking,2024-04-06,-4.11,Starbucks,STARBUCKS 1836,coffee,false,5814,synthetic
+t137,u_user6,a_checking,2024-04-06,-4.28,Starbucks,STARBUCKS 5452,coffee,false,5814,synthetic
+t138,u_user6,a_checking,2024-04-06,-5.0,Starbucks,STARBUCKS 3420,coffee,false,5814,synthetic
+t118,u_user6,a_credit,2024-04-07,-2.87,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t119,u_user6,a_checking,2024-04-07,-74.19,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t124,u_user6,a_checking,2024-04-08,-66.87,Chevron,CHEVRON OIL 2933,gas,false,5541,synthetic
+t122,u_user6,a_checking,2024-04-09,-52.86,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t135,u_user6,a_checking,2024-04-09,-6.3,Starbucks,STARBUCKS 7707,coffee,false,5814,synthetic
+t113,u_user6,a_checking,2024-04-10,-79.47,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t114,u_user6,a_checking,2024-04-12,-62.86,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t115,u_user6,a_checking,2024-04-14,-43.61,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t136,u_user6,a_checking,2024-04-14,-4.99,Starbucks,STARBUCKS 1804,coffee,false,5814,synthetic
+t141,u_user6,a_checking,2024-04-14,-29.41,Lyft,,rideshare,false,4121,synthetic
+t111,u_user6,a_checking,2024-04-15,2420.16,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t121,u_user6,a_checking,2024-04-16,-107.1,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t142,u_user6,a_credit,2024-04-16,-92.95,Amazon,AMZN Mktp US*G1759,shopping,false,5942,synthetic
+t143,u_user6,a_credit,2024-04-17,-86.32,Amazon,AMZN Mktp US*D2665,shopping,false,5942,synthetic
+t129,u_user6,a_checking,2024-04-18,-28.76,Panera Bread,,restaurants,false,5812,synthetic
+t123,u_user6,a_checking,2024-04-20,-98.68,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t132,u_user6,a_checking,2024-04-23,-15.74,Chipotle,CHIPOTLE 7799,restaurants,false,5812,synthetic
+t130,u_user6,a_checking,2024-04-27,-35.53,Panera Bread,PANERA BREAD 9638,restaurants,false,5812,synthetic
+t127,u_user6,a_checking,2024-04-28,-30.49,Local Diner,LOCAL DINER 8445,restaurants,false,5812,synthetic
+t126,u_user6,a_checking,2024-04-30,-52.16,Shell,,gas,false,5541,synthetic
+t145,u_user6,a_checking,2024-05-01,2469.9,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t147,u_user6,a_checking,2024-05-02,-1469.4,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t157,u_user6,a_checking,2024-05-02,-54.8,Shell,SHELL OIL 4142,gas,false,5541,synthetic
+t169,u_user6,a_checking,2024-05-04,-6.09,Starbucks,STARBUCKS 3741,coffee,false,5814,synthetic
+t151,u_user6,a_credit,2024-05-05,-13.5,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t152,u_user6,a_credit,2024-05-06,-8.19,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t153,u_user6,a_credit,2024-05-07,-3.09,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t156,u_user6,a_checking,2024-05-08,-43.82,GrocerMart,,groceries,false,5411,synthetic
+t162,u_user6,a_checking,2024-05-08,-19.85,Panera Bread,PANERA BREAD 3200,restaurants,false,5812,synthetic
+t148,u_user6,a_checking,2024-05-10,-83.47,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t149,u_user6,a_checking,2024-05-12,-58.35,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t154,u_user6,a_checking,2024-05-12,-93.42,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t173,u_user6,a_credit,2024-05-12,-58.03,Amazon,AMZN Mktp US*H7952,shopping,false,5942,synthetic
+t166,u_user6,a_checking,2024-05-13,-4.11,Starbucks,STARBUCKS 6834,coffee,false,5814,synthetic
+t150,u_user6,a_checking,2024-05-14,-45.94,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t155,u_user6,a_checking,2024-05-14,-53.01,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t146,u_user6,a_checking,2024-05-15,2415.27,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t165,u_user6,a_checking,2024-05-15,-6.27,Starbucks,STARBUCKS 8749,coffee,false,5814,synthetic
+t168,u_user6,a_checking,2024-05-15,-3.94,Starbucks,STARBUCKS 3261,coffee,false,5814,synthetic
+t170,u_user6,a_checking,2024-05-16,-11.07,Lyft,LYFT TRIP 9790,rideshare,false,4121,synthetic
+t159,u_user6,a_checking,2024-05-19,-33.25,Local Diner,LOCAL DINER 2744,restaurants,false,5812,synthetic
+t163,u_user6,a_checking,2024-05-19,-4.29,Starbucks,STARBUCKS 7520,coffee,false,5814,synthetic
+t167,u_user6,a_checking,2024-05-21,-4.72,Starbucks,STARBUCKS 8731,coffee,false,5814,synthetic
+t174,u_user6,a_checking,2024-05-21,-119.84,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t160,u_user6,a_checking,2024-05-24,-30.29,Chipotle,CHIPOTLE 7031,restaurants,false,5812,synthetic
+t161,u_user6,a_checking,2024-05-24,-25.44,Local Diner,LOCAL DINER 2724,restaurants,false,5812,synthetic
+t172,u_user6,a_credit,2024-05-26,-229.2,Best Buy,BESTBUY #3232,electronics,false,5732,synthetic
+t158,u_user6,a_checking,2024-05-27,-53.07,Shell,SHELL OIL 2499,gas,false,5541,synthetic
+t164,u_user6,a_checking,2024-05-27,-4.43,Starbucks,STARBUCKS 7918,coffee,false,5814,synthetic
+t171,u_user6,a_credit,2024-05-31,-311.3,Target,TARGET #2154,shopping,false,5311,synthetic
+t175,u_user6,a_checking,2024-06-01,2473.34,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t191,u_user6,a_checking,2024-06-01,-12.22,Chipotle,,restaurants,false,5812,synthetic
+t177,u_user6,a_checking,2024-06-02,-1470.74,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t195,u_user6,a_checking,2024-06-04,-3.76,Starbucks,STARBUCKS 4651,coffee,false,5814,synthetic
+t181,u_user6,a_credit,2024-06-05,-13.33,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t204,u_user6,a_checking,2024-06-05,-77.59,Venmo,VENMO CASHOUT,transfer,false,6011,synthetic
+t182,u_user6,a_credit,2024-06-06,-7.88,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t187,u_user6,a_checking,2024-06-06,-79.26,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t183,u_user6,a_credit,2024-06-07,-2.99,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t201,u_user6,a_credit,2024-06-07,-348.09,Amazon,AMZN Mktp US*A7251,shopping,false,5942,synthetic
+t194,u_user6,a_checking,2024-06-09,-3.76,Starbucks,STARBUCKS 6163,coffee,false,5814,synthetic
+t178,u_user6,a_checking,2024-06-10,-82.48,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t189,u_user6,a_checking,2024-06-10,-36.0,Shell,SHELL OIL 1525,gas,false,5541,synthetic
+t199,u_user6,a_checking,2024-06-10,-32.92,Uber,UBER TRIP 1254,rideshare,false,4121,synthetic
+t179,u_user6,a_checking,2024-06-12,-57.27,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t198,u_user6,a_checking,2024-06-13,-34.91,Uber,UBER TRIP 6402,rideshare,false,4121,synthetic
+t180,u_user6,a_checking,2024-06-14,-43.7,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t176,u_user6,a_checking,2024-06-15,2387.01,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t190,u_user6,a_checking,2024-06-15,-74.95,Chevron,CHEVRON OIL 8304,gas,false,5541,synthetic
+t192,u_user6,a_checking,2024-06-18,-19.41,Chipotle,CHIPOTLE 2785,restaurants,false,5812,synthetic
+t203,u_user6,a_checking,2024-06-19,-76.37,Walgreens Clinic,WALGREENS CLINIC,healthcare,false,8011,synthetic
+t200,u_user6,a_credit,2024-06-20,-240.45,Amazon,AMZN Mktp US*H8756,shopping,false,5942,synthetic
+t188,u_user6,a_checking,2024-06-21,-120.8,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t185,u_user6,a_checking,2024-06-22,-92.07,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t196,u_user6,a_checking,2024-06-23,-5.74,Starbucks,STARBUCKS 9216,coffee,false,5814,synthetic
+t184,u_user6,a_checking,2024-06-25,-69.79,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t197,u_user6,a_checking,2024-06-25,-6.26,Starbucks,STARBUCKS 2355,coffee,false,5814,synthetic
+t186,u_user6,a_checking,2024-06-29,-74.84,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t202,u_user6,a_credit,2024-06-29,-374.98,United Airlines,UA 436476,travel,false,4511,synthetic
+t193,u_user6,a_checking,2024-06-30,-41.34,Panera Bread,PANERA BREAD 6743,restaurants,false,5812,synthetic
+t205,u_user6,a_checking,2024-07-01,2386.49,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t216,u_user6,a_checking,2024-07-01,-82.66,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t227,u_user6,a_checking,2024-07-01,-3.51,Starbucks,STARBUCKS 9366,coffee,false,5814,synthetic
+t207,u_user6,a_checking,2024-07-02,-1454.24,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t217,u_user6,a_checking,2024-07-02,-71.77,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t222,u_user6,a_checking,2024-07-03,-26.35,Panera Bread,PANERA BREAD 4453,restaurants,false,5812,synthetic
+t224,u_user6,a_checking,2024-07-03,-3.84,Starbucks,STARBUCKS 6130,coffee,false,5814,synthetic
+t233,u_user6,a_credit,2024-07-04,-534.52,United Airlines,UA 369548,travel,false,4511,synthetic
+t211,u_user6,a_credit,2024-07-05,-13.12,Spotify,,subscription,true,5815,synthetic
+t212,u_user6,a_credit,2024-07-06,-8.23,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t213,u_user6,a_credit,2024-07-07,-3.11,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t219,u_user6,a_checking,2024-07-07,-32.98,Shell,,gas,false,5541,synthetic
+t223,u_user6,a_checking,2024-07-07,-34.94,Panera Bread,PANERA BREAD 6208,restaurants,false,5812,synthetic
+t234,u_user6,a_checking,2024-07-08,-224.98,Walgreens Clinic,WALGREENS CLINIC,healthcare,false,8011,synthetic
+t208,u_user6,a_checking,2024-07-10,-78.22,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t209,u_user6,a_checking,2024-07-12,-61.58,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t235,u_user6,a_checking,2024-07-13,-60.82,Kaiser,Kaiser Permanente,healthcare,false,8011,synthetic
+t210,u_user6,a_checking,2024-07-14,-42.8,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t232,u_user6,a_credit,2024-07-14,-265.02,Amazon,AMZN Mktp US*G2850,shopping,false,5942,synthetic
+t206,u_user6,a_checking,2024-07-15,2377.96,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t214,u_user6,a_checking,2024-07-15,-103.38,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t218,u_user6,a_checking,2024-07-18,-65.15,Chevron,CHEVRON OIL 9046,gas,false,5541,synthetic
+t229,u_user6,a_checking,2024-07-20,-6.17,Starbucks,STARBUCKS 4967,coffee,false,5814,synthetic
+t215,u_user6,a_checking,2024-07-25,-48.76,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t225,u_user6,a_checking,2024-07-28,-7.1,Starbucks,STARBUCKS 7705,coffee,false,5814,synthetic
+t226,u_user6,a_checking,2024-07-28,-3.68,Starbucks,STARBUCKS 4877,coffee,false,5814,synthetic
+t231,u_user6,a_checking,2024-07-28,-35.05,Uber,UBER TRIP 8163,rideshare,false,4121,synthetic
+t228,u_user6,a_checking,2024-07-29,-5.51,Starbucks,STARBUCKS 7550,coffee,false,5814,synthetic
+t230,u_user6,a_checking,2024-07-30,-3.5,Starbucks,STARBUCKS 7125,coffee,false,5814,synthetic
+t220,u_user6,a_checking,2024-07-31,-14.56,Local Diner,LOCAL DINER 6087,restaurants,false,5812,synthetic
+t221,u_user6,a_checking,2024-07-31,-23.89,Chipotle,CHIPOTLE 7409,restaurants,false,5812,synthetic
+t236,u_user6,a_checking,2024-08-01,2513.95,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t266,u_user6,a_checking,2024-08-01,-64.18,Uber,UBER TRIP 9801,rideshare,false,4121,synthetic
+t238,u_user6,a_checking,2024-08-02,-1524.1,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t242,u_user6,a_credit,2024-08-05,-12.53,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t269,u_user6,a_credit,2024-08-05,-90.53,Amazon,AMZN Mktp US*G8660,shopping,false,5942,synthetic
+t243,u_user6,a_credit,2024-08-06,-8.21,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t247,u_user6,a_checking,2024-08-06,-94.52,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t254,u_user6,a_checking,2024-08-06,-54.43,Chevron,CHEVRON OIL 1056,gas,false,5541,synthetic
+t244,u_user6,a_credit,2024-08-07,-2.88,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t261,u_user6,a_checking,2024-08-07,-3.12,Starbucks,,coffee,false,5814,synthetic
+t253,u_user6,a_checking,2024-08-08,-30.33,Shell,SHELL OIL 6243,gas,false,5541,synthetic
+t263,u_user6,a_checking,2024-08-08,-6.8,Starbucks,STARBUCKS 1327,coffee,false,5814,synthetic
+t270,u_user6,a_credit,2024-08-09,-426.82,United Airlines,UA 737723,travel,false,4511,synthetic
+t271,u_user6,a_checking,2024-08-09,-162.77,City Dental,CITY DENTAL,healthcare,false,8011,synthetic
+t239,u_user6,a_checking,2024-08-10,-78.66,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t267,u_user6,a_credit,2024-08-10,-275.97,Target,,shopping,false,5311,synthetic
+t256,u_user6,a_checking,2024-08-11,-30.97,Panera Bread,PANERA BREAD 1259,restaurants,false,5812,synthetic
+t264,u_user6,a_checking,2024-08-11,-30.6,Lyft,LYFT TRIP 2307,rideshare,false,4121,synthetic
+t240,u_user6,a_checking,2024-08-12,-57.03,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t251,u_user6,a_checking,2024-08-13,-54.98,Chevron,CHEVRON OIL 5719,gas,false,5541,synthetic
+t241,u_user6,a_checking,2024-08-14,-43.54,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t248,u_user6,a_checking,2024-08-14,-68.67,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t237,u_user6,a_checking,2024-08-15,2439.27,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t257,u_user6,a_checking,2024-08-15,-37.17,Local Diner,LOCAL DINER 4157,restaurants,false,5812,synthetic
+t249,u_user6,a_checking,2024-08-17,-72.08,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t250,u_user6,a_checking,2024-08-17,-113.62,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t252,u_user6,a_checking,2024-08-19,-37.73,Chevron,CHEVRON OIL 1547,gas,false,5541,synthetic
+t259,u_user6,a_checking,2024-08-19,-3.9,Starbucks,,coffee,false,5814,synthetic
+t268,u_user6,a_credit,2024-08-21,-349.4,Best Buy,BESTBUY #4253,electronics,false,5732,synthetic
+t245,u_user6,a_checking,2024-08-22,-57.53,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t258,u_user6,a_checking,2024-08-24,-22.41,Panera Bread,PANERA BREAD 9024,restaurants,false,5812,synthetic
+t246,u_user6,a_checking,2024-08-27,-129.54,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t255,u_user6,a_checking,2024-08-29,-42.76,Chipotle,,restaurants,false,5812,synthetic
+t260,u_user6,a_checking,2024-08-29,-5.77,Starbucks,STARBUCKS 8228,coffee,false,5814,synthetic
+t262,u_user6,a_checking,2024-08-30,-4.57,Starbucks,STARBUCKS 2481,coffee,false,5814,synthetic
+t265,u_user6,a_checking,2024-08-30,-56.88,Uber,UBER TRIP 6335,rideshare,false,4121,synthetic
+t272,u_user6,a_checking,2024-08-31,-68.22,Kaiser,Kaiser Permanente,healthcare,false,8011,synthetic
+t273,u_user6,a_checking,2024-09-01,2408.47,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t275,u_user6,a_checking,2024-09-02,-1570.6,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t283,u_user6,a_checking,2024-09-04,-135.66,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t279,u_user6,a_credit,2024-09-05,-13.4,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t287,u_user6,a_checking,2024-09-05,-14.03,Panera Bread,,restaurants,false,5812,synthetic
+t295,u_user6,a_checking,2024-09-05,-7.14,Starbucks,STARBUCKS 7393,coffee,false,5814,synthetic
+t300,u_user6,a_checking,2024-09-05,-213.07,Walgreens Clinic,WALGREENS CLINIC,healthcare,false,8011,synthetic
+t280,u_user6,a_credit,2024-09-06,-7.78,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t281,u_user6,a_credit,2024-09-07,-2.93,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t297,u_user6,a_credit,2024-09-07,-310.78,Best Buy,BESTBUY #3005,electronics,false,5732,synthetic
+t302,u_user6,a_checking,2024-09-08,-187.46,Venmo,VENMO CASHOUT,transfer,false,6011,synthetic
+t293,u_user6,a_checking,2024-09-09,-4.78,Starbucks,STARBUCKS 7473,coffee,false,5814,synthetic
+t276,u_user6,a_checking,2024-09-10,-78.6,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t289,u_user6,a_checking,2024-09-11,-22.25,Chipotle,CHIPOTLE 7034,restaurants,false,5812,synthetic
+t290,u_user6,a_checking,2024-09-11,-33.6,Panera Bread,PANERA BREAD 3163,restaurants,false,5812,synthetic
+t277,u_user6,a_checking,2024-09-12,-58.74,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t291,u_user6,a_checking,2024-09-13,-28.8,Panera Bread,PANERA BREAD 8179,restaurants,false,5812,synthetic
+t278,u_user6,a_checking,2024-09-14,-46.78,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t274,u_user6,a_checking,2024-09-15,2470.17,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t285,u_user6,a_checking,2024-09-17,-74.62,Chevron,CHEVRON OIL 3051,gas,false,5541,synthetic
+t288,u_user6,a_checking,2024-09-19,-23.1,Panera Bread,PANERA BREAD 4608,restaurants,false,5812,synthetic
+t301,u_user6,a_checking,2024-09-20,-234.71,Walgreens Clinic,WALGREENS CLINIC,healthcare,false,8011,synthetic
+t303,u_user6,a_checking,2024-09-23,-72.77,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t296,u_user6,a_credit,2024-09-24,-348.68,Amazon,AMZN Mktp US*C6305,shopping,false,5942,synthetic
+t282,u_user6,a_checking,2024-09-27,-139.46,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t284,u_user6,a_checking,2024-09-28,-68.16,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t286,u_user6,a_checking,2024-09-28,-29.56,Shell,SHELL OIL 6274,gas,false,5541,synthetic
+t292,u_user6,a_checking,2024-09-28,-4.93,Starbucks,STARBUCKS 7038,coffee,false,5814,synthetic
+t298,u_user6,a_credit,2024-09-28,-31.75,Amazon,AMZN Mktp US*B6691,shopping,false,5942,synthetic
+t299,u_user6,a_credit,2024-09-29,-240.37,United Airlines,UA 693465,travel,false,4511,synthetic
+t294,u_user6,a_checking,2024-09-30,-4.9,Starbucks,STARBUCKS 7722,coffee,false,5814,synthetic
+t304,u_user6,a_checking,2024-10-01,2605.18,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t314,u_user6,a_checking,2024-10-01,-74.13,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t316,u_user6,a_checking,2024-10-01,-129.25,GrocerMart,,groceries,false,5411,synthetic
+t323,u_user6,a_checking,2024-10-01,-16.91,Panera Bread,PANERA BREAD 3542,restaurants,false,5812,synthetic
+t306,u_user6,a_checking,2024-10-02,-1521.51,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t322,u_user6,a_checking,2024-10-04,-30.09,Panera Bread,PANERA BREAD 3769,restaurants,false,5812,synthetic
+t310,u_user6,a_credit,2024-10-05,-13.29,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t311,u_user6,a_credit,2024-10-06,-7.63,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t312,u_user6,a_credit,2024-10-07,-3.03,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t330,u_user6,a_checking,2024-10-07,-7.17,Starbucks,STARBUCKS 7547,coffee,false,5814,synthetic
+t333,u_user6,a_checking,2024-10-07,-3.55,Starbucks,STARBUCKS 6293,coffee,false,5814,synthetic
+t324,u_user6,a_checking,2024-10-09,-41.98,Local Diner,,restaurants,false,5812,synthetic
+t307,u_user6,a_checking,2024-10-10,-76.17,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t308,u_user6,a_checking,2024-10-12,-60.5,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t335,u_user6,a_credit,2024-10-12,-146.27,Amazon,AMZN Mktp US*G8076,shopping,false,5942,synthetic
+t329,u_user6,a_checking,2024-10-13,-3.29,Starbucks,STARBUCKS 6293,coffee,false,5814,synthetic
+t309,u_user6,a_checking,2024-10-14,-43.2,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t325,u_user6,a_checking,2024-10-14,-17.43,Chipotle,CHIPOTLE 2316,restaurants,false,5812,synthetic
+t305,u_user6,a_checking,2024-10-15,2559.28,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t336,u_user6,a_credit,2024-10-15,-225.52,Target,TARGET #3925,shopping,false,5311,synthetic
+t319,u_user6,a_checking,2024-10-17,-31.15,Shell,SHELL OIL 9506,gas,false,5541,synthetic
+t328,u_user6,a_checking,2024-10-17,-6.05,Starbucks,STARBUCKS 4993,coffee,false,5814,synthetic
+t320,u_user6,a_checking,2024-10-18,-51.61,Chevron,CHEVRON OIL 3309,gas,false,5541,synthetic
+t318,u_user6,a_checking,2024-10-20,-58.06,Shell,SHELL OIL 3193,gas,false,5541,synthetic
+t331,u_user6,a_checking,2024-10-20,-3.26,Starbucks,STARBUCKS 4879,coffee,false,5814,synthetic
+t337,u_user6,a_credit,2024-10-22,-247.55,Amazon,AMZN Mktp US*D5891,shopping,false,5942,synthetic
+t327,u_user6,a_checking,2024-10-23,-4.21,Starbucks,STARBUCKS 3807,coffee,false,5814,synthetic
+t315,u_user6,a_checking,2024-10-24,-137.52,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t326,u_user6,a_checking,2024-10-24,-12.76,Panera Bread,PANERA BREAD 3113,restaurants,false,5812,synthetic
+t317,u_user6,a_checking,2024-10-27,-113.38,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t334,u_user6,a_checking,2024-10-27,-7.6,Starbucks,STARBUCKS 7656,coffee,false,5814,synthetic
+t338,u_user6,a_checking,2024-10-29,-119.31,Venmo,VENMO CASHOUT,transfer,false,6011,synthetic
+t321,u_user6,a_checking,2024-10-30,-10.99,Panera Bread,PANERA BREAD 9360,restaurants,false,5812,synthetic
+t332,u_user6,a_checking,2024-10-30,-5.24,Starbucks,STARBUCKS 2237,coffee,false,5814,synthetic
+t313,u_user6,a_checking,2024-10-31,-58.28,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t339,u_user6,a_checking,2024-10-31,173.65,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t340,u_user6,a_checking,2024-11-01,2379.9,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t342,u_user6,a_checking,2024-11-02,-1553.15,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t350,u_user6,a_checking,2024-11-02,-98.43,GrocerMart,,groceries,false,5411,synthetic
+t353,u_user6,a_checking,2024-11-02,-32.46,Shell,SHELL OIL 2726,gas,false,5541,synthetic
+t366,u_user6,a_checking,2024-11-03,-88.57,Kaiser,Kaiser Permanente,healthcare,false,8011,synthetic
+t349,u_user6,a_checking,2024-11-04,-46.33,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t364,u_user6,a_credit,2024-11-04,-117.19,Amazon,AMZN Mktp US*G2040,shopping,false,5942,synthetic
+t346,u_user6,a_credit,2024-11-05,-13.45,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t360,u_user6,a_checking,2024-11-05,-3.49,Starbucks,STARBUCKS 4796,coffee,false,5814,synthetic
+t347,u_user6,a_credit,2024-11-06,-8.21,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t359,u_user6,a_checking,2024-11-06,-35.15,Chipotle,CHIPOTLE 6708,restaurants,false,5812,synthetic
+t348,u_user6,a_credit,2024-11-07,-2.85,Apple,,subscription,true,5734,synthetic
+t354,u_user6,a_checking,2024-11-09,-48.42,Shell,,gas,false,5541,synthetic
+t343,u_user6,a_checking,2024-11-10,-80.93,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t363,u_user6,a_checking,2024-11-10,-3.4,Starbucks,STARBUCKS 9300,coffee,false,5814,synthetic
+t344,u_user6,a_checking,2024-11-12,-60.6,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t365,u_user6,a_credit,2024-11-12,-246.69,Target,TARGET #9947,shopping,false,5311,synthetic
+t368,u_user6,a_checking,2024-11-12,-120.03,Venmo,VENMO CASHOUT,transfer,false,6011,synthetic
+t345,u_user6,a_checking,2024-11-14,-44.19,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t358,u_user6,a_checking,2024-11-14,-16.44,Panera Bread,PANERA BREAD 4987,restaurants,false,5812,synthetic
+t341,u_user6,a_checking,2024-11-15,2380.98,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t356,u_user6,a_checking,2024-11-15,-14.41,Local Diner,LOCAL DINER 9769,restaurants,false,5812,synthetic
+t367,u_user6,a_checking,2024-11-15,-92.55,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t362,u_user6,a_checking,2024-11-19,-6.69,Starbucks,STARBUCKS 7135,coffee,false,5814,synthetic
+t351,u_user6,a_checking,2024-11-22,-128.49,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t357,u_user6,a_checking,2024-11-22,-28.03,Chipotle,CHIPOTLE 7058,restaurants,false,5812,synthetic
+t361,u_user6,a_checking,2024-11-24,-3.57,Starbucks,STARBUCKS 9105,coffee,false,5814,synthetic
+t352,u_user6,a_checking,2024-11-27,-81.28,Chevron,CHEVRON OIL 4080,gas,false,5541,synthetic
+t355,u_user6,a_checking,2024-11-29,-42.27,Shell,SHELL OIL 4365,gas,false,5541,synthetic
+t369,u_user6,a_checking,2024-12-01,2567.02,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t383,u_user6,a_checking,2024-12-01,-31.06,Shell,SHELL OIL 3694,gas,false,5541,synthetic
+t371,u_user6,a_checking,2024-12-02,-1483.05,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t378,u_user6,a_checking,2024-12-03,-58.79,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t398,u_user6,a_checking,2024-12-04,-6.92,Starbucks,,coffee,false,5814,synthetic
+t375,u_user6,a_credit,2024-12-05,-12.4,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t376,u_user6,a_credit,2024-12-06,-8.18,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t377,u_user6,a_credit,2024-12-07,-2.91,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t402,u_user6,a_checking,2024-12-09,-221.77,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t372,u_user6,a_checking,2024-12-10,-77.52,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t384,u_user6,a_checking,2024-12-10,-28.72,Chevron,CHEVRON OIL 3100,gas,false,5541,synthetic
+t389,u_user6,a_checking,2024-12-11,-36.37,Chipotle,,restaurants,false,5812,synthetic
+t373,u_user6,a_checking,2024-12-12,-59.97,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t391,u_user6,a_checking,2024-12-12,-24.89,Panera Bread,PANERA BREAD 6880,restaurants,false,5812,synthetic
+t400,u_user6,a_checking,2024-12-12,-64.77,Lyft,LYFT TRIP 2115,rideshare,false,4121,synthetic
+t379,u_user6,a_checking,2024-12-13,-108.62,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t380,u_user6,a_checking,2024-12-13,-66.44,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t374,u_user6,a_checking,2024-12-14,-43.87,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t370,u_user6,a_checking,2024-12-15,2471.05,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t392,u_user6,a_checking,2024-12-15,-4.86,Starbucks,STARBUCKS 6247,coffee,false,5814,synthetic
+t386,u_user6,a_checking,2024-12-16,-10.67,Panera Bread,PANERA BREAD 6659,restaurants,false,5812,synthetic
+t388,u_user6,a_checking,2024-12-17,-27.72,Panera Bread,PANERA BREAD 6042,restaurants,false,5812,synthetic
+t401,u_user6,a_credit,2024-12-18,-135.66,Best Buy,BESTBUY #6800,electronics,false,5732,synthetic
+t385,u_user6,a_checking,2024-12-19,-62.15,Shell,SHELL OIL 3422,gas,false,5541,synthetic
+t382,u_user6,a_checking,2024-12-20,-49.2,Chevron,CHEVRON OIL 1424,gas,false,5541,synthetic
+t387,u_user6,a_checking,2024-12-20,-21.89,Local Diner,LOCAL DINER 9941,restaurants,false,5812,synthetic
+t394,u_user6,a_checking,2024-12-23,-5.71,Starbucks,STARBUCKS 8860,coffee,false,5814,synthetic
+t397,u_user6,a_checking,2024-12-23,-6.37,Starbucks,,coffee,false,5814,synthetic
+t399,u_user6,a_checking,2024-12-23,-39.19,Lyft,LYFT TRIP 1500,rideshare,false,4121,synthetic
+t390,u_user6,a_checking,2024-12-25,-29.74,Local Diner,,restaurants,false,5812,synthetic
+t381,u_user6,a_checking,2024-12-26,-51.4,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t393,u_user6,a_checking,2024-12-28,-3.92,Starbucks,STARBUCKS 6264,coffee,false,5814,synthetic
+t395,u_user6,a_checking,2024-12-29,-6.4,Starbucks,STARBUCKS 7097,coffee,false,5814,synthetic
+t396,u_user6,a_checking,2024-12-30,-6.87,Starbucks,STARBUCKS 6419,coffee,false,5814,synthetic
+t403,u_user6,a_checking,2025-01-01,2532.06,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t405,u_user6,a_checking,2025-01-02,-1425.8,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t424,u_user6,a_checking,2025-01-02,-7.39,Starbucks,STARBUCKS 1087,coffee,false,5814,synthetic
+t417,u_user6,a_checking,2025-01-04,-35.06,Panera Bread,PANERA BREAD 5075,restaurants,false,5812,synthetic
+t409,u_user6,a_credit,2025-01-05,-12.76,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t410,u_user6,a_credit,2025-01-06,-7.86,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t411,u_user6,a_credit,2025-01-07,-3.08,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t413,u_user6,a_checking,2025-01-07,-112.49,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t406,u_user6,a_checking,2025-01-10,-77.65,Electric Co,,utilities,true,4900,synthetic
+t407,u_user6,a_checking,2025-01-12,-58.14,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t426,u_user6,a_checking,2025-01-13,-7.03,Starbucks,STARBUCKS 3151,coffee,false,5814,synthetic
+t408,u_user6,a_checking,2025-01-14,-46.68,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t423,u_user6,a_checking,2025-01-14,-5.09,Starbucks,STARBUCKS 5757,coffee,false,5814,synthetic
+t427,u_user6,a_checking,2025-01-14,-5.83,Starbucks,STARBUCKS 4709,coffee,false,5814,synthetic
+t433,u_user6,a_checking,2025-01-14,-183.28,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t404,u_user6,a_checking,2025-01-15,2492.05,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t422,u_user6,a_checking,2025-01-15,-7.46,Starbucks,STARBUCKS 4993,coffee,false,5814,synthetic
+t431,u_user6,a_checking,2025-01-15,-99.41,City Dental,CITY DENTAL,healthcare,false,8011,synthetic
+t414,u_user6,a_checking,2025-01-17,-128.79,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t421,u_user6,a_checking,2025-01-17,-5.03,Starbucks,STARBUCKS 6300,coffee,false,5814,synthetic
+t412,u_user6,a_checking,2025-01-18,-118.42,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t420,u_user6,a_checking,2025-01-18,-17.18,Local Diner,LOCAL DINER 1221,restaurants,false,5812,synthetic
+t432,u_user6,a_checking,2025-01-18,-91.58,City Dental,CITY DENTAL,healthcare,false,8011,synthetic
+t430,u_user6,a_credit,2025-01-19,-191.2,Amazon,AMZN Mktp US*C8983,shopping,false,5942,synthetic
+t425,u_user6,a_checking,2025-01-20,-3.9,Starbucks,STARBUCKS 2747,coffee,false,5814,synthetic
+t415,u_user6,a_checking,2025-01-21,-69.33,Shell,SHELL OIL 4139,gas,false,5541,synthetic
+t419,u_user6,a_checking,2025-01-21,-37.91,Panera Bread,PANERA BREAD 3891,restaurants,false,5812,synthetic
+t416,u_user6,a_checking,2025-01-22,-52.52,Chevron,CHEVRON OIL 1283,gas,false,5541,synthetic
+t429,u_user6,a_credit,2025-01-23,-254.12,Target,TARGET #3595,shopping,false,5311,synthetic
+t418,u_user6,a_checking,2025-01-24,-36.59,Chipotle,CHIPOTLE 8072,restaurants,false,5812,synthetic
+t428,u_user6,a_credit,2025-01-25,-119.42,Target,TARGET #9460,shopping,false,5311,synthetic
+t434,u_user6,a_checking,2025-02-01,2417.78,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t448,u_user6,a_checking,2025-02-01,-68.58,Shell,SHELL OIL 3293,gas,false,5541,synthetic
+t451,u_user6,a_checking,2025-02-01,-66.59,Chevron,CHEVRON OIL 7512,gas,false,5541,synthetic
+t436,u_user6,a_checking,2025-02-02,-1543.84,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t456,u_user6,a_checking,2025-02-03,-37.48,Panera Bread,PANERA BREAD 8404,restaurants,false,5812,synthetic
+t440,u_user6,a_credit,2025-02-05,-13.35,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t441,u_user6,a_credit,2025-02-06,-7.89,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t453,u_user6,a_checking,2025-02-06,-39.82,Chipotle,CHIPOTLE 4558,restaurants,false,5812,synthetic
+t442,u_user6,a_credit,2025-02-07,-2.99,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t450,u_user6,a_checking,2025-02-07,-51.02,Chevron,,gas,false,5541,synthetic
+t462,u_user6,a_checking,2025-02-08,-3.9,Starbucks,,coffee,false,5814,synthetic
+t463,u_user6,a_checking,2025-02-09,-5.64,Starbucks,STARBUCKS 2341,coffee,false,5814,synthetic
+t437,u_user6,a_checking,2025-02-10,-80.77,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t438,u_user6,a_checking,2025-02-12,-59.36,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t457,u_user6,a_checking,2025-02-12,-4.27,Starbucks,STARBUCKS 4199,coffee,false,5814,synthetic
+t439,u_user6,a_checking,2025-02-14,-43.14,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t446,u_user6,a_checking,2025-02-14,-43.58,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t452,u_user6,a_checking,2025-02-14,-25.32,Chipotle,CHIPOTLE 6407,restaurants,false,5812,synthetic
+t435,u_user6,a_checking,2025-02-15,2507.67,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t443,u_user6,a_checking,2025-02-17,-71.35,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t447,u_user6,a_checking,2025-02-18,-86.93,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t464,u_user6,a_checking,2025-02-18,-44.19,Lyft,LYFT TRIP 8728,rideshare,false,4121,synthetic
+t445,u_user6,a_checking,2025-02-19,-104.21,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t466,u_user6,a_credit,2025-02-20,-20.72,Amazon,AMZN Mktp US*A7462,shopping,false,5942,synthetic
+t449,u_user6,a_checking,2025-02-21,-30.7,Chevron,CHEVRON OIL 2947,gas,false,5541,synthetic
+t454,u_user6,a_checking,2025-02-21,-26.21,Chipotle,CHIPOTLE 7162,restaurants,false,5812,synthetic
+t458,u_user6,a_checking,2025-02-22,-3.13,Starbucks,STARBUCKS 4552,coffee,false,5814,synthetic
+t444,u_user6,a_checking,2025-02-23,-74.8,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t465,u_user6,a_credit,2025-02-23,-179.75,Target,TARGET #9865,shopping,false,5311,synthetic
+t467,u_user6,a_checking,2025-02-24,-245.38,Kaiser,Kaiser Permanente,healthcare,false,8011,synthetic
+t459,u_user6,a_checking,2025-02-25,-7.29,Starbucks,STARBUCKS 6052,coffee,false,5814,synthetic
+t460,u_user6,a_checking,2025-02-26,-5.05,Starbucks,STARBUCKS 8098,coffee,false,5814,synthetic
+t455,u_user6,a_checking,2025-02-27,-34.96,Local Diner,,restaurants,false,5812,synthetic
+t461,u_user6,a_checking,2025-02-28,-3.56,Starbucks,STARBUCKS 1612,coffee,false,5814,synthetic
+t468,u_user6,a_checking,2025-03-01,2429.35,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t480,u_user6,a_checking,2025-03-01,-58.09,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t470,u_user6,a_checking,2025-03-02,-1476.05,Landlord,,housing,true,6513,synthetic
+t485,u_user6,a_checking,2025-03-02,-63.37,Chevron,CHEVRON OIL 5628,gas,false,5541,synthetic
+t484,u_user6,a_checking,2025-03-04,-39.02,Shell,SHELL OIL 1394,gas,false,5541,synthetic
+t474,u_user6,a_credit,2025-03-05,-13.2,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t475,u_user6,a_credit,2025-03-06,-7.72,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t498,u_user6,a_checking,2025-03-06,-68.72,Lyft,LYFT TRIP 2202,rideshare,false,4121,synthetic
+t476,u_user6,a_credit,2025-03-07,-2.9,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t495,u_user6,a_checking,2025-03-07,-4.31,Starbucks,,coffee,false,5814,synthetic
+t489,u_user6,a_checking,2025-03-09,-32.64,Local Diner,LOCAL DINER 5092,restaurants,false,5812,synthetic
+t471,u_user6,a_checking,2025-03-10,-82.07,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t483,u_user6,a_checking,2025-03-10,-31.92,Shell,SHELL OIL 6517,gas,false,5541,synthetic
+t477,u_user6,a_checking,2025-03-11,-109.06,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t479,u_user6,a_checking,2025-03-11,-133.09,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t472,u_user6,a_checking,2025-03-12,-61.01,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t487,u_user6,a_checking,2025-03-12,-24.92,Local Diner,LOCAL DINER 9903,restaurants,false,5812,synthetic
+t473,u_user6,a_checking,2025-03-14,-43.71,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t469,u_user6,a_checking,2025-03-15,2443.77,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t494,u_user6,a_checking,2025-03-15,-3.29,Starbucks,STARBUCKS 4978,coffee,false,5814,synthetic
+t497,u_user6,a_checking,2025-03-17,-43.14,Lyft,LYFT TRIP 3258,rideshare,false,4121,synthetic
+t492,u_user6,a_checking,2025-03-18,-6.66,Starbucks,STARBUCKS 8228,coffee,false,5814,synthetic
+t499,u_user6,a_credit,2025-03-18,-21.27,Target,TARGET #1170,shopping,false,5311,synthetic
+t500,u_user6,a_credit,2025-03-18,-74.51,Amazon,AMZN Mktp US*H1599,shopping,false,5942,synthetic
+t493,u_user6,a_checking,2025-03-20,-6.74,Starbucks,STARBUCKS 8198,coffee,false,5814,synthetic
+t486,u_user6,a_checking,2025-03-22,-39.87,Shell,SHELL OIL 7755,gas,false,5541,synthetic
+t490,u_user6,a_checking,2025-03-22,-23.89,Local Diner,LOCAL DINER 4756,restaurants,false,5812,synthetic
+t496,u_user6,a_checking,2025-03-22,-4.42,Starbucks,STARBUCKS 7447,coffee,false,5814,synthetic
+t488,u_user6,a_checking,2025-03-23,-20.13,Panera Bread,,restaurants,false,5812,synthetic
+t481,u_user6,a_checking,2025-03-24,-126.39,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t491,u_user6,a_checking,2025-03-24,-7.06,Starbucks,STARBUCKS 3221,coffee,false,5814,synthetic
+t482,u_user6,a_checking,2025-03-25,-60.04,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t501,u_user6,a_credit,2025-03-26,-165.45,United Airlines,UA 940777,travel,false,4511,synthetic
+t478,u_user6,a_checking,2025-03-31,-114.78,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t502,u_user6,a_checking,2025-04-01,2467.82,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t514,u_user6,a_checking,2025-04-01,-48.84,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t504,u_user6,a_checking,2025-04-02,-1451.79,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t525,u_user6,a_checking,2025-04-02,-4.04,Starbucks,STARBUCKS 7842,coffee,false,5814,synthetic
+t532,u_user6,a_checking,2025-04-02,-24.93,Lyft,LYFT TRIP 1026,rideshare,false,4121,synthetic
+t533,u_user6,a_credit,2025-04-04,-311.96,Target,TARGET #5137,shopping,false,5311,synthetic
+t508,u_user6,a_credit,2025-04-05,-13.36,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t528,u_user6,a_checking,2025-04-05,-5.03,Starbucks,STARBUCKS 8940,coffee,false,5814,synthetic
+t531,u_user6,a_checking,2025-04-05,-49.94,Lyft,LYFT TRIP 3559,rideshare,false,4121,synthetic
+t536,u_user6,a_checking,2025-04-05,100.09,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t509,u_user6,a_credit,2025-04-06,-8.19,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t516,u_user6,a_checking,2025-04-06,-31.36,Chevron,CHEVRON OIL 6778,gas,false,5541,synthetic
+t535,u_user6,a_checking,2025-04-06,-106.68,City Dental,CITY DENTAL,healthcare,false,8011,synthetic
+t510,u_user6,a_credit,2025-04-07,-2.94,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t512,u_user6,a_checking,2025-04-07,-138.3,GrocerMart,,groceries,false,5411,synthetic
+t527,u_user6,a_checking,2025-04-08,-3.36,Starbucks,STARBUCKS 6361,coffee,false,5814,synthetic
+t530,u_user6,a_checking,2025-04-08,-47.81,Lyft,LYFT TRIP 1707,rideshare,false,4121,synthetic
+t518,u_user6,a_checking,2025-04-09,-66.96,Chevron,CHEVRON OIL 4686,gas,false,5541,synthetic
+t505,u_user6,a_checking,2025-04-10,-80.07,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t519,u_user6,a_checking,2025-04-10,-40.08,Chevron,CHEVRON OIL 2223,gas,false,5541,synthetic
+t529,u_user6,a_checking,2025-04-10,-3.01,Starbucks,STARBUCKS 3945,coffee,false,5814,synthetic
+t506,u_user6,a_checking,2025-04-12,-60.03,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t507,u_user6,a_checking,2025-04-14,-46.73,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t511,u_user6,a_checking,2025-04-14,-97.86,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t503,u_user6,a_checking,2025-04-15,2482.95,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t522,u_user6,a_checking,2025-04-15,-25.99,Panera Bread,PANERA BREAD 5723,restaurants,false,5812,synthetic
+t526,u_user6,a_checking,2025-04-15,-6.79,Starbucks,STARBUCKS 8457,coffee,false,5814,synthetic
+t520,u_user6,a_checking,2025-04-20,-33.66,Chipotle,CHIPOTLE 8558,restaurants,false,5812,synthetic
+t524,u_user6,a_checking,2025-04-20,-4.28,Starbucks,STARBUCKS 6521,coffee,false,5814,synthetic
+t523,u_user6,a_checking,2025-04-23,-30.25,Chipotle,CHIPOTLE 7486,restaurants,false,5812,synthetic
+t515,u_user6,a_checking,2025-04-24,-79.23,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t517,u_user6,a_checking,2025-04-25,-30.05,Chevron,CHEVRON OIL 7453,gas,false,5541,synthetic
+t534,u_user6,a_checking,2025-04-25,-238.21,Walgreens Clinic,WALGREENS CLINIC,healthcare,false,8011,synthetic
+t513,u_user6,a_checking,2025-04-27,-93.43,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t521,u_user6,a_checking,2025-04-27,-27.67,Local Diner,LOCAL DINER 1103,restaurants,false,5812,synthetic
+t537,u_user6,a_checking,2025-05-01,2439.05,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t539,u_user6,a_checking,2025-05-02,-1433.05,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t571,u_user6,a_checking,2025-05-02,149.15,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t567,u_user6,a_checking,2025-05-04,-36.04,Lyft,LYFT TRIP 6766,rideshare,false,4121,synthetic
+t568,u_user6,a_credit,2025-05-04,-212.4,Amazon,AMZN Mktp US*H5349,shopping,false,5942,synthetic
+t543,u_user6,a_credit,2025-05-05,-13.59,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t544,u_user6,a_credit,2025-05-06,-7.8,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t561,u_user6,a_checking,2025-05-06,-6.45,Starbucks,STARBUCKS 3640,coffee,false,5814,synthetic
+t570,u_user6,a_credit,2025-05-06,-269.16,Amazon,AMZN Mktp US*C8038,shopping,false,5942,synthetic
+t545,u_user6,a_credit,2025-05-07,-3.07,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t548,u_user6,a_checking,2025-05-07,-100.89,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t556,u_user6,a_checking,2025-05-07,-20.8,Chipotle,CHIPOTLE 4162,restaurants,false,5812,synthetic
+t566,u_user6,a_checking,2025-05-07,-53.46,Lyft,,rideshare,false,4121,synthetic
+t565,u_user6,a_checking,2025-05-08,-3.38,Starbucks,STARBUCKS 3334,coffee,false,5814,synthetic
+t560,u_user6,a_checking,2025-05-09,-3.86,Starbucks,STARBUCKS 6515,coffee,false,5814,synthetic
+t540,u_user6,a_checking,2025-05-10,-76.39,Electric Co,,utilities,true,4900,synthetic
+t559,u_user6,a_checking,2025-05-11,-28.43,Panera Bread,PANERA BREAD 8554,restaurants,false,5812,synthetic
+t541,u_user6,a_checking,2025-05-12,-58.55,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t542,u_user6,a_checking,2025-05-14,-44.08,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t550,u_user6,a_checking,2025-05-14,-64.43,Shell,SHELL OIL 8967,gas,false,5541,synthetic
+t555,u_user6,a_checking,2025-05-14,-15.85,Chipotle,CHIPOTLE 2005,restaurants,false,5812,synthetic
+t558,u_user6,a_checking,2025-05-14,-30.27,Local Diner,LOCAL DINER 6310,restaurants,false,5812,synthetic
+t538,u_user6,a_checking,2025-05-15,2526.93,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t553,u_user6,a_checking,2025-05-16,-46.75,Shell,SHELL OIL 2971,gas,false,5541,synthetic
+t554,u_user6,a_checking,2025-05-16,-37.8,Panera Bread,PANERA BREAD 4695,restaurants,false,5812,synthetic
+t563,u_user6,a_checking,2025-05-16,-6.18,Starbucks,STARBUCKS 5701,coffee,false,5814,synthetic
+t562,u_user6,a_checking,2025-05-18,-5.59,Starbucks,STARBUCKS 3446,coffee,false,5814,synthetic
+t564,u_user6,a_checking,2025-05-18,-5.24,Starbucks,STARBUCKS 7383,coffee,false,5814,synthetic
+t557,u_user6,a_checking,2025-05-21,-28.53,Panera Bread,PANERA BREAD 6948,restaurants,false,5812,synthetic
+t569,u_user6,a_credit,2025-05-22,-293.99,Amazon,AMZN Mktp US*D5807,shopping,false,5942,synthetic
+t551,u_user6,a_checking,2025-05-26,-58.78,Shell,SHELL OIL 1964,gas,false,5541,synthetic
+t549,u_user6,a_checking,2025-05-27,-123.52,GrocerMart,,groceries,false,5411,synthetic
+t552,u_user6,a_checking,2025-05-28,-36.09,Shell,SHELL OIL 2228,gas,false,5541,synthetic
+t547,u_user6,a_checking,2025-05-30,-61.8,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t546,u_user6,a_checking,2025-05-31,-84.26,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t572,u_user6,a_checking,2025-06-01,2574.26,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t582,u_user6,a_checking,2025-06-01,-64.49,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t588,u_user6,a_checking,2025-06-01,-30.86,Chipotle,CHIPOTLE 8389,restaurants,false,5812,synthetic
+t574,u_user6,a_checking,2025-06-02,-1566.86,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t578,u_user6,a_credit,2025-06-05,-13.2,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t579,u_user6,a_credit,2025-06-06,-7.67,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t592,u_user6,a_checking,2025-06-06,-30.31,Chipotle,CHIPOTLE 7704,restaurants,false,5812,synthetic
+t580,u_user6,a_credit,2025-06-07,-3.02,Apple,,subscription,true,5734,synthetic
+t594,u_user6,a_checking,2025-06-09,-4.32,Starbucks,STARBUCKS 7063,coffee,false,5814,synthetic
+t598,u_user6,a_checking,2025-06-09,-3.02,Starbucks,STARBUCKS 2357,coffee,false,5814,synthetic
+t602,u_user6,a_credit,2025-06-09,-52.6,Amazon,AMZN Mktp US*E5560,shopping,false,5942,synthetic
+t575,u_user6,a_checking,2025-06-10,-78.25,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t581,u_user6,a_checking,2025-06-10,-110.74,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t576,u_user6,a_checking,2025-06-12,-58.83,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t586,u_user6,a_checking,2025-06-12,-64.01,Shell,SHELL OIL 8702,gas,false,5541,synthetic
+t593,u_user6,a_checking,2025-06-12,-7.48,Starbucks,STARBUCKS 2230,coffee,false,5814,synthetic
+t577,u_user6,a_checking,2025-06-14,-43.6,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t596,u_user6,a_checking,2025-06-14,-4.65,Starbucks,STARBUCKS 3823,coffee,false,5814,synthetic
+t573,u_user6,a_checking,2025-06-15,2380.5,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t584,u_user6,a_checking,2025-06-15,-79.24,Chevron,,gas,false,5541,synthetic
+t591,u_user6,a_checking,2025-06-16,-11.14,Panera Bread,PANERA BREAD 1368,restaurants,false,5812,synthetic
+t590,u_user6,a_checking,2025-06-19,-17.6,Panera Bread,PANERA BREAD 2883,restaurants,false,5812,synthetic
+t601,u_user6,a_credit,2025-06-20,-220.51,Amazon,AMZN Mktp US*E5385,shopping,false,5942,synthetic
+t597,u_user6,a_checking,2025-06-22,-7.36,Starbucks,STARBUCKS 7115,coffee,false,5814,synthetic
+t589,u_user6,a_checking,2025-06-24,-11.02,Chipotle,CHIPOTLE 7051,restaurants,false,5812,synthetic
+t599,u_user6,a_checking,2025-06-25,-6.64,Starbucks,,coffee,false,5814,synthetic
+t583,u_user6,a_checking,2025-06-26,-122.55,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t585,u_user6,a_checking,2025-06-26,-87.64,Shell,SHELL OIL 3909,gas,false,5541,synthetic
+t595,u_user6,a_checking,2025-06-27,-6.27,Starbucks,STARBUCKS 5022,coffee,false,5814,synthetic
+t587,u_user6,a_checking,2025-06-28,-36.27,Chevron,CHEVRON OIL 6372,gas,false,5541,synthetic
+t600,u_user6,a_checking,2025-06-28,-16.3,Lyft,LYFT TRIP 3218,rideshare,false,4121,synthetic
+t603,u_user6,a_credit,2025-06-30,-635.9,American Airlines,AA 778544,travel,false,4511,synthetic
+t604,u_user6,a_checking,2025-07-01,2525.16,Acme Inc.,,Income,true,0,synthetic
+t606,u_user6,a_checking,2025-07-02,-1432.21,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t625,u_user6,a_checking,2025-07-02,-7.72,Starbucks,STARBUCKS 2642,coffee,false,5814,synthetic
+t631,u_user6,a_credit,2025-07-02,-99.18,Amazon,AMZN Mktp US*F7967,shopping,false,5942,synthetic
+t616,u_user6,a_checking,2025-07-04,-65.83,Shell,SHELL OIL 6554,gas,false,5541,synthetic
+t635,u_user6,a_checking,2025-07-04,104.27,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t610,u_user6,a_credit,2025-07-05,-12.55,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t617,u_user6,a_checking,2025-07-05,-39.76,Shell,SHELL OIL 3160,gas,false,5541,synthetic
+t630,u_user6,a_checking,2025-07-05,-63.5,Lyft,LYFT TRIP 6500,rideshare,false,4121,synthetic
+t611,u_user6,a_credit,2025-07-06,-7.78,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t612,u_user6,a_credit,2025-07-07,-3.05,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t634,u_user6,a_checking,2025-07-07,-116.67,Walgreens Clinic,WALGREENS CLINIC,healthcare,false,8011,synthetic
+t620,u_user6,a_checking,2025-07-08,-35.07,Chipotle,,restaurants,false,5812,synthetic
+t614,u_user6,a_checking,2025-07-09,-75.41,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t636,u_user6,a_checking,2025-07-09,64.59,Venmo,VENMO CASHIN,transfer,false,6011,synthetic
+t607,u_user6,a_checking,2025-07-10,-82.7,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t619,u_user6,a_checking,2025-07-10,-50.28,Shell,SHELL OIL 5027,gas,false,5541,synthetic
+t628,u_user6,a_checking,2025-07-10,-6.54,Starbucks,,coffee,false,5814,synthetic
+t608,u_user6,a_checking,2025-07-12,-61.29,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t621,u_user6,a_checking,2025-07-12,-22.11,Local Diner,LOCAL DINER 1651,restaurants,false,5812,synthetic
+t633,u_user6,a_checking,2025-07-12,-51.19,City Dental,CITY DENTAL,healthcare,false,8011,synthetic
+t622,u_user6,a_checking,2025-07-13,-31.81,Chipotle,CHIPOTLE 6056,restaurants,false,5812,synthetic
+t609,u_user6,a_checking,2025-07-14,-44.59,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t624,u_user6,a_checking,2025-07-14,-3.18,Starbucks,,coffee,false,5814,synthetic
+t605,u_user6,a_checking,2025-07-15,2462.14,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t618,u_user6,a_checking,2025-07-15,-61.41,Shell,SHELL OIL 4267,gas,false,5541,synthetic
+t626,u_user6,a_checking,2025-07-17,-4.99,Starbucks,STARBUCKS 2035,coffee,false,5814,synthetic
+t627,u_user6,a_checking,2025-07-20,-4.56,Starbucks,STARBUCKS 5015,coffee,false,5814,synthetic
+t615,u_user6,a_checking,2025-07-25,-115.44,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t623,u_user6,a_checking,2025-07-27,-6.57,Starbucks,STARBUCKS 3057,coffee,false,5814,synthetic
+t632,u_user6,a_credit,2025-07-28,-222.97,Amazon,AMZN Mktp US*A3181,shopping,false,5942,synthetic
+t613,u_user6,a_checking,2025-07-30,-48.99,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t629,u_user6,a_checking,2025-07-31,-26.26,Uber,UBER TRIP 2898,rideshare,false,4121,synthetic
+t637,u_user6,a_checking,2025-08-01,2454.83,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t646,u_user6,a_checking,2025-08-01,-79.04,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t662,u_user6,a_checking,2025-08-01,-5.33,Starbucks,STARBUCKS 3609,coffee,false,5814,synthetic
+t639,u_user6,a_checking,2025-08-02,-1531.14,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t660,u_user6,a_checking,2025-08-02,-3.88,Starbucks,STARBUCKS 5568,coffee,false,5814,synthetic
+t652,u_user6,a_checking,2025-08-03,-42.56,Shell,SHELL OIL 8381,gas,false,5541,synthetic
+t643,u_user6,a_credit,2025-08-05,-12.38,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t644,u_user6,a_credit,2025-08-06,-7.98,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t659,u_user6,a_checking,2025-08-06,-6.14,Starbucks,STARBUCKS 6682,coffee,false,5814,synthetic
+t665,u_user6,a_checking,2025-08-06,-58.52,Uber,UBER TRIP 2038,rideshare,false,4121,synthetic
+t645,u_user6,a_credit,2025-08-07,-2.86,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t656,u_user6,a_checking,2025-08-08,-17.37,Panera Bread,PANERA BREAD 5690,restaurants,false,5812,synthetic
+t668,u_user6,a_credit,2025-08-08,-308.34,Target,TARGET #5864,shopping,false,5311,synthetic
+t667,u_user6,a_checking,2025-08-09,-23.82,Lyft,LYFT TRIP 3241,rideshare,false,4121,synthetic
+t640,u_user6,a_checking,2025-08-10,-81.28,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t641,u_user6,a_checking,2025-08-12,-59.13,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t654,u_user6,a_checking,2025-08-12,-81.66,Chevron,CHEVRON OIL 4741,gas,false,5541,synthetic
+t642,u_user6,a_checking,2025-08-14,-46.2,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t647,u_user6,a_checking,2025-08-14,-113.49,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t649,u_user6,a_checking,2025-08-14,-108.32,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t666,u_user6,a_checking,2025-08-14,-41.16,Uber,UBER TRIP 4447,rideshare,false,4121,synthetic
+t638,u_user6,a_checking,2025-08-15,2413.07,Acme Inc.,,Income,true,0,synthetic
+t651,u_user6,a_checking,2025-08-16,-96.92,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t664,u_user6,a_checking,2025-08-19,-3.55,Starbucks,STARBUCKS 5999,coffee,false,5814,synthetic
+t653,u_user6,a_checking,2025-08-20,-71.77,Chevron,CHEVRON OIL 6422,gas,false,5541,synthetic
+t650,u_user6,a_checking,2025-08-22,-142.44,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t657,u_user6,a_checking,2025-08-23,-38.44,Chipotle,CHIPOTLE 1529,restaurants,false,5812,synthetic
+t661,u_user6,a_checking,2025-08-23,-5.64,Starbucks,STARBUCKS 6109,coffee,false,5814,synthetic
+t669,u_user6,a_checking,2025-08-24,-51.05,City Dental,CITY DENTAL,healthcare,false,8011,synthetic
+t670,u_user6,a_checking,2025-08-24,-152.86,Kaiser,Kaiser Permanente,healthcare,false,8011,synthetic
+t663,u_user6,a_checking,2025-08-26,-3.46,Starbucks,,coffee,false,5814,synthetic
+t648,u_user6,a_checking,2025-08-27,-79.29,GrocerMart,,groceries,false,5411,synthetic
+t655,u_user6,a_checking,2025-08-27,-17.42,Chipotle,CHIPOTLE 9486,restaurants,false,5812,synthetic
+t658,u_user6,a_checking,2025-08-30,-25.35,Panera Bread,PANERA BREAD 1643,restaurants,false,5812,synthetic
+t671,u_user6,a_checking,2025-09-01,2415.78,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t680,u_user6,a_checking,2025-09-01,-72.16,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t688,u_user6,a_checking,2025-09-01,-36.36,Chipotle,CHIPOTLE 6088,restaurants,false,5812,synthetic
+t673,u_user6,a_checking,2025-09-02,-1498.12,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t681,u_user6,a_checking,2025-09-02,-120.48,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t704,u_user6,a_credit,2025-09-02,-265.03,Delta Airlines,DL 667694,travel,false,4511,synthetic
+t690,u_user6,a_checking,2025-09-04,-11.08,Chipotle,CHIPOTLE 7640,restaurants,false,5812,synthetic
+t677,u_user6,a_credit,2025-09-05,-12.34,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t678,u_user6,a_credit,2025-09-06,-8.05,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t687,u_user6,a_checking,2025-09-06,-27.43,Shell,SHELL OIL 6768,gas,false,5541,synthetic
+t689,u_user6,a_checking,2025-09-06,-21.67,Panera Bread,PANERA BREAD 7101,restaurants,false,5812,synthetic
+t679,u_user6,a_credit,2025-09-07,-3.03,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t701,u_user6,a_credit,2025-09-08,-49.7,Amazon,,shopping,false,5942,synthetic
+t674,u_user6,a_checking,2025-09-10,-80.4,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t697,u_user6,a_checking,2025-09-10,-3.41,Starbucks,STARBUCKS 3250,coffee,false,5814,synthetic
+t698,u_user6,a_checking,2025-09-11,-5.11,Starbucks,STARBUCKS 3014,coffee,false,5814,synthetic
+t675,u_user6,a_checking,2025-09-12,-57.47,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t699,u_user6,a_checking,2025-09-13,-5.59,Starbucks,STARBUCKS 1804,coffee,false,5814,synthetic
+t702,u_user6,a_credit,2025-09-13,-118.0,Best Buy,BESTBUY #5704,electronics,false,5732,synthetic
+t676,u_user6,a_checking,2025-09-14,-43.97,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t692,u_user6,a_checking,2025-09-14,-30.24,Panera Bread,PANERA BREAD 4865,restaurants,false,5812,synthetic
+t672,u_user6,a_checking,2025-09-15,2575.17,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t683,u_user6,a_checking,2025-09-15,-68.52,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t691,u_user6,a_checking,2025-09-15,-29.11,Local Diner,LOCAL DINER 6402,restaurants,false,5812,synthetic
+t682,u_user6,a_checking,2025-09-18,-89.33,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t694,u_user6,a_checking,2025-09-18,-7.82,Starbucks,STARBUCKS 2502,coffee,false,5814,synthetic
+t684,u_user6,a_checking,2025-09-19,-51.73,Chevron,CHEVRON OIL 8996,gas,false,5541,synthetic
+t696,u_user6,a_checking,2025-09-21,-5.2,Starbucks,STARBUCKS 6957,coffee,false,5814,synthetic
+t700,u_user6,a_checking,2025-09-23,-4.74,Starbucks,STARBUCKS 4440,coffee,false,5814,synthetic
+t705,u_user6,a_checking,2025-09-23,-194.62,Walgreens Clinic,WALGREENS CLINIC,healthcare,false,8011,synthetic
+t706,u_user6,a_checking,2025-09-23,248.71,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t693,u_user6,a_checking,2025-09-25,-28.62,Chipotle,CHIPOTLE 4187,restaurants,false,5812,synthetic
+t703,u_user6,a_credit,2025-09-25,-197.83,Amazon,AMZN Mktp US*D2075,shopping,false,5942,synthetic
+t685,u_user6,a_checking,2025-09-29,-56.42,Shell,SHELL OIL 1760,gas,false,5541,synthetic
+t695,u_user6,a_checking,2025-09-29,-5.42,Starbucks,STARBUCKS 4062,coffee,false,5814,synthetic
+t686,u_user6,a_checking,2025-09-30,-75.95,Chevron,CHEVRON OIL 2569,gas,false,5541,synthetic
+t707,u_user6,a_checking,2025-10-01,2504.63,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t709,u_user6,a_checking,2025-10-02,-1481.83,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t719,u_user6,a_checking,2025-10-04,-54.1,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t713,u_user6,a_credit,2025-10-05,-12.85,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t720,u_user6,a_checking,2025-10-05,-79.21,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t730,u_user6,a_checking,2025-10-05,-6.08,Starbucks,STARBUCKS 2290,coffee,false,5814,synthetic
+t714,u_user6,a_credit,2025-10-06,-7.98,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t721,u_user6,a_checking,2025-10-06,-29.89,Chevron,CHEVRON OIL 9989,gas,false,5541,synthetic
+t715,u_user6,a_credit,2025-10-07,-3.12,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t733,u_user6,a_checking,2025-10-09,-5.88,Starbucks,STARBUCKS 3017,coffee,false,5814,synthetic
+t710,u_user6,a_checking,2025-10-10,-83.86,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t728,u_user6,a_checking,2025-10-10,-6.85,Starbucks,STARBUCKS 7505,coffee,false,5814,synthetic
+t738,u_user6,a_credit,2025-10-10,-324.68,Amazon,AMZN Mktp US*H9203,shopping,false,5942,synthetic
+t711,u_user6,a_checking,2025-10-12,-59.53,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t723,u_user6,a_checking,2025-10-13,-70.03,Shell,SHELL OIL 6256,gas,false,5541,synthetic
+t725,u_user6,a_checking,2025-10-13,-16.8,Local Diner,LOCAL DINER 4727,restaurants,false,5812,synthetic
+t729,u_user6,a_checking,2025-10-13,-6.77,Starbucks,STARBUCKS 4012,coffee,false,5814,synthetic
+t735,u_user6,a_checking,2025-10-13,-47.85,Uber,UBER TRIP 2722,rideshare,false,4121,synthetic
+t712,u_user6,a_checking,2025-10-14,-46.92,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t726,u_user6,a_checking,2025-10-14,-33.33,Chipotle,,restaurants,false,5812,synthetic
+t708,u_user6,a_checking,2025-10-15,2530.67,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t731,u_user6,a_checking,2025-10-15,-5.43,Starbucks,STARBUCKS 2688,coffee,false,5814,synthetic
+t734,u_user6,a_checking,2025-10-15,-4.21,Starbucks,STARBUCKS 6136,coffee,false,5814,synthetic
+t717,u_user6,a_checking,2025-10-16,-116.13,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t743,u_user6,a_checking,2025-10-17,187.53,Venmo,VENMO CASHIN,transfer,false,6011,synthetic
+t744,u_user6,a_checking,2025-10-17,-111.79,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t724,u_user6,a_checking,2025-10-19,-30.46,Chipotle,CHIPOTLE 4518,restaurants,false,5812,synthetic
+t718,u_user6,a_checking,2025-10-21,-94.48,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t722,u_user6,a_checking,2025-10-21,-41.55,Chevron,CHEVRON OIL 5941,gas,false,5541,synthetic
+t737,u_user6,a_credit,2025-10-22,-57.53,Target,,shopping,false,5311,synthetic
+t741,u_user6,a_checking,2025-10-23,-54.25,Walgreens Clinic,WALGREENS CLINIC,healthcare,false,8011,synthetic
+t732,u_user6,a_checking,2025-10-24,-6.18,Starbucks,STARBUCKS 1065,coffee,false,5814,synthetic
+t736,u_user6,a_checking,2025-10-25,-19.23,Uber,UBER TRIP 2419,rideshare,false,4121,synthetic
+t742,u_user6,a_checking,2025-10-25,-229.95,City Dental,CITY DENTAL,healthcare,false,8011,synthetic
+t727,u_user6,a_checking,2025-10-27,-13.8,Panera Bread,PANERA BREAD 1338,restaurants,false,5812,synthetic
+t739,u_user6,a_credit,2025-10-27,-46.18,Amazon,,shopping,false,5942,synthetic
+t716,u_user6,a_checking,2025-10-29,-68.94,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t740,u_user6,a_credit,2025-10-29,-218.01,American Airlines,AA 247139,travel,false,4511,synthetic
+t745,u_user6,a_checking,2025-11-01,2619.52,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t747,u_user6,a_checking,2025-11-02,-1533.07,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t762,u_user6,a_checking,2025-11-04,-29.79,Local Diner,LOCAL DINER 2334,restaurants,false,5812,synthetic
+t772,u_user6,a_checking,2025-11-04,-263.99,Walgreens Clinic,WALGREENS CLINIC,healthcare,false,8011,synthetic
+t751,u_user6,a_credit,2025-11-05,-13.47,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t752,u_user6,a_credit,2025-11-06,-7.77,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t754,u_user6,a_checking,2025-11-06,-119.41,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t753,u_user6,a_credit,2025-11-07,-3.02,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t768,u_user6,a_checking,2025-11-07,-3.67,Starbucks,STARBUCKS 6269,coffee,false,5814,synthetic
+t765,u_user6,a_checking,2025-11-08,-7.52,Starbucks,STARBUCKS 1650,coffee,false,5814,synthetic
+t748,u_user6,a_checking,2025-11-10,-80.14,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t749,u_user6,a_checking,2025-11-12,-59.87,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t758,u_user6,a_checking,2025-11-12,-57.11,Shell,SHELL OIL 9808,gas,false,5541,synthetic
+t750,u_user6,a_checking,2025-11-14,-44.53,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t764,u_user6,a_checking,2025-11-14,-4.3,Starbucks,STARBUCKS 8490,coffee,false,5814,synthetic
+t746,u_user6,a_checking,2025-11-15,2483.96,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t771,u_user6,a_credit,2025-11-15,-84.86,Best Buy,BESTBUY #4367,electronics,false,5732,synthetic
+t757,u_user6,a_checking,2025-11-17,-29.42,Shell,,gas,false,5541,synthetic
+t763,u_user6,a_checking,2025-11-17,-29.6,Panera Bread,PANERA BREAD 7834,restaurants,false,5812,synthetic
+t755,u_user6,a_checking,2025-11-19,-65.31,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t769,u_user6,a_checking,2025-11-19,-6.77,Starbucks,STARBUCKS 6736,coffee,false,5814,synthetic
+t761,u_user6,a_checking,2025-11-21,-21.77,Chipotle,CHIPOTLE 9557,restaurants,false,5812,synthetic
+t774,u_user6,a_checking,2025-11-21,173.64,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t770,u_user6,a_checking,2025-11-22,-57.95,Lyft,LYFT TRIP 7208,rideshare,false,4121,synthetic
+t775,u_user6,a_checking,2025-11-24,106.85,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t773,u_user6,a_checking,2025-11-26,-252.0,City Dental,CITY DENTAL,healthcare,false,8011,synthetic
+t760,u_user6,a_checking,2025-11-28,-66.04,Chevron,CHEVRON OIL 4920,gas,false,5541,synthetic
+t759,u_user6,a_checking,2025-11-29,-54.26,Shell,SHELL OIL 2357,gas,false,5541,synthetic
+t766,u_user6,a_checking,2025-11-29,-7.84,Starbucks,STARBUCKS 2110,coffee,false,5814,synthetic
+t756,u_user6,a_checking,2025-11-30,-123.66,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t767,u_user6,a_checking,2025-11-30,-2.93,Starbucks,STARBUCKS 2256,coffee,false,5814,synthetic
+t776,u_user6,a_checking,2025-12-01,2480.0,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t778,u_user6,a_checking,2025-12-02,-1455.11,Landlord,MONTHLY RENT,housing,true,6513,synthetic
+t801,u_user6,a_checking,2025-12-02,-5.4,Starbucks,STARBUCKS 1568,coffee,false,5814,synthetic
+t791,u_user6,a_checking,2025-12-03,-77.42,Shell,SHELL OIL 2047,gas,false,5541,synthetic
+t796,u_user6,a_checking,2025-12-03,-3.46,Starbucks,STARBUCKS 9051,coffee,false,5814,synthetic
+t798,u_user6,a_checking,2025-12-03,-7.22,Starbucks,STARBUCKS 4978,coffee,false,5814,synthetic
+t808,u_user6,a_checking,2025-12-03,-212.63,City Dental,CITY DENTAL,healthcare,false,8011,synthetic
+t782,u_user6,a_credit,2025-12-05,-13.33,Spotify,SPOTIFY P123,subscription,true,5815,synthetic
+t794,u_user6,a_checking,2025-12-05,-11.63,Chipotle,CHIPOTLE 3520,restaurants,false,5812,synthetic
+t804,u_user6,a_checking,2025-12-05,-68.36,Uber,UBER TRIP 1531,rideshare,false,4121,synthetic
+t806,u_user6,a_credit,2025-12-05,-604.86,American Airlines,AA 257562,travel,false,4511,synthetic
+t783,u_user6,a_credit,2025-12-06,-8.32,Netflix,NETFLIX.COM SUB,subscription,true,5815,synthetic
+t784,u_user6,a_credit,2025-12-07,-3.08,Apple,APPLE.COM/BILL,subscription,true,5734,synthetic
+t790,u_user6,a_checking,2025-12-08,-59.38,Shell,SHELL OIL 3589,gas,false,5541,synthetic
+t779,u_user6,a_checking,2025-12-10,-82.68,Electric Co,ELECTRIC BILL,utilities,true,4900,synthetic
+t785,u_user6,a_checking,2025-12-10,-117.65,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t797,u_user6,a_checking,2025-12-10,-7.22,Starbucks,STARBUCKS 9608,coffee,false,5814,synthetic
+t805,u_user6,a_credit,2025-12-10,-37.75,Amazon,AMZN Mktp US*A7500,shopping,false,5942,synthetic
+t780,u_user6,a_checking,2025-12-12,-58.28,Comcast,HOME INTERNET,internet,true,4816,synthetic
+t800,u_user6,a_checking,2025-12-13,-4.44,Starbucks,STARBUCKS 9428,coffee,false,5814,synthetic
+t781,u_user6,a_checking,2025-12-14,-44.12,T-Mobile,MOBILE BILL,mobile,true,4814,synthetic
+t777,u_user6,a_checking,2025-12-15,2492.36,Acme Inc.,PAYROLL,Income,true,0,synthetic
+t802,u_user6,a_checking,2025-12-15,-2.98,Starbucks,STARBUCKS 2308,coffee,false,5814,synthetic
+t803,u_user6,a_checking,2025-12-15,-65.09,Uber,UBER TRIP 3718,rideshare,false,4121,synthetic
+t788,u_user6,a_checking,2025-12-18,-105.9,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t787,u_user6,a_checking,2025-12-19,-68.46,Whole Foods,,groceries,false,5411,synthetic
+t810,u_user6,a_checking,2025-12-19,127.0,Venmo,VENMO CASHIN,transfer,false,6011,synthetic
+t792,u_user6,a_checking,2025-12-20,-26.43,Chipotle,CHIPOTLE 8812,restaurants,false,5812,synthetic
+t795,u_user6,a_checking,2025-12-23,-31.91,Panera Bread,PANERA BREAD 3244,restaurants,false,5812,synthetic
+t789,u_user6,a_checking,2025-12-25,-106.06,Whole Foods,WHOLEFDS #1045,groceries,false,5411,synthetic
+t793,u_user6,a_checking,2025-12-27,-41.08,Panera Bread,PANERA BREAD 8227,restaurants,false,5812,synthetic
+t807,u_user6,a_checking,2025-12-27,-51.47,Walgreens Clinic,WALGREENS CLINIC,healthcare,false,8011,synthetic
+t786,u_user6,a_checking,2025-12-28,-50.47,GrocerMart,GROCERY STORE,groceries,false,5411,synthetic
+t809,u_user6,a_checking,2025-12-28,143.46,Zelle Transfer,ZELLE TO FRIEND,transfer,false,6011,synthetic
+t799,u_user6,a_checking,2025-12-30,-7.65,Starbucks,STARBUCKS 7377,coffee,false,5814,synthetic

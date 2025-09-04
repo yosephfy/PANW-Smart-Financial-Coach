@@ -1,0 +1,530 @@
+id,account_id,date,amount,merchant,description,mcc,source,balance
+t1,a_checking,2024-01-01,2333.01,Acme Inc.,PAYROLL,0,synthetic,6549.01
+t26,a_credit,2024-01-01,-237.19,Amazon,AMZN Mktp US*C6555,5942,synthetic,1298.81
+t10,a_checking,2024-01-02,-65.54,GrocerMart,GROCERY STORE,5411,synthetic,6483.47
+t18,a_checking,2024-01-02,190.62,Venmo,VENMO CASHIN,6011,synthetic,6674.09
+t3,a_checking,2024-01-04,-1450.93,Landlord,MONTHLY RENT,6513,synthetic,5223.16
+t7,a_credit,2024-01-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,1285.82
+t21,a_checking,2024-01-06,-38.05,Chipotle,CHIPOTLE 2758,5812,synthetic,5185.11
+t8,a_credit,2024-01-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,1277.83
+t11,a_checking,2024-01-10,-23.05,Target,TARGET #4253,5311,synthetic,5162.06
+t4,a_checking,2024-01-10,-75.89,Electric Co,ELECTRIC BILL,4900,synthetic,5086.17
+t15,a_checking,2024-01-11,-215.0,Target,TARGET #9586,5311,synthetic,4871.17
+t5,a_checking,2024-01-12,-62.89,Comcast,HOME INTERNET,4816,synthetic,4808.28
+t2,a_checking,2024-01-13,2530.37,Acme Inc.,PAYROLL,0,synthetic,7338.65
+t24,a_checking,2024-01-13,-13.32,Chipotle,CHIPOTLE 7856,5812,synthetic,7325.33
+t6,a_checking,2024-01-14,-47.13,T-Mobile,MOBILE BILL,4814,synthetic,7278.2
+t12,a_checking,2024-01-15,-4.72,Starbucks,STARBUCKS 4949,5814,synthetic,7273.48
+t16,a_checking,2024-01-16,-7.05,Starbucks,STARBUCKS 2797,5814,synthetic,7266.43
+t14,a_checking,2024-01-18,-16.3,Chipotle,,5812,synthetic,7250.13
+t13,a_credit,2024-01-19,-172.02,Amazon,AMZN Mktp US*C5369,5942,synthetic,1105.81
+t25,a_checking,2024-01-22,-4.66,Starbucks,STARBUCKS 1556,5814,synthetic,7245.47
+t17,a_checking,2024-01-23,-27.78,Chipotle,CHIPOTLE 8917,5812,synthetic,7217.69
+t19,a_checking,2024-01-24,-21.81,Lyft,LYFT TRIP 5914,4121,synthetic,7195.88
+t20,a_checking,2024-01-24,-14.73,Uber,UBER TRIP 9601,4121,synthetic,7181.15
+t9,a_checking,2024-01-24,-814.53,Credit Card Payment,AUTOPAY,6012,synthetic,6366.62
+t22,a_checking,2024-01-26,-79.61,Shell,SHELL OIL 5909,5541,synthetic,6287.01
+t23,a_checking,2024-01-26,-170.87,Target,TARGET #9022,5311,synthetic,6116.14
+t29,a_checking,2024-02-02,-1593.85,Landlord,MONTHLY RENT,6513,synthetic,4522.29
+t27,a_checking,2024-02-03,2471.23,Acme Inc.,PAYROLL,0,synthetic,6993.52
+t44,a_checking,2024-02-03,-7.42,Starbucks,STARBUCKS 6917,5814,synthetic,6986.1
+t45,a_credit,2024-02-04,-89.67,Amazon,AMZN Mktp US*B8583,5942,synthetic,1016.14
+t33,a_credit,2024-02-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,1003.15
+t46,a_checking,2024-02-05,-108.61,Target,TARGET #6618,5311,synthetic,6877.49
+t34,a_credit,2024-02-06,-12.99,Spotify,SPOTIFY P123,5815,synthetic,990.16
+t36,a_credit,2024-02-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,982.17
+t35,a_credit,2024-02-07,12.99,Spotify,REFUND SPOTIFY,5815,synthetic,995.16
+t30,a_checking,2024-02-10,-84.63,Electric Co,ELECTRIC BILL,4900,synthetic,6792.86
+t49,a_checking,2024-02-10,-97.43,Target,TARGET #3113,5311,synthetic,6695.43
+t41,a_checking,2024-02-11,67.33,Venmo,VENMO CASHIN,6011,synthetic,6762.76
+t47,a_checking,2024-02-11,-21.18,Uber,UBER TRIP 6416,4121,synthetic,6741.58
+t31,a_checking,2024-02-12,-66.0,Comcast,HOME INTERNET,4816,synthetic,6675.58
+t40,a_checking,2024-02-13,-157.18,Whole Foods,WHOLEFDS #1045,5411,synthetic,6518.4
+t28,a_checking,2024-02-14,2541.3,Acme Inc.,PAYROLL,0,synthetic,9059.7
+t32,a_checking,2024-02-14,-44.99,T-Mobile,MOBILE BILL,4814,synthetic,9014.71
+t48,a_checking,2024-02-15,-14.05,Chipotle,CHIPOTLE 7843,5812,synthetic,9000.66
+t38,a_checking,2024-02-16,-21.05,Panera Bread,,5812,synthetic,8979.61
+t43,a_checking,2024-02-17,-66.74,Shell,SHELL OIL 4761,5541,synthetic,8912.87
+t39,a_checking,2024-02-20,-95.66,Whole Foods,WHOLEFDS #1045,5411,synthetic,8817.21
+t37,a_checking,2024-02-21,-890.19,Credit Card Payment,AUTOPAY,6012,synthetic,7927.02
+t42,a_checking,2024-02-22,-34.58,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,7892.44
+t50,a_checking,2024-03-01,2280.6,Acme Inc.,PAYROLL,0,synthetic,10173
+t52,a_checking,2024-03-04,-1565.87,Landlord,MONTHLY RENT,6513,synthetic,8607.17
+t65,a_checking,2024-03-04,-3.5,Starbucks,STARBUCKS 3754,5814,synthetic,8603.67
+t56,a_credit,2024-03-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,982.17
+t57,a_credit,2024-03-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,974.18
+t63,a_checking,2024-03-06,-16.34,Local Diner,LOCAL DINER 2458,5812,synthetic,8587.33
+t61,a_checking,2024-03-07,-17.9,Chipotle,,5812,synthetic,8569.43
+t68,a_checking,2024-03-08,-116.41,GrocerMart,GROCERY STORE,5411,synthetic,8453.02
+t53,a_checking,2024-03-10,-77.89,Electric Co,ELECTRIC BILL,4900,synthetic,8375.13
+t59,a_credit,2024-03-11,-166.85,Amazon,AMZN Mktp US*F8825,5942,synthetic,807.33
+t54,a_checking,2024-03-12,-57.24,Comcast,HOME INTERNET,4816,synthetic,8317.89
+t51,a_checking,2024-03-14,2452.46,Acme Inc.,PAYROLL,0,synthetic,10770.3
+t55,a_checking,2024-03-14,-52.86,T-Mobile,MOBILE BILL,4814,synthetic,10717.5
+t64,a_checking,2024-03-17,-6.16,Starbucks,STARBUCKS 1470,5814,synthetic,10711.3
+t58,a_checking,2024-03-20,-611.03,Credit Card Payment,AUTOPAY,6012,synthetic,10100.3
+t60,a_checking,2024-03-21,-151.27,GrocerMart,GROCERY STORE,5411,synthetic,9949.03
+t67,a_checking,2024-03-21,-131.81,Target,TARGET #2765,5311,synthetic,9817.22
+t62,a_checking,2024-03-28,-7.01,Starbucks,STARBUCKS 3374,5814,synthetic,9810.21
+t66,a_checking,2024-03-28,-23.51,Lyft,LYFT TRIP 3895,4121,synthetic,9786.7
+t69,a_checking,2024-04-01,2405.69,Acme Inc.,PAYROLL,0,synthetic,12192.4
+t79,a_credit,2024-04-01,-297.77,Amazon,AMZN Mktp US*H6739,5942,synthetic,509.56
+t80,a_credit,2024-04-03,297.77,Amazon,AMZN REFUND,5942,synthetic,807.33
+t82,a_checking,2024-04-03,-24.76,Lyft,LYFT TRIP 2214,4121,synthetic,12167.6
+t71,a_checking,2024-04-04,-1523.4,Landlord,MONTHLY RENT,6513,synthetic,10644.2
+t84,a_checking,2024-04-04,-3.04,Starbucks,STARBUCKS 6475,5814,synthetic,10641.2
+t75,a_credit,2024-04-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,794.34
+t76,a_credit,2024-04-06,-7.99,Netflix,,5815,synthetic,786.35
+t88,a_checking,2024-04-08,-3.27,Starbucks,,5814,synthetic,10637.9
+t72,a_checking,2024-04-10,-72.12,Electric Co,ELECTRIC BILL,4900,synthetic,10565.8
+t73,a_checking,2024-04-12,-60.13,Comcast,HOME INTERNET,4816,synthetic,10505.7
+t70,a_checking,2024-04-14,2524.19,Acme Inc.,PAYROLL,0,synthetic,13029.9
+t74,a_checking,2024-04-14,-41.43,T-Mobile,MOBILE BILL,4814,synthetic,12988.4
+t85,a_credit,2024-04-16,-135.09,Amazon,AMZN Mktp US*D6592,5942,synthetic,651.26
+t90,a_checking,2024-04-16,-3.76,Starbucks,STARBUCKS 6508,5814,synthetic,12984.7
+t87,a_checking,2024-04-19,-35.2,Chipotle,CHIPOTLE 5110,5812,synthetic,12949.5
+t77,a_checking,2024-04-22,-800.52,Credit Card Payment,AUTOPAY,6012,synthetic,12148.9
+t83,a_credit,2024-04-22,-127.22,Best Buy,BESTBUY #7609,5732,synthetic,524.04
+t78,a_checking,2024-04-26,-4.04,Starbucks,STARBUCKS 9227,5814,synthetic,12144.9
+t89,a_credit,2024-04-26,-84.3,Amazon,,5942,synthetic,439.74
+t81,a_checking,2024-04-29,-137.54,Target,TARGET #1018,5311,synthetic,12007.4
+t86,a_checking,2024-04-29,-3.22,Starbucks,STARBUCKS 5975,5814,synthetic,12004.1
+t104,a_checking,2024-05-02,-150.09,GrocerMart,GROCERY STORE,5411,synthetic,11854.1
+t93,a_checking,2024-05-02,-1501.88,Landlord,MONTHLY RENT,6513,synthetic,10352.2
+t91,a_checking,2024-05-03,2417.8,Acme Inc.,PAYROLL,0,synthetic,12770
+t108,a_checking,2024-05-05,-49.45,GrocerMart,GROCERY STORE,5411,synthetic,12720.5
+t97,a_credit,2024-05-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,426.75
+t98,a_credit,2024-05-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,418.76
+t100,a_checking,2024-05-07,-112.41,Target,TARGET #5290,5311,synthetic,12608.1
+t111,a_credit,2024-05-09,-235.75,Amazon,AMZN Mktp US*C8350,5942,synthetic,183.01
+t102,a_checking,2024-05-10,-116.81,Whole Foods,WHOLEFDS #1045,5411,synthetic,12491.3
+t110,a_credit,2024-05-10,-146.89,Amazon,AMZN Mktp US*D9319,5942,synthetic,36.12
+t94,a_checking,2024-05-10,-73.35,Electric Co,ELECTRIC BILL,4900,synthetic,12418
+t95,a_checking,2024-05-12,-69.75,Comcast,HOME INTERNET,4816,synthetic,12348.2
+t92,a_checking,2024-05-13,2508.28,Acme Inc.,PAYROLL,0,synthetic,14856.5
+t96,a_checking,2024-05-14,-44.82,T-Mobile,MOBILE BILL,4814,synthetic,14811.7
+t107,a_credit,2024-05-15,-43.07,Amazon,AMZN Mktp US*G3476,5942,synthetic,-6.95
+t101,a_checking,2024-05-19,-29.05,Lyft,LYFT TRIP 5389,4121,synthetic,14782.6
+t105,a_checking,2024-05-19,-56.45,Lyft,LYFT TRIP 3063,4121,synthetic,14726.2
+t103,a_checking,2024-05-20,-7.04,Starbucks,STARBUCKS 7439,5814,synthetic,14719.1
+t99,a_checking,2024-05-24,-655.61,Credit Card Payment,AUTOPAY,6012,synthetic,14063.5
+t106,a_checking,2024-05-26,-86.86,Whole Foods,WHOLEFDS #1045,5411,synthetic,13976.7
+t109,a_credit,2024-05-28,-135.84,Amazon,AMZN Mktp US*F4223,5942,synthetic,-142.79
+t112,a_checking,2024-06-01,2463.64,Acme Inc.,PAYROLL,0,synthetic,16440.3
+t135,a_checking,2024-06-01,-13.83,Panera Bread,PANERA BREAD 7708,5812,synthetic,16426.5
+t132,a_checking,2024-06-02,-91.56,GrocerMart,GROCERY STORE,5411,synthetic,16334.9
+t137,a_checking,2024-06-02,-51.23,Shell,SHELL OIL 7085,5541,synthetic,16283.7
+t114,a_checking,2024-06-04,-1422.61,Landlord,MONTHLY RENT,6513,synthetic,14861.1
+t118,a_credit,2024-06-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-155.78
+t119,a_credit,2024-06-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-163.77
+t122,a_checking,2024-06-07,-37.2,Shell,SHELL OIL 7708,5541,synthetic,14823.9
+t126,a_credit,2024-06-07,-53.1,Amazon,AMZN Mktp US*H3038,5942,synthetic,-216.87
+t133,a_checking,2024-06-08,-84.48,GrocerMart,GROCERY STORE,5411,synthetic,14739.4
+t115,a_checking,2024-06-10,-77.69,Electric Co,ELECTRIC BILL,4900,synthetic,14661.7
+t129,a_checking,2024-06-10,-53.61,Chevron,,5541,synthetic,14608.1
+t127,a_checking,2024-06-11,-19.89,Panera Bread,,5812,synthetic,14588.2
+t116,a_checking,2024-06-12,-63.8,Comcast,HOME INTERNET,4816,synthetic,14524.4
+t124,a_checking,2024-06-12,-59.48,Lyft,LYFT TRIP 3296,4121,synthetic,14464.9
+t131,a_checking,2024-06-12,-6.3,Starbucks,STARBUCKS 5083,5814,synthetic,14458.6
+t113,a_checking,2024-06-14,2409.27,Acme Inc.,PAYROLL,0,synthetic,16867.9
+t117,a_checking,2024-06-14,-41.61,T-Mobile,MOBILE BILL,4814,synthetic,16826.3
+t123,a_checking,2024-06-14,-56.2,Chevron,,5541,synthetic,16770.1
+t136,a_credit,2024-06-18,-245.9,Amazon,,5942,synthetic,-462.77
+t134,a_checking,2024-06-20,-117.2,GrocerMart,GROCERY STORE,5411,synthetic,16652.9
+t120,a_checking,2024-06-22,-411.35,Credit Card Payment,AUTOPAY,6012,synthetic,16241.5
+t128,a_checking,2024-06-22,-22.32,Panera Bread,PANERA BREAD 4406,5812,synthetic,16219.2
+t130,a_checking,2024-06-23,-74.53,Shell,,5541,synthetic,16144.7
+t138,a_checking,2024-06-23,-15.19,Lyft,LYFT TRIP 4877,4121,synthetic,16129.5
+t121,a_checking,2024-06-25,-12.0,MyBank,MONTHLY FEE,6012,synthetic,16117.5
+t125,a_checking,2024-06-27,-6.17,Starbucks,STARBUCKS 1831,5814,synthetic,16111.3
+t158,a_checking,2024-07-01,-71.48,Chevron,CHEVRON OIL 8559,5541,synthetic,16039.8
+t141,a_checking,2024-07-02,-1551.07,Landlord,MONTHLY RENT,6513,synthetic,14488.8
+t139,a_checking,2024-07-03,2406.96,Acme Inc.,PAYROLL,0,synthetic,16895.7
+t156,a_checking,2024-07-03,-60.11,Whole Foods,WHOLEFDS #1045,5411,synthetic,16835.6
+t144,a_credit,2024-07-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-475.76
+t157,a_credit,2024-07-05,-112.44,Amazon,AMZN Mktp US*C3074,5942,synthetic,-588.2
+t145,a_credit,2024-07-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-596.19
+t155,a_checking,2024-07-07,-6.13,Starbucks,STARBUCKS 3229,5814,synthetic,16829.5
+t153,a_checking,2024-07-08,-64.08,Whole Foods,WHOLEFDS #1045,5411,synthetic,16765.4
+t160,a_checking,2024-07-09,-178.47,Target,TARGET #7257,5311,synthetic,16586.9
+t142,a_checking,2024-07-10,-83.36,Electric Co,ELECTRIC BILL,4900,synthetic,16503.6
+t148,a_checking,2024-07-10,-36.99,Shell,,5541,synthetic,16466.6
+t149,a_credit,2024-07-11,-104.42,Amazon,AMZN Mktp US*H6816,5942,synthetic,-700.61
+t143,a_checking,2024-07-12,-60.99,Comcast,HOME INTERNET,4816,synthetic,16405.6
+t161,a_checking,2024-07-12,-50.3,Shell,SHELL OIL 8005,5541,synthetic,16355.3
+t154,a_checking,2024-07-13,-14.89,Chipotle,CHIPOTLE 9895,5812,synthetic,16340.4
+t140,a_checking,2024-07-15,2414.23,Acme Inc.,PAYROLL,0,synthetic,18754.6
+t152,a_credit,2024-07-15,-540.77,Best Buy,BESTBUY #6512,5732,synthetic,-1241.38
+t159,a_checking,2024-07-15,-174.02,Target,,5311,synthetic,18580.6
+t146,a_checking,2024-07-20,-471.8,Credit Card Payment,AUTOPAY,6012,synthetic,18108.8
+t147,a_checking,2024-07-20,-36.81,Chevron,CHEVRON OIL 8431,5541,synthetic,18072
+t150,a_credit,2024-07-23,-186.73,Amazon,AMZN Mktp US*G8380,5942,synthetic,-1428.11
+t151,a_credit,2024-07-25,186.73,Amazon,AMZN REFUND,5942,synthetic,-1241.38
+t162,a_checking,2024-08-02,2396.39,Acme Inc.,PAYROLL,0,synthetic,20468.4
+t164,a_checking,2024-08-02,-1482.36,Landlord,MONTHLY RENT,6513,synthetic,18986
+t174,a_checking,2024-08-03,-183.51,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,18802.5
+t168,a_credit,2024-08-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-1254.37
+t169,a_credit,2024-08-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-1262.36
+t178,a_checking,2024-08-07,-39.86,Panera Bread,PANERA BREAD 8851,5812,synthetic,18762.7
+t176,a_checking,2024-08-09,-54.68,Uber,UBER TRIP 2317,4121,synthetic,18708
+t165,a_checking,2024-08-10,-79.61,Electric Co,ELECTRIC BILL,4900,synthetic,18628.4
+t166,a_checking,2024-08-12,-62.89,Comcast,HOME INTERNET,4816,synthetic,18565.5
+t180,a_credit,2024-08-13,-26.2,Amazon,AMZN Mktp US*E7536,5942,synthetic,-1288.56
+t167,a_checking,2024-08-14,-42.34,T-Mobile,MOBILE BILL,4814,synthetic,18523.1
+t175,a_credit,2024-08-15,-187.29,Amazon,AMZN Mktp US*E3941,5942,synthetic,-1475.85
+t163,a_checking,2024-08-16,2452.66,Acme Inc.,PAYROLL,0,synthetic,20975.8
+t177,a_checking,2024-08-17,-25.14,Chipotle,CHIPOTLE 2109,5812,synthetic,20950.7
+t173,a_checking,2024-08-18,-109.46,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,20841.2
+t171,a_checking,2024-08-19,-11.48,Chipotle,CHIPOTLE 5130,5812,synthetic,20829.7
+t172,a_checking,2024-08-21,-5.08,Starbucks,STARBUCKS 4508,5814,synthetic,20824.6
+t170,a_checking,2024-08-24,-571.55,Credit Card Payment,AUTOPAY,6012,synthetic,20253.1
+t181,a_credit,2024-08-29,-160.98,Amazon,AMZN Mktp US*F5158,5942,synthetic,-1636.83
+t179,a_checking,2024-08-30,127.27,Venmo,VENMO CASHIN,6011,synthetic,20380.4
+t182,a_checking,2024-09-01,2505.31,Acme Inc.,PAYROLL,0,synthetic,22885.7
+t191,a_checking,2024-09-01,-158.07,GrocerMart,GROCERY STORE,5411,synthetic,22727.6
+t184,a_checking,2024-09-04,-1551.71,Landlord,MONTHLY RENT,6513,synthetic,21175.9
+t194,a_credit,2024-09-04,-216.75,Amazon,AMZN Mktp US*A1060,5942,synthetic,-1853.58
+t188,a_credit,2024-09-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-1866.57
+t197,a_checking,2024-09-05,-46.25,Uber,UBER TRIP 6856,4121,synthetic,21129.6
+t199,a_credit,2024-09-05,-63.97,Amazon,AMZN Mktp US*A4078,5942,synthetic,-1930.54
+t189,a_credit,2024-09-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-1938.53
+t195,a_credit,2024-09-06,216.75,Amazon,AMZN REFUND,5942,synthetic,-1721.78
+t200,a_checking,2024-09-09,-26.91,Panera Bread,PANERA BREAD 5853,5812,synthetic,21102.7
+t185,a_checking,2024-09-10,-68.96,Electric Co,ELECTRIC BILL,4900,synthetic,21033.8
+t198,a_checking,2024-09-11,-76.85,Target,,5311,synthetic,20956.9
+t186,a_checking,2024-09-12,-63.89,Comcast,HOME INTERNET,4816,synthetic,20893
+t187,a_checking,2024-09-14,-43.14,T-Mobile,MOBILE BILL,4814,synthetic,20849.9
+t183,a_checking,2024-09-16,2351.12,Acme Inc.,PAYROLL,0,synthetic,23201
+t193,a_checking,2024-09-19,-148.31,GrocerMart,GROCERY STORE,5411,synthetic,23052.7
+t192,a_checking,2024-09-21,-4.94,Starbucks,STARBUCKS 8376,5814,synthetic,23047.8
+t196,a_checking,2024-09-21,-38.69,Shell,SHELL OIL 7270,5541,synthetic,23009.1
+t190,a_checking,2024-09-22,-594.43,Credit Card Payment,AUTOPAY,6012,synthetic,22414.6
+t201,a_checking,2024-09-23,-63.04,Chevron,CHEVRON OIL 7718,5541,synthetic,22351.6
+t202,a_checking,2024-10-01,2532.79,Acme Inc.,PAYROLL,0,synthetic,24884.4
+t222,a_credit,2024-10-02,-42.72,Amazon,AMZN Mktp US*F6816,5942,synthetic,-1764.5
+t204,a_checking,2024-10-03,-1484.11,Landlord,MONTHLY RENT,6513,synthetic,23400.3
+t224,a_credit,2024-10-03,-69.05,Amazon,AMZN Mktp US*B3724,5942,synthetic,-1833.55
+t208,a_credit,2024-10-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-1846.54
+t209,a_credit,2024-10-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-1854.53
+t218,a_checking,2024-10-06,-32.0,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,23368.3
+t212,a_checking,2024-10-09,-15.84,Chipotle,CHIPOTLE 7368,5812,synthetic,23352.4
+t205,a_checking,2024-10-10,-87.0,Electric Co,,4900,synthetic,23265.4
+t220,a_checking,2024-10-11,-139.44,GrocerMart,GROCERY STORE,5411,synthetic,23126
+t206,a_checking,2024-10-12,-65.02,Comcast,HOME INTERNET,4816,synthetic,23061
+t211,a_checking,2024-10-12,-60.36,Chevron,CHEVRON OIL 9264,5541,synthetic,23000.6
+t207,a_checking,2024-10-14,-50.25,T-Mobile,MOBILE BILL,4814,synthetic,22950.4
+t221,a_checking,2024-10-14,-75.44,Whole Foods,WHOLEFDS #1045,5411,synthetic,22874.9
+t203,a_checking,2024-10-15,2364.25,Acme Inc.,PAYROLL,0,synthetic,25239.2
+t223,a_checking,2024-10-15,-5.71,Starbucks,STARBUCKS 2475,5814,synthetic,25233.5
+t214,a_credit,2024-10-16,-18.11,Amazon,AMZN Mktp US*A6853,5942,synthetic,-1872.64
+t213,a_checking,2024-10-23,-92.92,GrocerMart,GROCERY STORE,5411,synthetic,25140.6
+t210,a_checking,2024-10-24,-688.42,Credit Card Payment,AUTOPAY,6012,synthetic,24452.1
+t219,a_checking,2024-10-24,-182.15,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,24270
+t215,a_checking,2024-10-26,-56.38,Uber,UBER TRIP 3354,4121,synthetic,24213.6
+t216,a_checking,2024-10-26,-5.61,Starbucks,STARBUCKS 7430,5814,synthetic,24208
+t217,a_checking,2024-10-29,-5.55,Starbucks,STARBUCKS 1441,5814,synthetic,24202.4
+t244,a_checking,2024-11-02,-4.61,Starbucks,STARBUCKS 2758,5814,synthetic,24197.8
+t225,a_checking,2024-11-03,2366.63,Acme Inc.,PAYROLL,0,synthetic,26564.5
+t227,a_checking,2024-11-03,-1528.67,Landlord,MONTHLY RENT,6513,synthetic,25035.8
+t236,a_checking,2024-11-03,-142.05,GrocerMart,GROCERY STORE,5411,synthetic,24893.7
+t238,a_checking,2024-11-03,-25.08,Local Diner,LOCAL DINER 5929,5812,synthetic,24868.7
+t239,a_checking,2024-11-03,-26.68,Lyft,LYFT TRIP 1782,4121,synthetic,24842
+t231,a_credit,2024-11-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-1880.63
+t228,a_checking,2024-11-10,-72.29,Electric Co,ELECTRIC BILL,4900,synthetic,24769.7
+t229,a_checking,2024-11-12,-57.41,Comcast,HOME INTERNET,4816,synthetic,24712.3
+t233,a_checking,2024-11-13,-74.05,Shell,SHELL OIL 7018,5541,synthetic,24638.2
+t234,a_credit,2024-11-13,-158.74,Amazon,AMZN Mktp US*D6569,5942,synthetic,-2039.37
+t242,a_credit,2024-11-13,-492.86,Best Buy,BESTBUY #6117,5732,synthetic,-2532.23
+t230,a_checking,2024-11-14,-40.52,T-Mobile,,4814,synthetic,24597.7
+t226,a_checking,2024-11-15,2326.08,Acme Inc.,PAYROLL,0,synthetic,26923.8
+t237,a_checking,2024-11-15,-108.04,GrocerMart,GROCERY STORE,5411,synthetic,26815.8
+t240,a_checking,2024-11-20,-146.07,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,26669.7
+t232,a_checking,2024-11-21,-846.23,Credit Card Payment,AUTOPAY,6012,synthetic,25823.5
+t235,a_checking,2024-11-24,-19.79,Uber,UBER TRIP 8598,4121,synthetic,25803.7
+t241,a_checking,2024-11-29,177.03,Venmo,VENMO CASHIN,6011,synthetic,25980.7
+t243,a_checking,2024-11-30,-5.17,Starbucks,STARBUCKS 5604,5814,synthetic,25975.5
+t270,a_checking,2024-12-01,-37.01,Uber,UBER TRIP 9930,4121,synthetic,25938.5
+t245,a_checking,2024-12-02,2376.44,Acme Inc.,PAYROLL,0,synthetic,28315
+t247,a_checking,2024-12-03,-1576.58,Landlord,MONTHLY RENT,6513,synthetic,26738.4
+t251,a_credit,2024-12-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-2545.22
+t252,a_credit,2024-12-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-2553.21
+t263,a_credit,2024-12-06,-235.15,Amazon,AMZN Mktp US*G3831,5942,synthetic,-2788.36
+t254,a_checking,2024-12-07,50.64,Venmo,VENMO CASHIN,6011,synthetic,26789
+t265,a_checking,2024-12-08,114.88,Venmo,VENMO CASHIN,6011,synthetic,26903.9
+t248,a_checking,2024-12-10,-84.62,Electric Co,ELECTRIC BILL,4900,synthetic,26819.3
+t266,a_checking,2024-12-10,-78.52,GrocerMart,GROCERY STORE,5411,synthetic,26740.8
+t268,a_checking,2024-12-11,-111.52,Whole Foods,,5411,synthetic,26629.2
+t249,a_checking,2024-12-12,-60.54,Comcast,HOME INTERNET,4816,synthetic,26568.7
+t259,a_checking,2024-12-12,-167.43,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,26401.3
+t250,a_checking,2024-12-14,-41.63,T-Mobile,,4814,synthetic,26359.6
+t267,a_credit,2024-12-16,-284.68,Amazon,AMZN Mktp US*C4360,5942,synthetic,-3073.04
+t246,a_checking,2024-12-17,2643.59,Acme Inc.,PAYROLL,0,synthetic,29003.2
+t255,a_checking,2024-12-17,-11.43,Local Diner,,5812,synthetic,28991.8
+t256,a_checking,2024-12-17,-38.12,Shell,SHELL OIL 4552,5541,synthetic,28953.7
+t260,a_credit,2024-12-17,-22.01,Amazon,AMZN Mktp US*C2400,5942,synthetic,-3095.05
+t269,a_checking,2024-12-19,-109.69,Whole Foods,WHOLEFDS #1045,5411,synthetic,28844
+t253,a_checking,2024-12-21,-375.83,Credit Card Payment,AUTOPAY,6012,synthetic,28468.2
+t261,a_credit,2024-12-21,-50.6,Amazon,AMZN Mktp US*E7256,5942,synthetic,-3145.65
+t262,a_credit,2024-12-21,-319.37,Best Buy,BESTBUY #6879,5732,synthetic,-3465.02
+t264,a_checking,2024-12-21,-12.27,Chipotle,CHIPOTLE 5232,5812,synthetic,28455.9
+t258,a_checking,2024-12-25,-36.27,Shell,SHELL OIL 5062,5541,synthetic,28419.6
+t257,a_checking,2024-12-29,-130.51,Target,TARGET #3971,5311,synthetic,28289.1
+t271,a_checking,2025-01-01,2539.47,Acme Inc.,PAYROLL,0,synthetic,30828.6
+t280,a_checking,2025-01-01,-25.42,Lyft,LYFT TRIP 3428,4121,synthetic,30803.2
+t286,a_credit,2025-01-01,-24.79,Amazon,AMZN Mktp US*H2477,5942,synthetic,-3489.81
+t289,a_checking,2025-01-03,-77.01,Target,TARGET #2144,5311,synthetic,30726.1
+t273,a_checking,2025-01-04,-1508.92,Landlord,MONTHLY RENT,6513,synthetic,29217.2
+t277,a_credit,2025-01-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-3502.8
+t278,a_credit,2025-01-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-3510.79
+t274,a_checking,2025-01-10,-81.92,Electric Co,ELECTRIC BILL,4900,synthetic,29135.3
+t275,a_checking,2025-01-12,-63.32,Comcast,HOME INTERNET,4816,synthetic,29072
+t288,a_checking,2025-01-13,-81.87,GrocerMart,GROCERY STORE,5411,synthetic,28990.1
+t291,a_checking,2025-01-13,-25.23,Chipotle,CHIPOTLE 2040,5812,synthetic,28964.9
+t276,a_checking,2025-01-14,-47.2,T-Mobile,MOBILE BILL,4814,synthetic,28917.7
+t293,a_checking,2025-01-14,-20.03,Local Diner,LOCAL DINER 2164,5812,synthetic,28897.7
+t272,a_checking,2025-01-17,2389.09,Acme Inc.,PAYROLL,0,synthetic,31286.8
+t285,a_credit,2025-01-19,-276.83,Best Buy,BESTBUY #2665,5732,synthetic,-3787.62
+t284,a_checking,2025-01-20,-162.89,Target,TARGET #3798,5311,synthetic,31123.9
+t279,a_checking,2025-01-21,-501.64,Credit Card Payment,AUTOPAY,6012,synthetic,30622.2
+t287,a_credit,2025-01-23,-46.6,Amazon,AMZN Mktp US*C1045,5942,synthetic,-3834.22
+t283,a_checking,2025-01-25,-6.36,Starbucks,STARBUCKS 5578,5814,synthetic,30615.9
+t292,a_credit,2025-01-26,-214.34,Amazon,AMZN Mktp US*B9738,5942,synthetic,-4048.56
+t281,a_credit,2025-01-27,-257.97,Amazon,AMZN Mktp US*D4344,5942,synthetic,-4306.53
+t282,a_checking,2025-01-27,-58.28,GrocerMart,GROCERY STORE,5411,synthetic,30557.6
+t290,a_checking,2025-01-30,-112.89,Target,TARGET #8459,5311,synthetic,30444.7
+t294,a_checking,2025-02-01,2616.3,Acme Inc.,PAYROLL,0,synthetic,33061
+t296,a_checking,2025-02-03,-1386.68,Landlord,MONTHLY RENT,6513,synthetic,31674.3
+t300,a_credit,2025-02-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-4319.52
+t301,a_credit,2025-02-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-4327.51
+t303,a_checking,2025-02-06,-5.07,Starbucks,STARBUCKS 5990,5814,synthetic,31669.2
+t306,a_credit,2025-02-08,-23.79,Amazon,AMZN Mktp US*D4121,5942,synthetic,-4351.3
+t297,a_checking,2025-02-10,-91.93,Electric Co,ELECTRIC BILL,4900,synthetic,31577.3
+t308,a_checking,2025-02-10,-37.65,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,31539.7
+t307,a_checking,2025-02-11,-137.43,GrocerMart,GROCERY STORE,5411,synthetic,31402.2
+t298,a_checking,2025-02-12,-59.2,Comcast,HOME INTERNET,4816,synthetic,31343
+t304,a_credit,2025-02-12,-251.66,Amazon,AMZN Mktp US*H2018,5942,synthetic,-4602.96
+t299,a_checking,2025-02-14,-44.02,T-Mobile,MOBILE BILL,4814,synthetic,31299
+t310,a_credit,2025-02-16,-298.67,Amazon,AMZN Mktp US*H1988,5942,synthetic,-4901.63
+t295,a_checking,2025-02-17,2355.89,Acme Inc.,PAYROLL,0,synthetic,33654.9
+t309,a_checking,2025-02-21,-41.45,Shell,SHELL OIL 9843,5541,synthetic,33613.5
+t302,a_checking,2025-02-24,-678.04,Credit Card Payment,AUTOPAY,6012,synthetic,32935.4
+t311,a_checking,2025-02-25,-3.14,Starbucks,,5814,synthetic,32932.3
+t305,a_credit,2025-02-27,-71.02,Amazon,AMZN Mktp US*A1756,5942,synthetic,-4972.65
+t312,a_checking,2025-02-27,-20.91,Chipotle,CHIPOTLE 8177,5812,synthetic,32911.4
+t313,a_checking,2025-03-01,2441.14,Acme Inc.,PAYROLL,0,synthetic,35352.5
+t325,a_checking,2025-03-01,-12.74,Chipotle,CHIPOTLE 9930,5812,synthetic,35339.8
+t331,a_credit,2025-03-01,-155.22,Amazon,AMZN Mktp US*A9890,5942,synthetic,-5127.87
+t315,a_checking,2025-03-03,-1518.67,Landlord,MONTHLY RENT,6513,synthetic,33821.1
+t327,a_checking,2025-03-04,25.5,Venmo,VENMO CASHIN,6011,synthetic,33846.6
+t319,a_credit,2025-03-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-5140.86
+t320,a_credit,2025-03-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-5148.85
+t329,a_checking,2025-03-07,-61.54,GrocerMart,,5411,synthetic,33785.1
+t316,a_checking,2025-03-10,-75.81,Electric Co,ELECTRIC BILL,4900,synthetic,33709.2
+t330,a_checking,2025-03-10,-34.56,Uber,UBER TRIP 7682,4121,synthetic,33674.7
+t317,a_checking,2025-03-12,-59.76,Comcast,HOME INTERNET,4816,synthetic,33614.9
+t318,a_checking,2025-03-14,-37.24,T-Mobile,,4814,synthetic,33577.7
+t314,a_checking,2025-03-15,2552.63,Acme Inc.,PAYROLL,0,synthetic,36130.3
+t322,a_credit,2025-03-16,-182.35,Amazon,AMZN Mktp US*F1860,5942,synthetic,-5331.2
+t321,a_checking,2025-03-22,-443.72,Credit Card Payment,AUTOPAY,6012,synthetic,35686.6
+t328,a_checking,2025-03-24,-168.81,Target,TARGET #4938,5311,synthetic,35517.8
+t323,a_checking,2025-03-27,-26.55,Chipotle,,5812,synthetic,35491.2
+t324,a_checking,2025-03-27,-191.21,Target,TARGET #1256,5311,synthetic,35300
+t326,a_checking,2025-03-27,-21.23,Chipotle,CHIPOTLE 2896,5812,synthetic,35278.8
+t332,a_checking,2025-04-01,2483.76,Acme Inc.,PAYROLL,0,synthetic,37762.6
+t348,a_checking,2025-04-02,-12.79,Panera Bread,PANERA BREAD 7940,5812,synthetic,37749.8
+t334,a_checking,2025-04-04,-1555.19,Landlord,MONTHLY RENT,6513,synthetic,36194.6
+t352,a_checking,2025-04-04,-48.56,GrocerMart,GROCERY STORE,5411,synthetic,36146
+t338,a_credit,2025-04-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-5344.19
+t339,a_credit,2025-04-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-5352.18
+t341,a_checking,2025-04-06,-41.12,Uber,UBER TRIP 7099,4121,synthetic,36104.9
+t349,a_checking,2025-04-06,-6.76,Starbucks,STARBUCKS 7193,5814,synthetic,36098.1
+t342,a_credit,2025-04-08,-218.19,Amazon,AMZN Mktp US*H5834,5942,synthetic,-5570.37
+t335,a_checking,2025-04-10,-73.94,Electric Co,ELECTRIC BILL,4900,synthetic,36024.2
+t343,a_checking,2025-04-11,-4.01,Starbucks,STARBUCKS 9546,5814,synthetic,36020.2
+t346,a_checking,2025-04-11,-39.86,Uber,UBER TRIP 4018,4121,synthetic,35980.3
+t336,a_checking,2025-04-12,-59.27,Comcast,HOME INTERNET,4816,synthetic,35921
+t333,a_checking,2025-04-14,2398.97,Acme Inc.,PAYROLL,0,synthetic,38320
+t337,a_checking,2025-04-14,-37.39,T-Mobile,MOBILE BILL,4814,synthetic,38282.6
+t351,a_checking,2025-04-16,-56.6,Shell,,5541,synthetic,38226
+t347,a_checking,2025-04-17,-51.59,Chevron,CHEVRON OIL 7638,5541,synthetic,38174.4
+t345,a_checking,2025-04-18,181.52,Venmo,VENMO CASHIN,6011,synthetic,38356
+t340,a_checking,2025-04-22,-615.67,Credit Card Payment,AUTOPAY,6012,synthetic,37740.3
+t344,a_checking,2025-04-30,-6.66,Starbucks,STARBUCKS 4692,5814,synthetic,37733.6
+t350,a_checking,2025-04-30,38.88,Venmo,VENMO CASHIN,6011,synthetic,37772.5
+t368,a_checking,2025-05-01,-18.99,Chipotle,,5812,synthetic,37753.5
+t353,a_checking,2025-05-02,2299.3,Acme Inc.,PAYROLL,0,synthetic,40052.8
+t355,a_checking,2025-05-04,-1516.46,Landlord,MONTHLY RENT,6513,synthetic,38536.4
+t359,a_credit,2025-05-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-5583.36
+t360,a_credit,2025-05-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-5591.35
+t363,a_checking,2025-05-06,-34.7,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,38501.7
+t367,a_checking,2025-05-07,-113.4,GrocerMart,GROCERY STORE,5411,synthetic,38388.3
+t356,a_checking,2025-05-10,-79.31,Electric Co,ELECTRIC BILL,4900,synthetic,38309
+t373,a_checking,2025-05-10,-24.02,Target,TARGET #4116,5311,synthetic,38284.9
+t357,a_checking,2025-05-12,-62.46,Comcast,HOME INTERNET,4816,synthetic,38222.5
+t354,a_checking,2025-05-14,2396.9,Acme Inc.,PAYROLL,0,synthetic,40619.4
+t358,a_checking,2025-05-14,-39.77,T-Mobile,,4814,synthetic,40579.6
+t362,a_checking,2025-05-15,-95.9,GrocerMart,GROCERY STORE,5411,synthetic,40483.7
+t370,a_credit,2025-05-22,-420.9,Best Buy,BESTBUY #7564,5732,synthetic,-6012.25
+t371,a_credit,2025-05-22,-243.39,Amazon,AMZN Mktp US*G7252,5942,synthetic,-6255.64
+t361,a_checking,2025-05-23,-552.89,Credit Card Payment,AUTOPAY,6012,synthetic,39930.8
+t374,a_credit,2025-05-23,-434.49,Best Buy,BESTBUY #1554,5732,synthetic,-6690.13
+t364,a_checking,2025-05-24,-6.22,Starbucks,STARBUCKS 6843,5814,synthetic,39924.6
+t365,a_credit,2025-05-25,-259.26,Amazon,AMZN Mktp US*B2226,5942,synthetic,-6949.39
+t375,a_checking,2025-05-26,-15.45,Lyft,,4121,synthetic,39909.1
+t366,a_credit,2025-05-27,259.26,Amazon,AMZN REFUND,5942,synthetic,-6690.13
+t372,a_checking,2025-05-27,-6.5,Starbucks,STARBUCKS 8168,5814,synthetic,39902.6
+t369,a_checking,2025-05-30,-17.88,Chipotle,CHIPOTLE 6146,5812,synthetic,39884.8
+t376,a_checking,2025-06-02,2354.46,Acme Inc.,PAYROLL,0,synthetic,42239.2
+t387,a_checking,2025-06-02,58.0,Venmo,VENMO CASHIN,6011,synthetic,42297.2
+t378,a_checking,2025-06-04,-1421.74,Landlord,MONTHLY RENT,6513,synthetic,40875.5
+t382,a_credit,2025-06-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-6703.12
+t383,a_credit,2025-06-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-6711.11
+t390,a_checking,2025-06-06,-4.72,Starbucks,,5814,synthetic,40870.8
+t389,a_credit,2025-06-07,-234.71,Amazon,AMZN Mktp US*D3521,5942,synthetic,-6945.82
+t396,a_checking,2025-06-09,-168.89,Target,TARGET #1199,5311,synthetic,40701.9
+t379,a_checking,2025-06-10,-97.67,Electric Co,ELECTRIC BILL,4900,synthetic,40604.2
+t385,a_checking,2025-06-11,-72.25,Shell,,5541,synthetic,40532
+t380,a_checking,2025-06-12,-53.08,Comcast,HOME INTERNET,4816,synthetic,40478.9
+t392,a_checking,2025-06-13,-40.77,Lyft,LYFT TRIP 7039,4121,synthetic,40438.1
+t381,a_checking,2025-06-14,-52.31,T-Mobile,MOBILE BILL,4814,synthetic,40385.8
+t397,a_checking,2025-06-14,-71.51,Shell,SHELL OIL 4913,5541,synthetic,40314.3
+t377,a_checking,2025-06-17,2381.17,Acme Inc.,PAYROLL,0,synthetic,42695.5
+t388,a_credit,2025-06-17,-287.54,Amazon,,5942,synthetic,-7233.36
+t393,a_checking,2025-06-17,-155.32,Target,TARGET #6238,5311,synthetic,42540.1
+t394,a_checking,2025-06-18,-50.64,Lyft,LYFT TRIP 8762,4121,synthetic,42489.5
+t398,a_checking,2025-06-19,-115.58,Target,TARGET #6590,5311,synthetic,42373.9
+t391,a_checking,2025-06-23,-148.01,Whole Foods,WHOLEFDS #1045,5411,synthetic,42225.9
+t384,a_checking,2025-06-24,-626.39,Credit Card Payment,AUTOPAY,6012,synthetic,41599.5
+t395,a_checking,2025-06-25,-106.39,GrocerMart,,5411,synthetic,41493.1
+t386,a_credit,2025-06-28,-197.7,Amazon,AMZN Mktp US*A5297,5942,synthetic,-7431.06
+t399,a_checking,2025-07-01,2459.01,Acme Inc.,PAYROLL,0,synthetic,43952.1
+t416,a_credit,2025-07-01,-295.83,Amazon,AMZN Mktp US*C1464,5942,synthetic,-7726.89
+t401,a_checking,2025-07-04,-1505.13,Landlord,MONTHLY RENT,6513,synthetic,42447
+t419,a_checking,2025-07-04,-30.39,Chipotle,CHIPOTLE 1931,5812,synthetic,42416.6
+t404,a_credit,2025-07-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-7739.88
+t420,a_checking,2025-07-05,-6.12,Starbucks,,5814,synthetic,42410.5
+t405,a_credit,2025-07-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-7747.87
+t407,a_checking,2025-07-08,-23.61,Chipotle,CHIPOTLE 4795,5812,synthetic,42386.9
+t415,a_checking,2025-07-08,-5.65,Starbucks,,5814,synthetic,42381.2
+t414,a_checking,2025-07-09,-5.1,Starbucks,STARBUCKS 1488,5814,synthetic,42376.1
+t417,a_credit,2025-07-09,-182.36,Amazon,AMZN Mktp US*A8317,5942,synthetic,-7930.23
+t402,a_checking,2025-07-12,-52.94,Comcast,HOME INTERNET,4816,synthetic,42323.2
+t410,a_credit,2025-07-13,-152.09,Amazon,AMZN Mktp US*D8731,5942,synthetic,-8082.32
+t400,a_checking,2025-07-14,2338.92,Acme Inc.,PAYROLL,0,synthetic,44662.1
+t403,a_checking,2025-07-14,-43.09,T-Mobile,MOBILE BILL,4814,synthetic,44619
+t411,a_checking,2025-07-16,-35.62,Chipotle,CHIPOTLE 2115,5812,synthetic,44583.4
+t408,a_checking,2025-07-17,-7.06,Starbucks,STARBUCKS 4238,5814,synthetic,44576.3
+t412,a_checking,2025-07-17,-30.43,Panera Bread,PANERA BREAD 6983,5812,synthetic,44545.9
+t418,a_checking,2025-07-18,-38.97,Chipotle,CHIPOTLE 5026,5812,synthetic,44506.9
+t406,a_checking,2025-07-20,-724.48,Credit Card Payment,AUTOPAY,6012,synthetic,43782.5
+t409,a_credit,2025-07-25,-226.66,Amazon,AMZN Mktp US*B8785,5942,synthetic,-8308.98
+t413,a_checking,2025-07-28,-79.67,Target,,5311,synthetic,43702.8
+t421,a_checking,2025-07-31,-36.0,Chevron,CHEVRON OIL 2720,5541,synthetic,43666.8
+t422,a_checking,2025-08-01,2411.67,Acme Inc.,PAYROLL,0,synthetic,46078.5
+t437,a_checking,2025-08-01,-174.67,Target,TARGET #9186,5311,synthetic,45903.8
+t440,a_checking,2025-08-01,-198.54,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,45705.3
+t442,a_credit,2025-08-01,-225.29,Amazon,AMZN Mktp US*D2988,5942,synthetic,-8534.27
+t434,a_checking,2025-08-02,-49.19,Shell,SHELL OIL 9969,5541,synthetic,45656.1
+t424,a_checking,2025-08-04,-1488.69,Landlord,MONTHLY RENT,6513,synthetic,44167.4
+t427,a_credit,2025-08-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-8547.26
+t444,a_checking,2025-08-05,-3.37,Starbucks,STARBUCKS 7449,5814,synthetic,44164
+t428,a_credit,2025-08-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-8555.25
+t436,a_checking,2025-08-09,-3.51,Starbucks,,5814,synthetic,44160.5
+t425,a_checking,2025-08-10,-88.61,Electric Co,ELECTRIC BILL,4900,synthetic,44071.9
+t432,a_checking,2025-08-11,-17.55,Panera Bread,PANERA BREAD 7341,5812,synthetic,44054.3
+t443,a_checking,2025-08-11,-4.33,Starbucks,STARBUCKS 2329,5814,synthetic,44050
+t435,a_checking,2025-08-12,-52.37,GrocerMart,GROCERY STORE,5411,synthetic,43997.6
+t426,a_checking,2025-08-14,-46.47,T-Mobile,MOBILE BILL,4814,synthetic,43951.2
+t423,a_checking,2025-08-15,2429.82,Acme Inc.,PAYROLL,0,synthetic,46381
+t439,a_credit,2025-08-16,-222.21,Amazon,AMZN Mktp US*F2161,5942,synthetic,-8777.46
+t441,a_checking,2025-08-17,-80.08,GrocerMart,GROCERY STORE,5411,synthetic,46300.9
+t445,a_checking,2025-08-18,-20.27,Chipotle,CHIPOTLE 1979,5812,synthetic,46280.6
+t438,a_checking,2025-08-19,-67.23,Chevron,,5541,synthetic,46213.4
+t429,a_checking,2025-08-21,-698.72,Credit Card Payment,AUTOPAY,6012,synthetic,45514.7
+t431,a_checking,2025-08-21,-29.52,Uber,UBER TRIP 3468,4121,synthetic,45485.2
+t433,a_checking,2025-08-27,-19.18,Panera Bread,PANERA BREAD 1539,5812,synthetic,45466
+t430,a_checking,2025-08-30,-80.65,Target,,5311,synthetic,45385.3
+t446,a_checking,2025-09-01,2367.62,Acme Inc.,PAYROLL,0,synthetic,47752.9
+t448,a_checking,2025-09-02,-1505.83,Landlord,MONTHLY RENT,6513,synthetic,46247.1
+t460,a_credit,2025-09-02,-246.61,Amazon,,5942,synthetic,-9024.07
+t451,a_credit,2025-09-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-9037.06
+t449,a_checking,2025-09-10,-90.38,Electric Co,ELECTRIC BILL,4900,synthetic,46156.7
+t463,a_checking,2025-09-11,-32.89,Local Diner,LOCAL DINER 1241,5812,synthetic,46123.8
+t459,a_checking,2025-09-13,-51.3,Chevron,CHEVRON OIL 7734,5541,synthetic,46072.5
+t461,a_checking,2025-09-13,-52.68,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,46019.9
+t450,a_checking,2025-09-14,-38.85,T-Mobile,MOBILE BILL,4814,synthetic,45981
+t447,a_checking,2025-09-15,2420.04,Acme Inc.,PAYROLL,0,synthetic,48401.1
+t464,a_checking,2025-09-15,-16.95,Chipotle,CHIPOTLE 7771,5812,synthetic,48384.1
+t456,a_checking,2025-09-19,-147.9,Whole Foods,WHOLEFDS #1045,5411,synthetic,48236.2
+t452,a_checking,2025-09-21,-601.38,Credit Card Payment,AUTOPAY,6012,synthetic,47634.8
+t455,a_checking,2025-09-24,-28.07,Target,TARGET #3226,5311,synthetic,47606.8
+t453,a_checking,2025-09-25,-79.23,Whole Foods,WHOLEFDS #1045,5411,synthetic,47527.5
+t465,a_checking,2025-09-26,-38.57,Uber,UBER TRIP 3292,4121,synthetic,47489
+t454,a_credit,2025-09-27,-91.84,Best Buy,BESTBUY #6678,5732,synthetic,-9128.9
+t457,a_checking,2025-09-28,-4.11,Starbucks,STARBUCKS 2112,5814,synthetic,47484.8
+t458,a_checking,2025-09-28,-7.34,Starbucks,STARBUCKS 4202,5814,synthetic,47477.5
+t462,a_checking,2025-09-30,-114.01,GrocerMart,GROCERY STORE,5411,synthetic,47363.5
+t466,a_checking,2025-10-03,2422.47,Acme Inc.,PAYROLL,0,synthetic,49786
+t479,a_checking,2025-10-03,-180.77,Target,TARGET #2576,5311,synthetic,49605.2
+t468,a_checking,2025-10-04,-1469.6,Landlord,MONTHLY RENT,6513,synthetic,48135.6
+t472,a_credit,2025-10-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-9141.89
+t473,a_credit,2025-10-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-9149.88
+t475,a_checking,2025-10-06,-124.59,GrocerMart,GROCERY STORE,5411,synthetic,48011
+t486,a_checking,2025-10-07,-38.38,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,47972.6
+t469,a_checking,2025-10-10,-67.35,Electric Co,ELECTRIC BILL,4900,synthetic,47905.3
+t470,a_checking,2025-10-12,-68.42,Comcast,HOME INTERNET,4816,synthetic,47836.9
+t481,a_checking,2025-10-13,-5.03,Starbucks,STARBUCKS 1439,5814,synthetic,47831.8
+t467,a_checking,2025-10-14,2447.51,Acme Inc.,PAYROLL,0,synthetic,50279.3
+t471,a_checking,2025-10-14,-41.18,T-Mobile,,4814,synthetic,50238.2
+t476,a_checking,2025-10-16,-20.83,Local Diner,LOCAL DINER 8734,5812,synthetic,50217.3
+t478,a_checking,2025-10-17,-45.89,Uber,UBER TRIP 8341,4121,synthetic,50171.4
+t483,a_checking,2025-10-18,-66.3,GrocerMart,GROCERY STORE,5411,synthetic,50105.1
+t485,a_checking,2025-10-18,-51.23,Lyft,LYFT TRIP 5773,4121,synthetic,50053.9
+t484,a_checking,2025-10-21,-78.29,Chevron,CHEVRON OIL 2869,5541,synthetic,49975.6
+t474,a_checking,2025-10-22,-400.81,Credit Card Payment,AUTOPAY,6012,synthetic,49574.8
+t477,a_credit,2025-10-22,-605.14,Best Buy,BESTBUY #6433,5732,synthetic,-9755.02
+t482,a_credit,2025-10-25,-60.54,Amazon,AMZN Mktp US*A8419,5942,synthetic,-9815.56
+t480,a_checking,2025-10-28,-56.48,Chevron,CHEVRON OIL 2385,5541,synthetic,49518.3
+t487,a_checking,2025-10-29,-136.38,Whole Foods,WHOLEFDS #1045,5411,synthetic,49382
+t488,a_checking,2025-11-01,2479.38,Acme Inc.,PAYROLL,0,synthetic,51861.3
+t490,a_checking,2025-11-04,-1585.26,Landlord,MONTHLY RENT,6513,synthetic,50276.1
+t494,a_credit,2025-11-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-9828.55
+t504,a_credit,2025-11-05,-234.35,Best Buy,BESTBUY #6189,5732,synthetic,-10062.9
+t495,a_credit,2025-11-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-10070.9
+t499,a_checking,2025-11-08,-64.84,Target,TARGET #5239,5311,synthetic,50211.2
+t491,a_checking,2025-11-10,-77.14,Electric Co,ELECTRIC BILL,4900,synthetic,50134.1
+t492,a_checking,2025-11-12,-62.05,Comcast,HOME INTERNET,4816,synthetic,50072
+t503,a_checking,2025-11-13,-115.35,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,49956.7
+t493,a_checking,2025-11-14,-43.02,T-Mobile,MOBILE BILL,4814,synthetic,49913.7
+t489,a_checking,2025-11-16,2382.35,Acme Inc.,PAYROLL,0,synthetic,52296
+t508,a_checking,2025-11-17,-84.09,GrocerMart,GROCERY STORE,5411,synthetic,52211.9
+t506,a_checking,2025-11-18,-6.6,Starbucks,STARBUCKS 9882,5814,synthetic,52205.3
+t507,a_checking,2025-11-18,-6.71,Starbucks,,5814,synthetic,52198.6
+t498,a_credit,2025-11-20,-169.94,Amazon,AMZN Mktp US*A9895,5942,synthetic,-10240.8
+t496,a_checking,2025-11-23,-482.45,Credit Card Payment,AUTOPAY,6012,synthetic,51716.2
+t500,a_checking,2025-11-24,-167.15,Zelle Transfer,,6011,synthetic,51549
+t501,a_credit,2025-11-24,-129.2,Amazon,AMZN Mktp US*F1442,5942,synthetic,-10370
+t497,a_checking,2025-11-25,-12.0,MyBank,MONTHLY FEE,6012,synthetic,51537
+t502,a_credit,2025-11-26,129.2,Amazon,AMZN REFUND,5942,synthetic,-10240.8
+t505,a_checking,2025-11-26,-136.7,GrocerMart,GROCERY STORE,5411,synthetic,51400.3
+t509,a_checking,2025-12-01,2337.03,Acme Inc.,PAYROLL,0,synthetic,53737.4
+t524,a_credit,2025-12-01,-88.94,Amazon,AMZN Mktp US*H8801,5942,synthetic,-10329.8
+t525,a_checking,2025-12-01,-153.63,Zelle Transfer,ZELLE TO FRIEND,6011,synthetic,53583.7
+t511,a_checking,2025-12-02,-1552.24,Landlord,MONTHLY RENT,6513,synthetic,52031.5
+t527,a_checking,2025-12-02,-65.62,Chevron,CHEVRON OIL 6517,5541,synthetic,51965.9
+t528,a_checking,2025-12-03,-77.62,Whole Foods,WHOLEFDS #1045,5411,synthetic,51888.2
+t518,a_checking,2025-12-04,-121.27,Whole Foods,WHOLEFDS #1045,5411,synthetic,51767
+t514,a_credit,2025-12-05,-12.99,Spotify,SPOTIFY P123,5815,synthetic,-10342.8
+t515,a_credit,2025-12-06,-7.99,Netflix,NETFLIX.COM SUB,5815,synthetic,-10350.7
+t520,a_checking,2025-12-07,-3.55,Starbucks,STARBUCKS 9287,5814,synthetic,51763.4
+t512,a_checking,2025-12-12,-61.79,Comcast,HOME INTERNET,4816,synthetic,51701.6
+t513,a_checking,2025-12-14,-43.24,T-Mobile,MOBILE BILL,4814,synthetic,51658.4
+t522,a_checking,2025-12-14,-26.89,Panera Bread,PANERA BREAD 5217,5812,synthetic,51631.5
+t521,a_credit,2025-12-15,-179.52,Amazon,AMZN Mktp US*H9068,5942,synthetic,-10530.3
+t510,a_checking,2025-12-17,2368.71,Acme Inc.,PAYROLL,0,synthetic,54000.2
+t529,a_checking,2025-12-17,-31.79,Chipotle,CHIPOTLE 3273,5812,synthetic,53968.4
+t526,a_credit,2025-12-18,-226.94,Amazon,AMZN Mktp US*G5577,5942,synthetic,-10757.2
+t523,a_checking,2025-12-20,133.04,Venmo,VENMO CASHIN,6011,synthetic,54101.5
+t517,a_checking,2025-12-21,-118.64,GrocerMart,GROCERY STORE,5411,synthetic,53982.8
+t519,a_checking,2025-12-22,-202.26,Target,TARGET #1989,5311,synthetic,53780.6
+t516,a_checking,2025-12-23,-841.21,Credit Card Payment,AUTOPAY,6012,synthetic,52939.4
