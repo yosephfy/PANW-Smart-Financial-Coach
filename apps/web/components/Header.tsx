@@ -31,10 +31,13 @@ export default function Header() {
           <Link href="/insights" className="hover:underline">
             Insights
           </Link>
+          <Link href="/goals" className="hover:underline">
+            Goals
+          </Link>
         </nav>
         <div className="ml-auto text-xs text-slate-400 flex items-center gap-3">
           <div>
-            {process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000"}
+            {process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}
           </div>
           {userId ? (
             <>
@@ -43,13 +46,18 @@ export default function Header() {
               </div>
               <button
                 className="text-sm underline"
-                onClick={() => setUserId("")}
+                onClick={async () => {
+                  try {
+                    await fetch((process.env.NEXT_PUBLIC_API_URL||'http://localhost:8000')+"/auth/logout", { method: 'POST', credentials: 'include' });
+                  } catch {}
+                  setUserId("");
+                }}
               >
                 Sign out
               </button>
             </>
           ) : (
-            <Link href="/connect" className="text-sm underline">
+            <Link href="/auth" className="text-sm underline">
               Sign in
             </Link>
           )}

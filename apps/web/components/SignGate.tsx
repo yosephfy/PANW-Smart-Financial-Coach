@@ -9,13 +9,11 @@ export default function SignGate({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
 
-  const allowedWithoutSignIn =
-    !!pathname &&
-    (pathname.startsWith("/connect") || pathname.startsWith("/plaid"));
+  const allowedWithoutSignIn = !!pathname && pathname.startsWith("/auth");
 
   useEffect(() => {
     if (!userId && !allowedWithoutSignIn) {
-      router.replace("/connect");
+      router.replace("/auth");
     }
   }, [userId, router, pathname, allowedWithoutSignIn]);
 

@@ -22,13 +22,13 @@ An AI-powered personal finance coach that turns raw transactions into personaliz
 
 2) Run the API locally:
    - `uvicorn app.main:app --reload`
-   - Open `http://127.0.0.1:8000/health` for a health check.
+   - Open `http://localhost:8000/health` for a health check.
 
 ## Getting Started (Frontend)
 1) Open a new terminal:
    - `cd apps/web`
    - `npm install`
-   - `export NEXT_PUBLIC_API_URL=http://127.0.0.1:8000` (optional; defaults to this)
+   - `export NEXT_PUBLIC_API_URL=http://localhost:8000` (optional; defaults to this)
    - `npm run dev`
    - Open `http://localhost:3000`
 

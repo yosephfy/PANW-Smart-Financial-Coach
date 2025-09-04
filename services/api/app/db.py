@@ -66,3 +66,9 @@ def init_db() -> None:
         if not _has_column("subscriptions", "trial_converted"):
             conn.execute(
                 "ALTER TABLE subscriptions ADD COLUMN trial_converted BOOLEAN DEFAULT 0;")
+
+        # Users auth columns
+        if not _has_column("users", "password_hash"):
+            conn.execute("ALTER TABLE users ADD COLUMN password_hash TEXT;")
+        if not _has_column("users", "password_salt"):
+            conn.execute("ALTER TABLE users ADD COLUMN password_salt TEXT;")

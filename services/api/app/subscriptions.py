@@ -65,6 +65,22 @@ def _detect_cadence(intervals: List[int]) -> Optional[str]:
     return None
 
 
+def _cadence_consistency(cadence: str, intervals: List[int]) -> float:
+    """Return fraction of intervals that fall within a tight window for cadence."""
+    if not intervals:
+        return 0.0
+    if cadence == "weekly":
+        lo, hi = 6, 9  # allow small jitter
+    elif cadence == "monthly":
+        lo, hi = 27, 33
+    elif cadence == "yearly":
+        lo, hi = 330, 400
+    else:
+        return 0.0
+    good = sum(1 for d in intervals if lo <= d <= hi)
+    return good / len(intervals)
+
+
 def _status_for(cadence: str, last_seen: date, ref: Optional[date] = None) -> str:
     today = ref or date.today()
     days = (today - last_seen).days
@@ -121,14 +137,23 @@ def detect_subscriptions_for_user(conn: sqlite3.Connection, user_id: str) -> Lis
             else:
                 continue
 
-        # Amount consistency: allow ~15% variation or $3 absolute
+        # Timing consistency: require majority of intervals near cadence window
+        cfrac = _cadence_consistency(cad, intervals)
+        # Require at least 70% of intervals inside window
+        if len(intervals) >= 2 and cfrac < 0.7:
+            continue
+
+        # Amount consistency: require majority of charges near the median
         med_abs, last_abs = _amounts_stats(amts)
         if med_abs == 0:
             continue
-        tolerance = max(3.0, 0.15 * med_abs)
-        if abs(last_abs - med_abs) > 4 * tolerance and len(amts) >= 3:
-            # Very inconsistent, likely not a subscription
-            continue
+        tol = max(2.0, 0.10 * med_abs)  # tighter: 10% or $2
+        within = [abs(abs(a) - med_abs) <= tol for a in amts]
+        if len(within) >= 3:
+            frac_within = sum(within) / len(within)
+            if frac_within < 0.7:
+                # Too much variability in amounts
+                continue
 
         pchg = _price_change_pct(med_abs, last_abs)
         last_seen = dates[-1]

@@ -13,6 +13,58 @@ from plaid.model.transactions_get_request import TransactionsGetRequest
 from plaid.model.accounts_get_request import AccountsGetRequest
 
 from . import db as db_mod
+import base64
+import logging
+
+
+def _cipher():
+    """Return a (encrypt, decrypt) pair using Fernet if available and key present.
+
+    If not available, return (None, None) signaling plaintext storage.
+    """
+    key = os.getenv("PLAID_ENC_KEY")
+    if not key:
+        return (None, None)
+    try:
+        from cryptography.fernet import Fernet
+
+        # Accept raw 32-byte urlsafe base64 key or passphrase to derive (dev only)
+        if len(key) != 44:  # not a base64 fernet key
+            # Derive a 32-byte key from passphrase (dev convenience)
+            import hashlib
+
+            d = hashlib.sha256(key.encode("utf-8")).digest()
+            key_b64 = base64.urlsafe_b64encode(d)
+        else:
+            key_b64 = key.encode("utf-8")
+        f = Fernet(key_b64)
+        return (lambda s: f.encrypt(s.encode("utf-8")).decode("utf-8"),
+                lambda s: f.decrypt(s.encode("utf-8")).decode("utf-8"))
+    except Exception:
+        logging.getLogger(__name__).warning(
+            "cryptography not available; storing Plaid tokens in plaintext")
+        return (None, None)
+
+
+def _seal(token: str) -> str:
+    enc, _dec = _cipher()
+    if enc:
+        return "enc:" + enc(token)
+    return "plain:" + token
+
+
+def _unseal(stored: str) -> str:
+    prefix, _, val = stored.partition(":")
+    if prefix == "enc":
+        _enc, dec = _cipher()
+        if not dec:
+            raise RuntimeError(
+                "PLAID_ENC_KEY or cryptography missing; cannot decrypt tokens")
+        return dec(val)
+    # Treat unknown/legacy as plaintext
+    if prefix == "plain":
+        return val
+    return stored
 from .ingest import categorize_with_provenance
 
 
@@ -60,7 +112,7 @@ def exchange_public_token(user_id: str, public_token: str) -> Dict:
         conn.execute("INSERT OR IGNORE INTO users (id) VALUES (?)", (user_id,))
         conn.execute(
             "INSERT OR REPLACE INTO plaid_items (id, user_id, item_id, access_token) VALUES (?, ?, ?, ?)",
-            (sid, user_id, item_id, access_token),
+            (sid, user_id, item_id, _seal(access_token)),
         )
     return {"item_id": item_id}
 
@@ -90,7 +142,7 @@ def import_transactions_for_user(user_id: str, start: Optional[str] = None, end:
         for row in items:
             access_token = row['access_token']
             # Fetch accounts to map account_id to our accounts table
-            accounts = _accounts_for(conn, access_token)
+            accounts = _accounts_for(conn, _unseal(access_token))
             for a in accounts:
                 acc_id = a['account_id']
                 name = a.get('name') or a.get('official_name') or 'Plaid Account'
@@ -156,4 +208,3 @@ def import_transactions_for_user(user_id: str, start: Optional[str] = None, end:
         "start_date": start_date,
         "end_date": end_date,
     }
-

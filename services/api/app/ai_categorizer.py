@@ -13,6 +13,20 @@ try:
     SKLEARN_AVAILABLE = True
 except Exception:
     SKLEARN_AVAILABLE = False
+    # lightweight JSON fallback helpers when sklearn isn't installable
+    import json
+
+    def _save_fallback_model(path, data):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path.with_suffix('.json'), 'w', encoding='utf-8') as fh:
+            json.dump(data, fh, ensure_ascii=False)
+
+    def _load_fallback_model(path):
+        p = path.with_suffix('.json')
+        if not p.exists():
+            raise FileNotFoundError(str(p))
+        with open(p, 'r', encoding='utf-8') as fh:
+            return json.load(fh)
 
 
 def _repo_root() -> Path:
@@ -62,12 +76,30 @@ def _gather_training_data(conn: sqlite3.Connection, user_id: str, min_per_class:
 
 def train_for_user(conn: sqlite3.Connection, user_id: str, min_per_class: int = 5) -> Dict:
     if not SKLEARN_AVAILABLE:
-        raise RuntimeError("scikit-learn not installed")
+        # fallback: simple token-frequency model stored as JSON
+        X, y = _gather_training_data(
+            conn, user_id, min_per_class=min_per_class)
+        if len(X) < 10 or len(set(y)) < 2:
+            raise RuntimeError("not_enough_training_data")
+        from collections import defaultdict
+        counts = defaultdict(int)
+        token_map = {}
+        for text, label in zip(X, y):
+            counts[label] += 1
+            for tok in text.lower().split():
+                token_map.setdefault(label, {}).setdefault(tok, 0)
+                token_map[label][tok] += 1
+        # prepare serializable counts (convert defaultdict)
+        serial_counts = {k: int(v) for k, v in counts.items()}
+        model = {"classes": list(serial_counts.keys()),
+                 "counts": serial_counts, "tokens": token_map}
+        _save_fallback_model(model_path(user_id), model)
+        return {"user_id": user_id, "classes": list(serial_counts.keys()), "counts": serial_counts, "n_samples": len(y)}
     X, y = _gather_training_data(conn, user_id, min_per_class=min_per_class)
     if len(X) < 10 or len(set(y)) < 2:
         raise RuntimeError("not_enough_training_data")
     pipe = Pipeline([
-        ("tfidf", TfidfVectorizer(ngram_range=(1,2), min_df=1, max_features=30000)),
+        ("tfidf", TfidfVectorizer(ngram_range=(1, 2), min_df=1, max_features=30000)),
         ("clf", LogisticRegression(max_iter=200, class_weight="balanced")),
     ])
     pipe.fit(X, y)
@@ -78,7 +110,26 @@ def train_for_user(conn: sqlite3.Connection, user_id: str, min_per_class: int = 
 
 def predict_for_user(user_id: str, merchant: Optional[str], description: Optional[str], top_k: int = 3) -> Dict:
     if not SKLEARN_AVAILABLE:
-        raise RuntimeError("scikit-learn not installed")
+        # fallback: score classes by token overlap / counts
+        p = model_path(user_id)
+        try:
+            model = _load_fallback_model(p)
+        except Exception:
+            raise RuntimeError("model_not_found")
+        text = f"{merchant or ''} {description or ''}".strip().lower()
+        if not text:
+            return {"predictions": []}
+        toks = text.split()
+        scores = {}
+        for cls in model.get('classes', []):
+            scores[cls] = 0.0
+            tmap = model.get('tokens', {}).get(cls, {})
+            for t in toks:
+                scores[cls] += tmap.get(t, 0)
+        ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)[
+            :top_k]
+        total = sum(v for _, v in ranked) or 1.0
+        return {"predictions": [{"label": c, "prob": float(v) / float(total)} for c, v in ranked]}
     p = model_path(user_id)
     if not p.exists():
         raise RuntimeError("model_not_found")
@@ -90,20 +141,21 @@ def predict_for_user(user_id: str, merchant: Optional[str], description: Optiona
     if hasattr(pipe.named_steps["clf"], "predict_proba"):
         probs = pipe.predict_proba([text])[0]
         classes = list(pipe.named_steps["clf"].classes_)
-        pairs = sorted(zip(classes, probs), key=lambda x: x[1], reverse=True)[:top_k]
+        pairs = sorted(zip(classes, probs),
+                       key=lambda x: x[1], reverse=True)[:top_k]
         return {"predictions": [{"label": c, "prob": float(p)} for c, p in pairs]}
     # fallback to decision_function
     scores = pipe.decision_function([text])
     if scores.ndim == 1:
         scores = [scores]
     classes = list(pipe.named_steps["clf"].classes_)
-    pairs = sorted(zip(classes, scores[0]), key=lambda x: x[1], reverse=True)[:top_k]
+    pairs = sorted(zip(classes, scores[0]),
+                   key=lambda x: x[1], reverse=True)[:top_k]
     # normalize scores to 0..1 via min-max (rough)
     svals = [s for _, s in pairs]
     if svals:
         smin, smax = min(svals), max(svals)
-        norm = lambda s: float((s - smin) / (smax - smin + 1e-9))
+        def norm(s): return float((s - smin) / (smax - smin + 1e-9))
     else:
-        norm = lambda s: 0.0
+        def norm(s): return 0.0
     return {"predictions": [{"label": c, "prob": norm(s)} for c, s in pairs]}
-

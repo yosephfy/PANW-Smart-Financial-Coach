@@ -1,39 +1,30 @@
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query
+from .api import plaid as plaid_router
+from .api import anomaly as anomaly_router
+from .api import forecast as forecast_router
+from .api import ai as ai_router
+from .api import categorization as categorization_router
+from .api import goals as goals_router
+from .api import subscriptions as subscriptions_router
+from .api import insights as insights_router
+import os
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 from . import db as db_mod
-from .ingest import parse_csv_transactions, dupe_hash, categorize_with_provenance
+from .ingest import parse_csv_transactions
 from pydantic import BaseModel
+from .services.ingestion_service import ingest_records as _ingest_records, AIHooks as _AIHooks, RecHooks as _RecHooks
+from .utils import auth as auth_utils
 from .insights import generate_insights, upsert_insights
+from .repositories import transactions_repo as _txrepo
 from .subscriptions import detect_subscriptions_for_user, upsert_subscriptions
-from .anomaly import detect_iforest_insights
-from .goals import create_goal, list_goals, evaluate_goal
-from .forecast import forecast_categories
+from .is_recurring_model import has_model as has_rec_model
 try:
-    from .llm import rewrite_insight_llm
-    LLM_AVAILABLE = True
+    from .is_recurring_model import train_for_user as train_rec_model, predict_for_user as predict_rec_model
+    ISREC_AVAILABLE = True
 except Exception:
-    LLM_AVAILABLE = False
-
-# Make Plaid optional so the API can start without plaid-python installed
-try:
-    from .plaid_integration import (
-        create_link_token as _create_link_token,
-        exchange_public_token as _exchange_public_token,
-        import_transactions_for_user as _import_transactions_for_user,
-    )
-    PLAID_AVAILABLE = True
-except Exception:
-    PLAID_AVAILABLE = False
-
-    def _unavailable(*_args, **_kwargs):
-        raise HTTPException(
-            status_code=503,
-            detail="Plaid integration unavailable. Install plaid-python and set PLAID_CLIENT_ID/PLAID_SECRET.",
-        )
-    _create_link_token = _unavailable
-    _exchange_public_token = _unavailable
-    _import_transactions_for_user = _unavailable
+    ISREC_AVAILABLE = False
+LLM_AVAILABLE = False
 
 # Optional ML categorizer (AI)
 try:
@@ -72,13 +63,57 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "http://127.0.0.1:3000",
     ],
 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include extracted routers
+app.include_router(insights_router.router)
+app.include_router(subscriptions_router.router)
+app.include_router(goals_router.router)
+app.include_router(categorization_router.router)
+app.include_router(ai_router.router)
+app.include_router(forecast_router.router)
+app.include_router(anomaly_router.router)
+app.include_router(plaid_router.router)
+
+"""
+Stateless auth helpers: we use a simple header-based user identity.
+Frontend stores the user id after login/register and supplies `X-User-Id`.
+"""
+
+
+def _current_username(request: Request) -> Optional[str]:
+    # Prefer explicit header if present (stateless auth)
+    header_user = request.headers.get(
+        "x-user-id") or request.headers.get("x-user")
+    if header_user:
+        return header_user.strip()
+    return None
+
+
+def _current_user(request: Request, provided: Optional[str] = None) -> Optional[str]:
+    # Stateless: header takes precedence, then explicit provided param
+    header_user = request.headers.get(
+        "x-user-id") or request.headers.get("x-user")
+    if header_user:
+        return header_user.strip()
+    if provided:
+        return provided
+    return None
+
+
+def _set_session(resp: Response, username: str):
+    # No-op in stateless mode; kept for compatibility
+    return
+
+
+def _clear_session(resp: Response):
+    # No-op in stateless mode; kept for compatibility
+    return
 
 
 @app.get("/", tags=["meta"])
@@ -89,6 +124,10 @@ def root():
         "status": "ok",
         "endpoints": [
             "/health",
+            "/auth/register",
+            "/auth/login",
+            "/auth/logout",
+            "/auth/me",
             "/ingest/csv",
             "/users/{user_id}/transactions",
             "/categorization/explain",
@@ -110,15 +149,85 @@ def health():
     return {"status": "healthy"}
 
 
+# Auth endpoints
+class AuthRequest(BaseModel):
+    username: str
+    password: str
+
+
+def _hash_password(password: str, salt: bytes) -> str:
+    # Delegate to utils for centralization
+    return auth_utils.hash_password(password, salt)
+
+
+@app.post("/auth/register", tags=["auth"])
+def auth_register(body: AuthRequest, response: Response):
+    username = body.username.strip()
+    if not username or not body.password:
+        raise HTTPException(status_code=400, detail="missing_credentials")
+    with db_mod.get_connection() as conn:
+        # If user exists, error
+        exists = conn.execute(
+            "SELECT 1 FROM users WHERE id = ?", (username,)).fetchone()
+        if exists:
+            raise HTTPException(status_code=400, detail="user_exists")
+        import os
+        salt = os.urandom(16)
+        pwh = _hash_password(body.password, salt)
+        conn.execute("INSERT INTO users (id, password_hash, password_salt) VALUES (?, ?, ?)",
+                     (username, pwh, salt.hex()))
+    # Stateless: return created user id; client stores it and sends X-User-Id
+    return {"id": username}
+
+
+@app.post("/auth/login", tags=["auth"])
+def auth_login(body: AuthRequest, response: Response):
+    username = body.username.strip()
+    with db_mod.get_connection() as conn:
+        row = conn.execute(
+            "SELECT password_hash, password_salt FROM users WHERE id = ?", (username,)).fetchone()
+        if not row:
+            raise HTTPException(status_code=400, detail="invalid_credentials")
+        salt = bytes.fromhex(row["password_salt"]
+                             or "") if row["password_salt"] else b""
+        if not salt:
+            raise HTTPException(status_code=400, detail="invalid_credentials")
+        pwh = _hash_password(body.password, salt)
+        if pwh != (row["password_hash"] or ""):
+            raise HTTPException(status_code=400, detail="invalid_credentials")
+    # Stateless: return user id only
+    return {"id": username}
+
+
+@app.post("/auth/logout", tags=["auth"])
+def auth_logout(response: Response):
+    _clear_session(response)
+    return {"ok": True}
+
+
+@app.get("/auth/me", tags=["auth"])
+def auth_me(request: Request):
+    u = _current_username(request)
+    if not u:
+        raise HTTPException(status_code=401, detail="not_authenticated")
+    return {"id": u}
+
+
 @app.post("/ingest/csv", tags=["ingestion"])
 async def ingest_csv(
+    request: Request,
     file: UploadFile = File(...),
-    user_id: str = Form(...),
     default_account_id: Optional[str] = Form(None),
 ):
     if file.content_type not in ("text/csv", "application/vnd.ms-excel", "application/csv"):
         # Allow anyway, as some browsers send application/octet-stream for CSV
         pass
+
+    # Determine user from header (stateless); CSVs never include user_id
+    session_user = _current_user(request)
+    if not session_user:
+        raise HTTPException(status_code=401, detail="not_authenticated")
+    user_id = session_user
 
     content = await file.read()
     try:
@@ -127,118 +236,24 @@ async def ingest_csv(
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"parse_error: {e}")
 
-    if not records:
-        return {"inserted": 0, "skipped": 0, "total_rows": 0}
+    # Enforce authenticated user's id on all parsed records
+    for r in records:
+        r["user_id"] = user_id
 
-    inserted = 0
-    skipped = 0
-    seen_hashes = set()
     with db_mod.get_connection() as conn:
-        # Ensure user exists
-        conn.execute("INSERT OR IGNORE INTO users (id) VALUES (?)", (user_id,))
-
-        # Ensure default account exists if provided
-        if default_account_id:
-            conn.execute(
-                "INSERT OR IGNORE INTO accounts (id, user_id, name, type, institution, mask) VALUES (?, ?, ?, ?, ?, ?)",
-                (default_account_id, user_id, "Default Account", None, None, None),
-            )
-
-        # Ensure any referenced accounts exist
-        for r in records:
-            # Optionally enhance categorization via ML model if present
-            if AI_AVAILABLE and _has_model(user_id):
-                if not r.get("category") or (r.get("category_source") in (None, "fallback", "regex")):
-                    try:
-                        pred = _predict_categorizer(
-                            user_id, r.get("merchant"), r.get("description"))
-                        preds = pred.get("predictions", [])
-                        if preds:
-                            top = preds[0]
-                            if float(top.get("prob", 0)) >= 0.7:
-                                r["category"] = top["label"]
-                                r["category_source"] = "ml"
-                                r["category_provenance"] = f"ml:{top['label']}:{float(top['prob']):.2f}"
-                    except Exception:
-                        pass
-            acc_id = r.get("account_id")
-            if acc_id:
-                conn.execute(
-                    "INSERT OR IGNORE INTO accounts (id, user_id, name, type, institution, mask) VALUES (?, ?, ?, ?, ?, ?)",
-                    (acc_id, user_id, r.get("account_name")
-                     or "Imported", None, None, None),
-                )
-
-        for r in records:
-            # Duplicate detection: hash(date, amount, merchant) per user
-            h = dupe_hash(user_id, r["date"], r["amount"], r.get("merchant"))
-            if h in seen_hashes:
-                skipped += 1
-                continue
-
-            # Check DB for existing row with same key
-            merchant_norm = (r.get("merchant") or "").strip().lower()
-            amount_cents = int(round(float(r["amount"]) * 100))
-            exists = conn.execute(
-                """
-                SELECT 1 FROM transactions
-                WHERE user_id = ? AND date = ?
-                  AND CAST(ROUND(amount * 100) AS INTEGER) = ?
-                  AND LOWER(COALESCE(merchant, '')) = ?
-                LIMIT 1
-                """,
-                (user_id, r["date"], amount_cents, merchant_norm),
-            ).fetchone()
-
-            if exists:
-                skipped += 1
-                continue
-
-            try:
-                pre = conn.total_changes
-                conn.execute(
-                    """
-                    INSERT OR IGNORE INTO transactions (
-                        id, user_id, account_id, date, amount, merchant, description,
-                        category, category_source, category_provenance,
-                        is_recurring, mcc, source
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        r["id"], r["user_id"], r.get(
-                            "account_id"), r["date"], r["amount"], r.get("merchant"),
-                        r.get("description"), r.get("category"), r.get(
-                            "category_source"), r.get("category_provenance"),
-                        r.get("is_recurring", False), r.get(
-                            "mcc"), r.get("source", "csv"),
-                    ),
-                )
-                post = conn.total_changes
-                if post > pre:
-                    inserted += 1
-                    seen_hashes.add(h)
-                else:
-                    skipped += 1
-            except Exception:
-                skipped += 1
-
-    sample = records[0] if records else None
-    # Hide possibly verbose fields in sample
-    if sample and "raw" in sample:
-        sample.pop("raw", None)
-
-    return {
-        "inserted": inserted,
-        "skipped": skipped,
-        "total_rows": len(records),
-        "sample": sample,
-    }
+        ai_hooks = _AIHooks(
+            _has_model, _predict_categorizer) if AI_AVAILABLE else None
+        rec_hooks = _RecHooks(
+            has_rec_model, predict_rec_model) if ISREC_AVAILABLE else None
+        result = _ingest_records(
+            conn, user_id, records, default_account_id, ai=ai_hooks, rec=rec_hooks)
+    return result
 
 
 @app.post("/ingest/csv/insights", tags=["ingestion"])
 async def ingest_csv_with_insights(
+    request: Request,
     file: UploadFile = File(...),
-    user_id: str = Form(...),
     default_account_id: Optional[str] = Form(None),
 ):
     """Ingest a CSV and immediately generate/upsert insights for the user.
@@ -246,18 +261,21 @@ async def ingest_csv_with_insights(
     Returns the ingestion result and the generated insights.
     """
     # Reuse existing ingest implementation
-    ingest_result = await ingest_csv(file, user_id, default_account_id)
+    ingest_result = await ingest_csv(request, file, default_account_id)
 
     # Generate insights based on the newly-ingested data
+    u = _current_username(request)
+    if not u:
+        raise HTTPException(status_code=401, detail="not_authenticated")
     with db_mod.get_connection() as conn:
-        items = generate_insights(conn, user_id)
+        items = generate_insights(conn, u)
         if items:
             upsert_insights(conn, items)
 
         # Detect subscriptions from the newly-ingested transactions and upsert
         try:
-            subs = detect_subscriptions_for_user(conn, user_id)
-            inserted, updated = upsert_subscriptions(conn, user_id, subs)
+            subs = detect_subscriptions_for_user(conn, u)
+            inserted, updated = upsert_subscriptions(conn, u, subs)
             # Convert dataclass objects to serializable dicts
             subs_list = [s.__dict__ for s in subs]
             subs_summary = {
@@ -276,39 +294,15 @@ async def ingest_csv_with_insights(
 @app.get("/users/{user_id}/transactions", tags=["transactions"])
 def list_transactions(user_id: str, limit: int = Query(50, ge=1, le=500)):
     with db_mod.get_connection() as conn:
-        rows = conn.execute(
-            """
-            SELECT id, date, amount, merchant, description, category, category_source, category_provenance,
-                   is_recurring, mcc, account_id
-            FROM transactions
-            WHERE user_id = ?
-            ORDER BY date DESC
-            LIMIT ?
-            """,
-            (user_id, limit),
-        ).fetchall()
-        return [dict(r) for r in rows]
+        return _txrepo.list_recent(conn, user_id, limit)
 
 
-@app.get("/categorization/explain", tags=["categorization"])
-def categorization_explain(
-    merchant: Optional[str] = Query(None),
-    description: Optional[str] = Query(None),
-    mcc: Optional[str] = Query(None),
-):
-    category, source, prov, rule = categorize_with_provenance(
-        merchant, description, mcc, None)
-    return {
-        "input": {"merchant": merchant, "description": description, "mcc": mcc},
-        "category": category,
-        "category_source": source,
-        "category_provenance": prov,
-        "rule": rule,
-    }
-
-
-class DetectRequest(BaseModel):
-    user_id: str
+@app.get("/me/transactions", tags=["transactions"])
+def list_transactions_me(request: Request, limit: int = Query(50, ge=1, le=500)):
+    u = _current_username(request)
+    if not u:
+        raise HTTPException(status_code=401, detail="not_authenticated")
+    return list_transactions(u, limit)
 
 
 class UserCreateRequest(BaseModel):
@@ -345,13 +339,18 @@ class TransactionCreateRequest(BaseModel):
 
 
 @app.post("/users/{user_id}/transactions", tags=["transactions"])
-def create_transaction(user_id: str, body: TransactionCreateRequest):
+def create_transaction(user_id: str, body: TransactionCreateRequest, request: Request):
     """Insert a single transaction for a user (used by "Add transaction" UI).
 
     This follows the same insertion rules as CSV ingest: ensures accounts exist,
     applies ML categorization fallback when available, and returns the inserted row on success.
     """
     import uuid
+
+    # Enforce that caller is the same user (stateless header auth)
+    u = _current_username(request)
+    if not u or u != user_id:
+        raise HTTPException(status_code=401, detail="not_authenticated")
 
     tid = uuid.uuid4().hex
     with db_mod.get_connection() as conn:
@@ -419,42 +418,6 @@ def create_transaction(user_id: str, body: TransactionCreateRequest):
     return {"inserted": True, "transaction": row}
 
 
-@app.post("/subscriptions/detect", tags=["subscriptions"])
-def subscriptions_detect(body: DetectRequest):
-    with db_mod.get_connection() as conn:
-        subs = detect_subscriptions_for_user(conn, body.user_id)
-        inserted, updated = upsert_subscriptions(conn, body.user_id, subs)
-    return {
-        "user_id": body.user_id,
-        "detected": len(subs),
-        "inserted": inserted,
-        "updated": updated,
-        "sample": subs[0].__dict__ if subs else None,
-    }
-
-
-@app.get("/users/{user_id}/subscriptions", tags=["subscriptions"])
-def list_subscriptions(user_id: str, limit: int = Query(100, ge=1, le=500)):
-    with db_mod.get_connection() as conn:
-        rows = conn.execute(
-            """
-            SELECT merchant, avg_amount, cadence, last_seen, status, price_change_pct, COALESCE(trial_converted, 0) as trial_converted
-            FROM subscriptions
-            WHERE user_id = ?
-            ORDER BY avg_amount DESC
-            LIMIT ?
-            """,
-            (user_id, limit),
-        ).fetchall()
-        out = []
-        for r in rows:
-            d = dict(r)
-            # Normalize SQLite integer boolean to Python bool
-            d["trial_converted"] = bool(d.get("trial_converted"))
-            out.append(d)
-        return out
-
-
 class CategorizationRequest(BaseModel):
     merchant: Optional[str] = None
     description: Optional[str] = None
@@ -475,185 +438,34 @@ def categorization_explain_post(body: CategorizationRequest):
     }
 
 
-# Insights
-class InsightsGenerateRequest(BaseModel):
+class TrainRecurringRequest(BaseModel):
     user_id: str
 
 
-@app.post("/insights/generate", tags=["insights"])
-def insights_generate(body: InsightsGenerateRequest):
-    with db_mod.get_connection() as conn:
-        items = generate_insights(conn, body.user_id)
-        upsert_insights(conn, items)
-    return {"user_id": body.user_id, "count": len(items), "sample": items[0] if items else None}
-
-
-@app.get("/users/{user_id}/insights", tags=["insights"])
-def list_insights(user_id: str, limit: int = Query(50, ge=1, le=200)):
-    with db_mod.get_connection() as conn:
-        rows = conn.execute(
-            """
-            SELECT id, type, title, body, severity, data_json, created_at,
-                   rewritten_title, rewritten_body, rewritten_at
-            FROM insights
-            WHERE user_id = ?
-            ORDER BY created_at DESC
-            LIMIT ?
-            """,
-            (user_id, limit),
-        ).fetchall()
-        out = []
-        for r in rows:
-            out.append(dict(r))
-        return out
-
-
-# AI Categorizer endpoints
-class TrainCategorizerRequest(BaseModel):
-    user_id: str
-    min_per_class: int | None = 5
-
-
-@app.post("/ai/categorizer/train", tags=["ai"])
-def ai_categorizer_train(body: TrainCategorizerRequest):
+@app.post("/ai/is_recurring/train", tags=["ai"])
+def api_is_recurring_train(body: TrainRecurringRequest):
     with db_mod.get_connection() as conn:
         try:
-            info = _train_categorizer(
-                conn, body.user_id, min_per_class=body.min_per_class or 5)
-            # Convert Counter to dict if present
-            counts = info.get("counts")
-            if counts is not None and hasattr(counts, "items"):
-                info["counts"] = {k: int(v) for k, v in counts.items()}
+            # Ensure subscriptions table is up to date for labels
+            subs = detect_subscriptions_for_user(conn, body.user_id)
+            upsert_subscriptions(conn, body.user_id, subs)
+            info = train_rec_model(conn, body.user_id)
             return info
         except Exception as e:
             raise HTTPException(status_code=400, detail=str(e))
 
 
-class PredictCategorizerRequest(BaseModel):
+class PredictRecurringRequest(BaseModel):
     user_id: str
     merchant: Optional[str] = None
     description: Optional[str] = None
-    top_k: Optional[int] = 3
+    amount: float
+    date: str
 
 
-@app.post("/ai/categorizer/predict", tags=["ai"])
-def ai_categorizer_predict(body: PredictCategorizerRequest):
+@app.post("/ai/is_recurring/predict", tags=["ai"])
+def api_is_recurring_predict(body: PredictRecurringRequest):
     try:
-        return _predict_categorizer(body.user_id, body.merchant, body.description, top_k=body.top_k or 3)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-# Plaid endpoints
-class LinkTokenRequest(BaseModel):
-    user_id: str
-
-
-@app.post("/plaid/link/token/create", tags=["plaid"])
-def plaid_link_token_create(body: LinkTokenRequest):
-    try:
-        return _create_link_token(body.user_id)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-# IsolationForest anomaly (ML)
-class IForestDetectRequest(BaseModel):
-    user_id: str
-    contamination: float | None = 0.08
-
-
-@app.post("/anomaly/iforest/detect", tags=["ai"])
-def iforest_detect(body: IForestDetectRequest):
-    with db_mod.get_connection() as conn:
-        items = detect_iforest_insights(
-            conn, body.user_id, contamination=body.contamination or 0.08)
-        if items:
-            upsert_insights(conn, items)
-    return {"user_id": body.user_id, "count": len(items) if items else 0, "sample": items[0] if items else None}
-
-
-# Forecast categories for next month
-class ForecastRequest(BaseModel):
-    user_id: str
-    months_history: int | None = 6
-    top_k: int | None = 8
-
-
-@app.post("/forecast/categories", tags=["forecast"])
-def categories_forecast(body: ForecastRequest):
-    with db_mod.get_connection() as conn:
-        out = forecast_categories(
-            conn, body.user_id, months_history=body.months_history or 6, top_k=body.top_k or 8)
-    return out
-
-
-# LLM rewrite of insights
-class RewriteInsightRequest(BaseModel):
-    user_id: str
-    insight_id: str
-    tone: str | None = None
-
-
-@app.post("/insights/rewrite", tags=["ai"])
-def insights_rewrite(body: RewriteInsightRequest):
-    if not LLM_AVAILABLE:
-        raise HTTPException(
-            status_code=503, detail="LLM unavailable. Set OPENAI_API_KEY and install dependencies.")
-    with db_mod.get_connection() as conn:
-        row = conn.execute(
-            "SELECT id, title, body, data_json FROM insights WHERE user_id = ? AND id = ?",
-            (body.user_id, body.insight_id),
-        ).fetchone()
-        if not row:
-            raise HTTPException(status_code=404, detail="insight_not_found")
-        try:
-            new_text = rewrite_insight_llm(
-                row["title"], row["body"], row["data_json"], tone=body.tone)
-        except Exception as e:
-            raise HTTPException(status_code=502, detail=f"llm_error: {e}")
-        conn.execute(
-            """
-            UPDATE insights
-            SET rewritten_title = ?, rewritten_body = ?, rewritten_at = CURRENT_TIMESTAMP
-            WHERE user_id = ? AND id = ?
-            """,
-            (new_text["title"], new_text["body"],
-             body.user_id, body.insight_id),
-        )
-        updated = conn.execute(
-            """
-            SELECT id, type, title, body, severity, data_json, created_at,
-                   rewritten_title, rewritten_body, rewritten_at
-            FROM insights WHERE user_id = ? AND id = ?
-            """,
-            (body.user_id, body.insight_id),
-        ).fetchone()
-    return {"insight_id": body.insight_id, "rewritten": new_text, "insight": dict(updated) if updated else None}
-
-
-class PublicTokenExchangeRequest(BaseModel):
-    user_id: str
-    public_token: str
-
-
-@app.post("/plaid/link/public_token/exchange", tags=["plaid"])
-def plaid_public_token_exchange(body: PublicTokenExchangeRequest):
-    try:
-        return _exchange_public_token(body.user_id, body.public_token)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-class PlaidImportRequest(BaseModel):
-    user_id: str
-    start_date: str | None = None
-    end_date: str | None = None
-
-
-@app.post("/plaid/transactions/import", tags=["plaid"])
-def plaid_transactions_import(body: PlaidImportRequest):
-    try:
-        return _import_transactions_for_user(body.user_id, body.start_date, body.end_date)
+        return predict_rec_model(body.user_id, body.merchant, body.description, body.amount, body.date)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

@@ -11,30 +11,31 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Visit `http://127.0.0.1:8000/health` for a health check.
+Visit `http://localhost:8000/health` for a health check.
 
 ## CSV Ingestion
 
-POST `/ingest/csv` with multipart form fields:
+POST `/ingest/csv` with multipart form fields and a stateless auth header.
 
 - `file`: CSV file
-- `user_id`: string user id (e.g., `u_demo`)
 - `default_account_id` (optional): used if CSV lacks `account_id`
+
+Auth: include `X-User-Id: <username>` header. The server assigns this user id to all rows; CSVs do not need a `user_id` column.
 
 Example (using sample CSV in repo):
 
 ```
 curl -X POST \
+  -H 'X-User-Id: u_demo' \
   -F "file=@../../data/samples/transactions_sample.csv" \
-  -F "user_id=u_demo" \
   -F "default_account_id=a_checking" \
-  http://127.0.0.1:8000/ingest/csv
+  http://localhost:8000/ingest/csv
 ```
 
 List transactions:
 
 ```
-curl http://127.0.0.1:8000/users/u_demo/transactions?limit=20
+curl http://localhost:8000/users/u_demo/transactions?limit=20
 ```
 
 ### Deduplication
@@ -59,9 +60,9 @@ Dry-run categorization for a merchant/description/MCC. Useful for UI “Why this
 Examples:
 
 ```
-curl "http://127.0.0.1:8000/categorization/explain?merchant=Spotify&mcc=4899"
+curl "http://localhost:8000/categorization/explain?merchant=Spotify&mcc=4899"
 
-curl -X POST http://127.0.0.1:8000/categorization/explain \
+curl -X POST http://localhost:8000/categorization/explain \
   -H 'Content-Type: application/json' \
   -d '{"merchant":"Starbucks","description":"STARBUCKS 1234","mcc":"5814"}'
 ```
@@ -80,7 +81,7 @@ Detect recurring subscriptions and list them.
 POST `/subscriptions/detect`
 
 ```
-curl -X POST http://127.0.0.1:8000/subscriptions/detect \
+curl -X POST http://localhost:8000/subscriptions/detect \
   -H 'Content-Type: application/json' \
   -d '{"user_id":"u_demo"}'
 ```
@@ -88,15 +89,16 @@ curl -X POST http://127.0.0.1:8000/subscriptions/detect \
 GET `/users/{user_id}/subscriptions`
 
 ```
-curl http://127.0.0.1:8000/users/u_demo/subscriptions
+curl http://localhost:8000/users/u_demo/subscriptions
 ```
 
-Heuristics:
+Heuristics (stricter):
 
-- Groups negative transactions by merchant, checks median interval for weekly (~7d), monthly (~30d), yearly (~365d).
-- Requires 3+ occurrences (monthly) or 4+ (weekly) with reasonable amount consistency.
+- Groups negative transactions by merchant.
+- Cadence via median interval for weekly (~7d), monthly (~30d), yearly (~365d), then requires timing consistency: at least 70% of intervals within a tight window (weekly: 6–9d, monthly: 27–33d, yearly: 330–400d).
+- Amount consistency: at least 70% of charges within 10% (or $2) of the median amount.
+- Requires 3+ occurrences minimum; also detects possible `trial_converted` events (heuristic) and returns `trial_converted`.
 - Computes `avg_amount` (median abs), `cadence`, `last_seen`, `status` (active/paused), and `price_change_pct` vs median.
-- Also detects possible `trial_converted` events (heuristic) and returns `trial_converted` boolean in the subscription record.
 
 ## Insights
 
@@ -105,7 +107,7 @@ Generate and list insights (overspend, trending, merchant anomaly, save suggesti
 POST `/insights/generate`
 
 ```
-curl -X POST http://127.0.0.1:8000/insights/generate \
+curl -X POST http://localhost:8000/insights/generate \
   -H 'Content-Type: application/json' \
   -d '{"user_id":"u_demo"}'
 ```
@@ -113,7 +115,7 @@ curl -X POST http://127.0.0.1:8000/insights/generate \
 GET `/users/{user_id}/insights`
 
 ```
-curl http://127.0.0.1:8000/users/u_demo/insights
+curl http://localhost:8000/users/u_demo/insights
 ```
 
 Notes:
@@ -131,7 +133,7 @@ Enable Plaid with Sandbox credentials as environment variables when running the 
 Detect personalized outliers using IsolationForest per merchant (6-month window). Detected items are upserted into `insights` as `ml_outlier`.
 
 ```
-curl -X POST http://127.0.0.1:8000/anomaly/iforest/detect \
+curl -X POST http://localhost:8000/anomaly/iforest/detect \
   -H 'Content-Type: application/json' \
   -d '{"user_id":"u_demo","contamination":0.08}'
 ```
@@ -141,23 +143,76 @@ curl -X POST http://127.0.0.1:8000/anomaly/iforest/detect \
 Simple next-month forecast per category using weighted recent months.
 
 ```
-curl -X POST http://127.0.0.1:8000/forecast/categories \
+curl -X POST http://localhost:8000/forecast/categories \
   -H 'Content-Type: application/json' \
   -d '{"user_id":"u_demo","months_history":6,"top_k":8}'
 ```
 
 ## LLM Insight Rewriter (Optional)
 
+## Goals
+Create goals and evaluate on-track status with suggested savings plan from discretionary categories.
+
+Create a goal:
+```
+curl -X POST http://localhost:8000/goals \
+  -H 'Content-Type: application/json' \
+  -d '{"user_id":"u_demo","name":"Save $3000","target_amount":3000,"target_date":"2025-12-31"}'
+```
+
+List goals for a user (includes computed plan):
+```
+curl http://localhost:8000/users/u_demo/goals
+```
+
+Evaluate a goal by id:
+```
+curl http://localhost:8000/goals/<goal_id>/evaluate
+```
+
+Update a goal (name/amount/date/status):
+```
+curl -X PATCH http://localhost:8000/goals/<goal_id> \
+  -H 'Content-Type: application/json' \
+  -d '{"status":"active"}'
+```
+
 Rewrite an insight’s title/body to a friendlier tone using OpenAI. Requires `OPENAI_API_KEY` set and `openai` installed.
 
 ```
 export OPENAI_API_KEY=sk-...
-curl -X POST http://127.0.0.1:8000/insights/rewrite \
+curl -X POST http://localhost:8000/insights/rewrite \
   -H 'Content-Type: application/json' \
   -d '{"user_id":"u_demo","insight_id":"<id-from-insights>","tone":"friendly"}'
 ```
 
 ## AI Categorizer (ML)
+
+## is_recurring Model (per user, weak labels)
+Trains a per-user classifier for recurring transactions using weak labels derived from the subscription detector. During ingestion, if a model exists and confidence ≥ 0.6, we set `is_recurring=true`.
+
+Train via API:
+```
+curl -X POST http://localhost:8000/ai/is_recurring/train \
+  -H 'Content-Type: application/json' \
+  -d '{"user_id":"u_demo"}'
+```
+
+Predict:
+```
+curl -X POST http://localhost:8000/ai/is_recurring/predict \
+  -H 'Content-Type: application/json' \
+  -d '{"user_id":"u_demo","merchant":"Spotify","description":"SPOTIFY P123","amount":-12.99,"date":"2025-08-02"}'
+```
+
+Bulk train from folder of CSVs (e.g., `training/user1.csv`, `training/user2.csv`):
+```
+python services/api/scripts/train_from_folder.py training/
+```
+
+Notes:
+- Uses subscription detection to generate weak labels per merchant; trains a Logistic Regression over TF‑IDF features (merchant+description) with baked-in amount/day features.
+- Ingestion uses the model when present; prediction threshold is 0.6.
 
 Optional TF‑IDF + Logistic Regression model to categorize merchants/descriptions. The API runs without it; install deps and train to enable.
 
@@ -165,15 +220,38 @@ Install deps (already in requirements.txt) and train on your user’s existing t
 
 ```
 pip install -r requirements.txt
-curl -X POST http://127.0.0.1:8000/ai/categorizer/train \
+curl -X POST http://localhost:8000/ai/categorizer/train \
   -H 'Content-Type: application/json' \
   -d '{"user_id":"u_demo","min_per_class":5}'
 ```
 
+## Plaid Sandbox and Security Notes
+
+Enable Plaid with Sandbox credentials as environment variables when running the API:
+
+```
+export PLAID_CLIENT_ID=your_sandbox_client_id
+export PLAID_SECRET=your_sandbox_secret
+export PLAID_HOST=https://sandbox.plaid.com
+# Optional: encrypt Plaid access tokens at rest
+# Use a Fernet key (recommended) or a passphrase (dev only)
+export PLAID_ENC_KEY=<fernet_key_or_passphrase>
+```
+
+Frontend `/plaid` page lets you:
+- Connect a sandbox bank (Plaid Link)
+- Import last 30 days of transactions
+- List and delete linked items per user
+
+Token storage:
+- If `PLAID_ENC_KEY` is set and `cryptography` is installed, access tokens are encrypted at rest using Fernet.
+- Otherwise, tokens are stored as `plain:<token>` (development only). Do not use plaintext in production.
+- Secrets rotation: rotate `PLAID_ENC_KEY` by deploying with a new key and re-linking items, or write a short migration script to re-encrypt stored values.
+
 Predict for a text snippet:
 
 ```
-curl -X POST http://127.0.0.1:8000/ai/categorizer/predict \
+curl -X POST http://localhost:8000/ai/categorizer/predict \
   -H 'Content-Type: application/json' \
   -d '{"user_id":"u_demo","merchant":"Starbucks","description":"STARBUCKS 1234","top_k":3}'
 ```

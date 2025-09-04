@@ -39,18 +39,14 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     try {
       const stored = localStorage.getItem("sfc:userId");
       if (stored) setUserId(stored);
-    } catch (e) {
-      // ignore
-    }
+    } catch {}
   }, []);
 
   useEffect(() => {
     try {
       if (userId) localStorage.setItem("sfc:userId", userId);
       else localStorage.removeItem("sfc:userId");
-    } catch (e) {
-      // ignore
-    }
+    } catch {}
   }, [userId]);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
