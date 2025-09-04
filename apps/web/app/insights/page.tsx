@@ -45,7 +45,8 @@ export default function InsightsPage() {
   const load = async () => {
     setBusy(true);
     try {
-      const res = await fetch(`${API}/users/me/insights`, { headers: ctx.userId ? { 'X-User-Id': ctx.userId } : undefined });
+      if (!ctx.userId) return;
+      const res = await fetch(`${API}/users/${encodeURIComponent(ctx.userId)}/insights`);
       const json = await res.json();
       setRows(Array.isArray(json) ? json : []);
     } finally {
@@ -56,10 +57,11 @@ export default function InsightsPage() {
   const generate = async () => {
     setGenBusy(true);
     try {
-      await fetch(`${API}/insights/generate/me`, {
+      if (!ctx.userId) return;
+      await fetch(`${API}/insights/generate`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", ...(ctx.userId ? { 'X-User-Id': ctx.userId } : {}) },
-        body: JSON.stringify({}),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: ctx.userId }),
       });
       await load();
       ctx.showToast("Insights generated", "success");
@@ -71,10 +73,11 @@ export default function InsightsPage() {
   const runML = async () => {
     setMlBusy(true);
     try {
+      if (!ctx.userId) return;
       await fetch(`${API}/anomaly/iforest/detect`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", ...(ctx.userId ? { 'X-User-Id': ctx.userId } : {}) },
-        body: JSON.stringify({ contamination: 0.08 }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: ctx.userId, contamination: 0.08 }),
       });
       await load();
       ctx.showToast("ML detection finished", "success");
@@ -86,10 +89,11 @@ export default function InsightsPage() {
   const rewrite = async (id: string) => {
     setRewriteBusy(id);
     try {
+      if (!ctx.userId) return;
       await fetch(`${API}/insights/rewrite`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", ...(ctx.userId ? { 'X-User-Id': ctx.userId } : {}) },
-        body: JSON.stringify({ insight_id: id, tone: "friendly" }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: ctx.userId, insight_id: id, tone: "friendly" }),
       });
       await load();
       ctx.showToast("Insight rewritten", "success");

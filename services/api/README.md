@@ -15,19 +15,18 @@ Visit `http://localhost:8000/health` for a health check.
 
 ## CSV Ingestion
 
-POST `/ingest/csv` with multipart form fields and a stateless auth header.
+POST `/ingest/csv` with multipart form fields:
 
 - `file`: CSV file
+- `user_id`: string user id (e.g., `u_demo`)
 - `default_account_id` (optional): used if CSV lacks `account_id`
-
-Auth: include `X-User-Id: <username>` header. The server assigns this user id to all rows; CSVs do not need a `user_id` column.
 
 Example (using sample CSV in repo):
 
 ```
 curl -X POST \
-  -H 'X-User-Id: u_demo' \
   -F "file=@../../data/samples/transactions_sample.csv" \
+  -F "user_id=u_demo" \
   -F "default_account_id=a_checking" \
   http://localhost:8000/ingest/csv
 ```

@@ -4,7 +4,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useUser } from "./Providers";
 
 export default function SignGate({ children }: { children: React.ReactNode }) {
-  const { userId } = useUser();
+  const { userId, ready } = useUser();
   const router = useRouter();
 
   const pathname = usePathname();
@@ -12,12 +12,14 @@ export default function SignGate({ children }: { children: React.ReactNode }) {
   const allowedWithoutSignIn = !!pathname && pathname.startsWith("/auth");
 
   useEffect(() => {
+    if (!ready) return;
     if (!userId && !allowedWithoutSignIn) {
       router.replace("/auth");
     }
-  }, [userId, router, pathname, allowedWithoutSignIn]);
+  }, [ready, userId, router, pathname, allowedWithoutSignIn]);
 
   // If there's no user and the current path is allowed (e.g. /connect), render children
+  if (!ready) return null;
   if (!userId && allowedWithoutSignIn) return <>{children}</>;
 
   if (!userId) return null;

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Query
 from pydantic import BaseModel
 
 from .. import db as db_mod
@@ -25,22 +25,16 @@ def plaid_link_token_create(body: LinkTokenRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/plaid/items/me")
-def plaid_items_me(request: Request):
-    u = current_username(request)
-    if not u:
-        raise HTTPException(status_code=401, detail="not_authenticated")
+@router.get("/plaid/items")
+def plaid_items(user_id: str = Query(...)):
     with db_mod.get_connection() as conn:
-        return svc.list_items(conn, u)
+        return svc.list_items(conn, user_id)
 
 
 @router.delete("/plaid/items/{item_id}")
-def plaid_item_delete(item_id: str, request: Request):
-    u = current_username(request)
-    if not u:
-        raise HTTPException(status_code=401, detail="not_authenticated")
+def plaid_item_delete(item_id: str, user_id: str = Query(...)):
     with db_mod.get_connection() as conn:
-        deleted = svc.delete_item(conn, u, item_id)
+        deleted = svc.delete_item(conn, user_id, item_id)
         return {"deleted": deleted}
 
 
@@ -73,4 +67,3 @@ def plaid_transactions_import(body: PlaidImportRequest):
         raise HTTPException(status_code=503, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-

@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 import sqlite3
 
 from ..insights import generate_insights, upsert_insights
+from ..insights import generate_duplicate_charge_insights, generate_budget_overage_insights
 
 try:
     from ..llm import rewrite_insight_llm
@@ -14,6 +15,15 @@ except Exception:
 
 def generate_and_upsert(conn: sqlite3.Connection, user_id: str) -> List[Dict]:
     items = generate_insights(conn, user_id)
+    # Add duplicate charges and budget overage insights
+    try:
+        items += generate_duplicate_charge_insights(conn, user_id)
+    except Exception:
+        pass
+    try:
+        items += generate_budget_overage_insights(conn, user_id)
+    except Exception:
+        pass
     if items:
         upsert_insights(conn, items)
     return items
@@ -61,4 +71,3 @@ def rewrite(conn: sqlite3.Connection, user_id: str, insight_id: str, tone: Optio
         (user_id, insight_id),
     ).fetchone()
     return {"insight_id": insight_id, "rewritten": new_text, "insight": dict(updated) if updated else None}
-

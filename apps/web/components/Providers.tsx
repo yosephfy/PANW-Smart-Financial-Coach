@@ -16,6 +16,7 @@ type UserContextType = {
   userId: string;
   setUserId: (s: string) => void;
   showToast: (message: string, type?: ToastType) => void;
+  ready: boolean;
 };
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -34,12 +35,14 @@ export function useToast() {
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   const [userId, setUserId] = useState("");
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem("sfc:userId");
       if (stored) setUserId(stored);
     } catch {}
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -58,8 +61,8 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ userId, setUserId, showToast }),
-    [userId, showToast]
+    () => ({ userId, setUserId, showToast, ready }),
+    [userId, showToast, ready]
   );
 
   return (

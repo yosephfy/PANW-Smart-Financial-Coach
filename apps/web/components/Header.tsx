@@ -46,10 +46,7 @@ export default function Header() {
               </div>
               <button
                 className="text-sm underline"
-                onClick={async () => {
-                  try {
-                    await fetch((process.env.NEXT_PUBLIC_API_URL||'http://localhost:8000')+"/auth/logout", { method: 'POST', credentials: 'include' });
-                  } catch {}
+                onClick={() => {
                   setUserId("");
                 }}
               >

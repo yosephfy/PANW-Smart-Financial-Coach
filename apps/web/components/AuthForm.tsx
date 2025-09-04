@@ -27,7 +27,7 @@ export default function AuthForm() {
       if (!json?.id) throw new Error("Invalid response from server");
       setUserId(json.id);
       showToast(`Signed in as ${json.id}`, "success");
-      router.replace("/connect");
+      router.replace("/");
     } catch (e: any) {
       showToast(e?.message || String(e), "error");
     } finally {

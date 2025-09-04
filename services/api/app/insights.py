@@ -212,6 +212,103 @@ def generate_insights(conn: sqlite3.Connection, user_id: str) -> List[Dict]:
     return insights
 
 
+# --- Additional generators: duplicate charges and budgets ---
+
+def _month_start_end(today: date) -> Tuple[str, str]:
+    start = today.replace(day=1)
+    if start.month == 12:
+        next_month = date(start.year + 1, 1, 1)
+    else:
+        next_month = date(start.year, start.month + 1, 1)
+    end = next_month - timedelta(days=1)
+    return start.isoformat(), end.isoformat()
+
+
+def generate_duplicate_charge_insights(conn: sqlite3.Connection, user_id: str) -> List[Dict]:
+    """Detect likely duplicate charges (same merchant and amount on the same day)."""
+    rows = conn.execute(
+        """
+        SELECT date, COALESCE(merchant,'') as merchant,
+               CAST(ROUND(amount * 100) AS INTEGER) AS amount_cents,
+               COUNT(*) as cnt
+        FROM transactions
+        WHERE user_id = ? AND amount < 0
+        GROUP BY date, merchant, amount_cents
+        HAVING cnt >= 2
+        ORDER BY date DESC
+        """,
+        (user_id,)
+    ).fetchall()
+    out: List[Dict] = []
+    for r in rows:
+        amt = abs(float(r["amount_cents"]) / 100.0)
+        merchant = (r["merchant"] or "").lower() or "unknown"
+        title = f"Possible duplicate charges at {merchant}"
+        body = f"{r['cnt']} identical charges of ${amt:.2f} on {r['date']}. If unintentional, dispute or contact the merchant."
+        out.append({
+            "id": _insight_id(user_id, "dup_charge", f"{r['date']}|{merchant}|{amt:.2f}"),
+            "user_id": user_id,
+            "type": "dup_charge",
+            "title": title,
+            "body": body,
+            "severity": "warn",
+            "data_json": json.dumps({
+                "date": r["date"],
+                "merchant": merchant,
+                "amount": amt,
+                "count": int(r["cnt"]),
+            })
+        })
+    return out
+
+
+def generate_budget_overage_insights(conn: sqlite3.Connection, user_id: str) -> List[Dict]:
+    """Compare MTD spend vs user-defined category budgets and emit overage insights."""
+    # Load budgets
+    budgets = conn.execute(
+        "SELECT category, monthly_budget FROM category_budgets WHERE user_id = ?",
+        (user_id,),
+    ).fetchall()
+    if not budgets:
+        return []
+    today = _today()
+    start, end = _month_start_end(today)
+    out: List[Dict] = []
+    for b in budgets:
+        cat = (b["category"] or "").lower()
+        mbud = float(b["monthly_budget"]) if b["monthly_budget"] is not None else 0.0
+        if mbud <= 0:
+            continue
+        row = conn.execute(
+            """
+            SELECT SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END) AS spend
+            FROM transactions
+            WHERE user_id = ? AND LOWER(COALESCE(category,'')) = ? AND date BETWEEN ? AND ?
+            """,
+            (user_id, cat, start, end),
+        ).fetchone()
+        mtd = float(row["spend"] or 0.0)
+        if mtd >= mbud * 0.9:  # warn when over 90% or exceeded
+            status = "over_budget" if mtd > mbud else "near_budget"
+            title = f"{cat} budget {status.replace('_',' ')}"
+            body = f"MTD ${mtd:.0f} vs budget ${mbud:.0f}. Consider trimming to stay on track."
+            out.append({
+                "id": _insight_id(user_id, "budget", cat + start),
+                "user_id": user_id,
+                "type": "budget",
+                "title": title,
+                "body": body,
+                "severity": "warn" if status == "near_budget" else "critical",
+                "data_json": json.dumps({
+                    "category": cat,
+                    "mtd_spend": mtd,
+                    "budget": mbud,
+                    "month_start": start,
+                }),
+            })
+    return out
+
+
 def upsert_insights(conn: sqlite3.Connection, items: List[Dict]):
     for x in items:
         conn.execute(

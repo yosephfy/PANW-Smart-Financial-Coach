@@ -42,7 +42,8 @@ export default function GoalsPage() {
         setGoals([])
         return
       }
-      const res = await fetch(`${API}/users/me/goals`, { headers: { 'X-User-Id': ctx.userId } })
+      if (!ctx.userId) return
+      const res = await fetch(`${API}/users/${encodeURIComponent(ctx.userId)}/goals`)
       const json = await res.json()
       setGoals(Array.isArray(json) ? json : [])
     } finally { setBusy(false) }
@@ -56,7 +57,7 @@ export default function GoalsPage() {
         ctx.showToast('Sign in to create goals', 'warning')
         return
       }
-      const res = await fetch(`${API}/goals`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-User-Id': ctx.userId }, body: JSON.stringify({ name, target_amount: amount, target_date: date }) })
+      const res = await fetch(`${API}/goals`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: ctx.userId, name, target_amount: amount, target_date: date }) })
       if (!res.ok) {
         const j = await res.json().catch(()=>null)
         throw new Error(j?.detail || 'Failed to create goal')

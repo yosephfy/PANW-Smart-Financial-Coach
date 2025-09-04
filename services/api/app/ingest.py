@@ -194,6 +194,13 @@ def parse_csv_transactions(
         else:
             is_recurring = _to_bool(row.get("is_recurring"))
 
+        # Parse optional balance column
+        balance = row.get("balance")
+        try:
+            balance = float(str(balance).replace(",", "").replace("$", "").strip()) if balance not in (None, "") else None
+        except Exception:
+            balance = None
+
         # Generate a stable natural ID to avoid collisions from CSV-provided ids
         # Use user_id|account_id|date|amount_cents|merchant|description
         cents = int(round(norm_amount * 100))
@@ -214,6 +221,7 @@ def parse_csv_transactions(
             "is_recurring": is_recurring,
             "mcc": r_mcc,
             "source": "csv",
+            "balance": balance,
         }
 
         out.append(rec)

@@ -22,12 +22,7 @@ def insights_generate(body: InsightsGenerateRequest):
     return {"user_id": body.user_id, "count": len(items), "sample": items[0] if items else None}
 
 
-@router.post("/insights/generate/me")
-def insights_generate_me(request: Request):
-    u = current_username(request)
-    if not u:
-        raise HTTPException(status_code=401, detail="not_authenticated")
-    return insights_generate(InsightsGenerateRequest(user_id=u))
+# Removed cookie-based "me" route; use /insights/generate with body { user_id }
 
 
 @router.get("/users/{user_id}/insights")
@@ -36,12 +31,7 @@ def list_insights(user_id: str, limit: int = Query(50, ge=1, le=200)):
         return svc.list_for_user(conn, user_id, limit)
 
 
-@router.get("/users/me/insights")
-def list_insights_me(request: Request, limit: int = Query(50, ge=1, le=200)):
-    u = current_username(request)
-    if not u:
-        raise HTTPException(status_code=401, detail="not_authenticated")
-    return list_insights(u, limit)
+# Removed cookie-based "me" route; use /users/{user_id}/insights
 
 
 class RewriteInsightRequest(BaseModel):
@@ -61,4 +51,3 @@ def insights_rewrite(body: RewriteInsightRequest):
         raise HTTPException(status_code=503, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=502, detail=f"llm_error: {e}")
-

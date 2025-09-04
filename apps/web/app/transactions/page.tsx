@@ -73,8 +73,9 @@ export default function TransactionsPage() {
   const load = async () => {
     setBusy(true);
     try {
+      if (!ctx.userId) return;
       const res = await fetch(
-        `${API}/me/transactions?limit=${limit}`, { headers: ctx.userId ? { 'X-User-Id': ctx.userId } : undefined }
+        `${API}/users/${encodeURIComponent(ctx.userId)}/transactions?limit=${limit}`
       );
       const json = await res.json();
       setRows(Array.isArray(json) ? json : []);
@@ -319,7 +320,8 @@ function AddTransactionButton({
         `${API}/users/${encodeURIComponent(ctx.userId)}/transactions`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json", ...(ctx.userId ? { 'X-User-Id': ctx.userId } : {}) },
+          headers: { "Content-Type": "application/json" },
+          credentials: 'include',
           body: JSON.stringify({
             date,
             amount: parseFloat(amount),

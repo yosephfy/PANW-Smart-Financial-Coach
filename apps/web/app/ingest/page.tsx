@@ -19,10 +19,11 @@ export default function IngestPage() {
     try {
       const form = new FormData();
       form.append("file", file);
+      if (ctx.userId) form.append("user_id", ctx.userId);
       const res = await fetch(`${API}/ingest/csv/insights`, {
         method: "POST",
         body: form,
-        headers: ctx.userId ? { 'X-User-Id': ctx.userId } : undefined,
+        // no cookies; send user_id in form
       });
       const json = await res.json();
       setResult(json);

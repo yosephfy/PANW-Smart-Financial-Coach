@@ -72,3 +72,23 @@ def init_db() -> None:
             conn.execute("ALTER TABLE users ADD COLUMN password_hash TEXT;")
         if not _has_column("users", "password_salt"):
             conn.execute("ALTER TABLE users ADD COLUMN password_salt TEXT;")
+
+        # Add balance to transactions if missing
+        if not _has_column("transactions", "balance"):
+            conn.execute("ALTER TABLE transactions ADD COLUMN balance NUMERIC;")
+
+        # Category budgets table (per user)
+        try:
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS category_budgets (
+                  user_id TEXT NOT NULL,
+                  category TEXT NOT NULL,
+                  monthly_budget NUMERIC NOT NULL,
+                  PRIMARY KEY (user_id, category),
+                  FOREIGN KEY(user_id) REFERENCES users(id)
+                )
+                """
+            )
+        except Exception:
+            pass

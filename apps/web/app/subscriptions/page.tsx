@@ -43,8 +43,9 @@ export default function SubscriptionsPage() {
   const load = async () => {
     setBusy(true);
     try {
+      if (!ctx.userId) return;
       const res = await fetch(
-        `${API}/me/subscriptions`, { headers: ctx.userId ? { 'X-User-Id': ctx.userId } : undefined }
+        `${API}/users/${encodeURIComponent(ctx.userId)}/subscriptions`
       );
       const json = await res.json();
       setRows(Array.isArray(json) ? json : []);
@@ -58,10 +59,11 @@ export default function SubscriptionsPage() {
   const detect = async () => {
     setDetecting(true);
     try {
+      if (!ctx.userId) return;
       await fetch(`${API}/subscriptions/detect`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", ...(ctx.userId ? { 'X-User-Id': ctx.userId } : {}) },
-        body: JSON.stringify({}),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: ctx.userId }),
       });
       await load();
       ctx.showToast("Subscription detection completed", "success");
@@ -81,8 +83,8 @@ export default function SubscriptionsPage() {
     try {
       const res = await fetch(`${API}/subscriptions/${encodeURIComponent(merchant)}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'X-User-Id': ctx.userId },
-        body: JSON.stringify({ status }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: ctx.userId, status }),
       });
       if (!res.ok) {
         const j = await res.json().catch(()=>null);

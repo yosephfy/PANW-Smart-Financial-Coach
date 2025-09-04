@@ -79,41 +79,68 @@ app.include_router(ai_router.router)
 app.include_router(forecast_router.router)
 app.include_router(anomaly_router.router)
 app.include_router(plaid_router.router)
+from .api import budgets as budgets_router
+app.include_router(budgets_router.router)
 
 """
-Stateless auth helpers: we use a simple header-based user identity.
-Frontend stores the user id after login/register and supplies `X-User-Id`.
+Cookie session auth: issue an HMAC-signed token as HttpOnly cookie.
+Frontend should set fetch `credentials: 'include'` and does not need custom headers.
 """
+
+AUTH_SECRET = os.getenv("AUTH_SECRET", "dev-secret")
+SESSION_COOKIE = "sfc_session"
+
+
+def _sign(data: str) -> str:
+    import hmac, hashlib
+    return hmac.new(AUTH_SECRET.encode(), data.encode(), hashlib.sha256).hexdigest()
+
+
+def _make_token(username: str, ttl_seconds: int = 86400 * 7) -> str:
+    import time
+    ts = int(time.time())
+    payload = f"{username}|{ts}|{ttl_seconds}"
+    sig = _sign(payload)
+    return f"{payload}|{sig}"
+
+
+def _verify_token(token: str) -> Optional[str]:
+    try:
+        username, ts_s, ttl_s, sig = token.split("|", 3)
+        payload = f"{username}|{ts_s}|{ttl_s}"
+        if _sign(payload) != sig:
+            return None
+        import time
+        if int(time.time()) > int(ts_s) + int(ttl_s):
+            return None
+        return username
+    except Exception:
+        return None
 
 
 def _current_username(request: Request) -> Optional[str]:
-    # Prefer explicit header if present (stateless auth)
-    header_user = request.headers.get(
-        "x-user-id") or request.headers.get("x-user")
-    if header_user:
-        return header_user.strip()
-    return None
+    token = request.cookies.get(SESSION_COOKIE)
+    if not token:
+        return None
+    return _verify_token(token)
 
 
 def _current_user(request: Request, provided: Optional[str] = None) -> Optional[str]:
-    # Stateless: header takes precedence, then explicit provided param
-    header_user = request.headers.get(
-        "x-user-id") or request.headers.get("x-user")
-    if header_user:
-        return header_user.strip()
+    u = _current_username(request)
+    if u:
+        return u
     if provided:
         return provided
     return None
 
 
 def _set_session(resp: Response, username: str):
-    # No-op in stateless mode; kept for compatibility
-    return
+    token = _make_token(username)
+    resp.set_cookie(key=SESSION_COOKIE, value=token, httponly=True, samesite="none", secure=False)
 
 
 def _clear_session(resp: Response):
-    # No-op in stateless mode; kept for compatibility
-    return
+    resp.delete_cookie(SESSION_COOKIE)
 
 
 @app.get("/", tags=["meta"])
@@ -176,7 +203,7 @@ def auth_register(body: AuthRequest, response: Response):
         pwh = _hash_password(body.password, salt)
         conn.execute("INSERT INTO users (id, password_hash, password_salt) VALUES (?, ?, ?)",
                      (username, pwh, salt.hex()))
-    # Stateless: return created user id; client stores it and sends X-User-Id
+    # No cookie session; client stores user id locally
     return {"id": username}
 
 
@@ -195,7 +222,7 @@ def auth_login(body: AuthRequest, response: Response):
         pwh = _hash_password(body.password, salt)
         if pwh != (row["password_hash"] or ""):
             raise HTTPException(status_code=400, detail="invalid_credentials")
-    # Stateless: return user id only
+    # No cookie session; client stores user id locally
     return {"id": username}
 
 
@@ -217,17 +244,16 @@ def auth_me(request: Request):
 async def ingest_csv(
     request: Request,
     file: UploadFile = File(...),
+    user_id: Optional[str] = Form(None),
     default_account_id: Optional[str] = Form(None),
 ):
     if file.content_type not in ("text/csv", "application/vnd.ms-excel", "application/csv"):
         # Allow anyway, as some browsers send application/octet-stream for CSV
         pass
 
-    # Determine user from header (stateless); CSVs never include user_id
-    session_user = _current_user(request)
-    if not session_user:
-        raise HTTPException(status_code=401, detail="not_authenticated")
-    user_id = session_user
+    # Determine user from explicit form field
+    if not user_id:
+        raise HTTPException(status_code=400, detail="missing_user_id")
 
     content = await file.read()
     try:
@@ -254,19 +280,20 @@ async def ingest_csv(
 async def ingest_csv_with_insights(
     request: Request,
     file: UploadFile = File(...),
+    user_id: Optional[str] = Form(None),
     default_account_id: Optional[str] = Form(None),
 ):
     """Ingest a CSV and immediately generate/upsert insights for the user.
 
     Returns the ingestion result and the generated insights.
     """
-    # Reuse existing ingest implementation
-    ingest_result = await ingest_csv(request, file, default_account_id)
+    # Validate user_id and reuse existing ingest implementation
+    if not user_id:
+        raise HTTPException(status_code=400, detail="missing_user_id")
+    ingest_result = await ingest_csv(request, file, user_id, default_account_id)
 
     # Generate insights based on the newly-ingested data
-    u = _current_username(request)
-    if not u:
-        raise HTTPException(status_code=401, detail="not_authenticated")
+    u = user_id
     with db_mod.get_connection() as conn:
         items = generate_insights(conn, u)
         if items:
@@ -297,12 +324,7 @@ def list_transactions(user_id: str, limit: int = Query(50, ge=1, le=500)):
         return _txrepo.list_recent(conn, user_id, limit)
 
 
-@app.get("/me/transactions", tags=["transactions"])
-def list_transactions_me(request: Request, limit: int = Query(50, ge=1, le=500)):
-    u = _current_username(request)
-    if not u:
-        raise HTTPException(status_code=401, detail="not_authenticated")
-    return list_transactions(u, limit)
+# Removed /me/transactions; use /users/{user_id}/transactions
 
 
 class UserCreateRequest(BaseModel):
@@ -347,10 +369,7 @@ def create_transaction(user_id: str, body: TransactionCreateRequest, request: Re
     """
     import uuid
 
-    # Enforce that caller is the same user (stateless header auth)
-    u = _current_username(request)
-    if not u or u != user_id:
-        raise HTTPException(status_code=401, detail="not_authenticated")
+    # No server-side session; trust explicit path param user_id
 
     tid = uuid.uuid4().hex
     with db_mod.get_connection() as conn:
@@ -400,8 +419,8 @@ def create_transaction(user_id: str, body: TransactionCreateRequest, request: Re
             conn.execute(
                 """
                 INSERT INTO transactions (id, user_id, account_id, date, amount, merchant, description,
-                    category, category_source, category_provenance, is_recurring, mcc, source)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    category, category_source, category_provenance, is_recurring, mcc, source, balance)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     row["id"], row["user_id"], row.get(
@@ -409,7 +428,7 @@ def create_transaction(user_id: str, body: TransactionCreateRequest, request: Re
                     row.get("merchant"), row.get("description"), row.get(
                         "category"), row.get("category_source"),
                     row.get("category_provenance"), int(
-                        bool(row.get("is_recurring", False))), row.get("mcc"), row.get("source"),
+                        bool(row.get("is_recurring", False))), row.get("mcc"), row.get("source"), row.get("balance"),
                 ),
             )
         except Exception as e:

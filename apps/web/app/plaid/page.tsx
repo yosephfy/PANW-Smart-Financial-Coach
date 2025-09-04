@@ -85,14 +85,14 @@ export default function PlaidPage() {
 
   const loadItems = async () => {
     if (!userId) return;
-    const r = await fetch(`${API}/plaid/items/me`, { headers: { 'X-User-Id': userId } });
+    const r = await fetch(`${API}/plaid/items?user_id=${encodeURIComponent(userId)}`);
     const j = await r.json();
     if (Array.isArray(j)) setItems(j);
   };
 
   const deleteItem = async (item_id: string) => {
     if (!userId) return;
-    await fetch(`${API}/plaid/items/${encodeURIComponent(item_id)}`, { method:'DELETE', headers: { 'X-User-Id': userId } });
+    await fetch(`${API}/plaid/items/${encodeURIComponent(item_id)}?user_id=${encodeURIComponent(userId)}`, { method:'DELETE' });
     await loadItems();
   };
 
