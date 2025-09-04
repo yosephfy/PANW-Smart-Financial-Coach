@@ -43,8 +43,13 @@ def model_path(user_id: str) -> Path:
     return _model_dir() / f"{user_id}.joblib"
 
 
+def global_model_path() -> Path:
+    return _model_dir() / "global.joblib"
+
+
 def has_model(user_id: str) -> bool:
-    return model_path(user_id).exists()
+    """Compatibility: report True if a per-user or global model exists."""
+    return model_path(user_id).exists() or global_model_path().exists()
 
 
 def _gather_training_data(conn: sqlite3.Connection, user_id: str, min_per_class: int = 5) -> Tuple[List[str], List[str]]:
@@ -112,6 +117,8 @@ def predict_for_user(user_id: str, merchant: Optional[str], description: Optiona
     if not SKLEARN_AVAILABLE:
         # fallback: score classes by token overlap / counts
         p = model_path(user_id)
+        if not p.exists():
+            p = global_model_path()
         try:
             model = _load_fallback_model(p)
         except Exception:
@@ -132,7 +139,9 @@ def predict_for_user(user_id: str, merchant: Optional[str], description: Optiona
         return {"predictions": [{"label": c, "prob": float(v) / float(total)} for c, v in ranked]}
     p = model_path(user_id)
     if not p.exists():
-        raise RuntimeError("model_not_found")
+        p = global_model_path()
+        if not p.exists():
+            raise RuntimeError("model_not_found")
     pipe: Pipeline = joblib.load(p)
     text = f"{merchant or ''} {description or ''}".strip()
     if not text:
@@ -159,3 +168,141 @@ def predict_for_user(user_id: str, merchant: Optional[str], description: Optiona
     else:
         def norm(s): return 0.0
     return {"predictions": [{"label": c, "prob": norm(s)} for c, s in pairs]}
+
+
+# -------- Global training from CSVs (user-agnostic) --------
+
+def _iter_training_csv_paths() -> List[Path]:
+    base = _repo_root() / "data"
+    candidates: List[Path] = []
+    # Prefer data/training/*.csv
+    train_dir = base / "training"
+    if train_dir.exists():
+        for p in sorted(train_dir.glob("*.csv")):
+            candidates.append(p)
+    # Fallback: common sample training filenames
+    samples = base / "samples"
+    for name in [
+        "transactions_training_2024-2025.csv",
+        "transactions_training_2024_2025.csv",
+        "transactions_sample.csv",
+    ]:
+        p = samples / name
+        if p.exists():
+            candidates.append(p)
+    # De-duplicate while preserving order
+    out: List[Path] = []
+    seen = set()
+    for p in candidates:
+        s = str(p.resolve())
+        if s not in seen:
+            seen.add(s)
+            out.append(p)
+    return out
+
+
+def _read_csv_text_label(p: Path) -> Tuple[List[str], List[str]]:
+    import csv
+    texts: List[str] = []
+    labels: List[str] = []
+    with open(p, "r", encoding="utf-8", errors="ignore") as fh:
+        reader = csv.DictReader(fh)
+        for row in reader:
+            cat = (row.get("category") or "").strip()
+            if not cat:
+                continue
+            merchant = (row.get("merchant") or row.get("name") or "").strip()
+            desc = (row.get("description") or row.get("details")
+                    or row.get("memo") or merchant).strip()
+            text = f"{merchant} {desc}".strip()
+            if not text:
+                continue
+            texts.append(text)
+            labels.append(cat.lower())
+    return texts, labels
+
+
+def _split_indices(n: int) -> Tuple[List[int], List[int]]:
+    """Return (train_idx, test_idx) using a deterministic 80/20 split."""
+    import random
+    rng = random.Random(42)
+    idxs = list(range(n))
+    rng.shuffle(idxs)
+    n_train = int(0.8 * n)
+    train = idxs[:n_train]
+    test = idxs[n_train:]
+    return train, test
+
+
+def train_global(min_per_class: int = 5) -> Dict:
+    """Train a single global model from CSV files under data/training/.
+
+    Ignores user_id. Uses 80% train, 10% test, 10% val (deterministic shuffle).
+    Saves to models/ai_categorizer/global.joblib (or JSON fallback).
+    Returns metrics and class counts.
+    """
+    paths = _iter_training_csv_paths()
+    if not paths:
+        raise RuntimeError("no_training_csvs_found")
+    all_texts: List[str] = []
+    all_labels: List[str] = []
+    for p in paths:
+        t, y = _read_csv_text_label(p)
+        all_texts.extend(t)
+        all_labels.extend(y)
+    if not all_texts:
+        raise RuntimeError("no_labeled_rows_in_csvs")
+    # filter classes with enough samples
+    counts = Counter(all_labels)
+    keep = {c for c, n in counts.items() if n >= min_per_class}
+    data = [(t, y) for t, y in zip(all_texts, all_labels) if y in keep]
+    if len(data) < 10 or len({y for _, y in data}) < 2:
+        raise RuntimeError("not_enough_training_data")
+    texts, labels = zip(*data)
+    texts, labels = list(texts), list(labels)
+
+    # Split (80/20)
+    train_idx, test_idx = _split_indices(len(texts))
+
+    def sel(idxs):
+        return [texts[i] for i in idxs], [labels[i] for i in idxs]
+    X_train, y_train = sel(train_idx)
+    X_test, y_test = sel(test_idx)
+
+    if not SKLEARN_AVAILABLE:
+        # Token-count fallback
+        token_map = {}
+        cls_counts = Counter(y_train)
+        for text, label in zip(X_train, y_train):
+            for tok in text.lower().split():
+                token_map.setdefault(label, {}).setdefault(tok, 0)
+                token_map[label][tok] += 1
+        model = {"classes": list(cls_counts.keys()), "counts": {k: int(
+            v) for k, v in cls_counts.items()}, "tokens": token_map}
+        _save_fallback_model(global_model_path(), model)
+        acc = None
+    else:
+        pipe = Pipeline([
+            ("tfidf", TfidfVectorizer(ngram_range=(
+                1, 2), min_df=1, max_features=30000)),
+            ("clf", LogisticRegression(max_iter=200, class_weight="balanced")),
+        ])
+        pipe.fit(X_train, y_train)
+        joblib.dump(pipe, global_model_path())
+        # quick test accuracy
+        try:
+            acc = float(pipe.score(X_test, y_test)) if X_test else None
+        except Exception:
+            acc = None
+
+    return {
+        "model": "global",
+        "n_samples": len(texts),
+        "classes": sorted(list({c for c in labels})),
+        "counts": {k: int(v) for k, v in Counter(labels).items()},
+        "train_size": len(X_train),
+        "test_size": len(X_test),
+        "val_size": 0,
+        "test_accuracy": acc,
+        "paths": [str(p) for p in paths],
+    }

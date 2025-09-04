@@ -11,6 +11,7 @@ try:
     AI_AVAILABLE = True
 except Exception:
     AI_AVAILABLE = False
+    from ..ai_categorizer import train_global as _train_global
 
 
 def train_categorizer(conn: sqlite3.Connection, user_id: str, min_per_class: Optional[int] = 5) -> Dict:
@@ -29,3 +30,9 @@ def predict_categorizer(user_id: str, merchant: Optional[str], description: Opti
         raise RuntimeError("AI categorizer unavailable")
     return _predict_categorizer(user_id, merchant, description, top_k=top_k)
 
+
+def train_global_categorizer(min_per_class: Optional[int] = 5) -> Dict:
+    """Train a single global model from CSV files under data/training/."""
+    # When sklearn is unavailable, train_global still works via fallback JSON
+    from ..ai_categorizer import train_global as _train_global
+    return _train_global(min_per_class=min_per_class or 5)

@@ -43,3 +43,14 @@ def ai_categorizer_predict(body: PredictCategorizerRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+
+class TrainGlobalRequest(BaseModel):
+    min_per_class: int | None = 5
+
+
+@router.post("/ai/categorizer/train/global")
+def ai_categorizer_train_global(body: TrainGlobalRequest | None = None):
+    try:
+        return svc.train_global_categorizer(min_per_class=(body.min_per_class if body else 5))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
