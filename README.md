@@ -8,6 +8,7 @@ This hackathon project targets **students, young adults, freelancers and anyone 
 
 ## VIDEO PRESENTATION LINK:
 <<<<<<< HEAD
+<<<<<<< HEAD
 (https://vimeo.com/1115991923?share=copy)
 
 
@@ -15,6 +16,9 @@ This hackathon project targets **students, young adults, freelancers and anyone 
 [https://77f083019ea3.ngrok-free.app](https://77f083019ea3.ngrok-free.app)
 =======
 [https://vimeo.com/1115981585?share=copy](https://vimeo.com/1115981585?share=copy)
+=======
+[https://vimeo.com/1115981585?share=copy](https://vimeo.com/1115981585?share=copy)](https://vimeo.com/1115991923?share=copy)
+>>>>>>> c9d39d8 (Fix video presentation link in README)
 
 
 ## Interactive DEMO:
