@@ -22,8 +22,12 @@ This hackathon project targets **students, young adults, freelancers and anyone 
 > > > > > > > c9d39d8 (Fix video presentation link in README)
 
 ## Interactive DEMO:
+<<<<<<< HEAD
 
 [https://e31edb5d3763.ngrok-free.app](https://e31edb5d3763.ngrok-free.app)
+=======
+[https://77f083019ea3.ngrok-free.app](https://77f083019ea3.ngrok-free.app)
+>>>>>>> 6d1ffd9 (Change demo link to new ngrok URL)
 
 > > > > > > > 061b22b (Add video presentation and demo links to README)
 
