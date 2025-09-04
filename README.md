@@ -1,73 +1,144 @@
-# PANW Smart Financial Coach
+# Smart Financial Coach
 
-An AI-powered personal finance coach that turns raw transactions into personalized insights, detects subscriptions/gray charges, and helps users hit savings goals.
+**AI-powered personal finance coach** that turns your raw transaction history into clear, personalized insights.  
+The app ingests CSV files or connects to Plaid, categorizes spending, detects recurring charges and gray-charges, forecasts your cash flow and savings goals, and surfaces friendly hints on how to save.
 
-## MVP Scope (Hackathon)
-- Transaction ingest (CSV now; Plaid Sandbox later)
-- Categorization heuristics (merchant/description mapping)
-- Insights feed (overspend, anomaly, trending up, subscription alerts)
-- Subscription detector (recurrence + price change)
-- Simple goal forecasting (cash flow vs target)
+This hackathon project targets **students, young adults, freelancers and anyone who wants better money visibility**.
 
-## Stack
-- Frontend: Next.js + TypeScript + Tailwind (to be added)
-- Backend: FastAPI (Python)
-- DB: PostgreSQL (dev: SQLite acceptable), SQL schema in `db/schema.sql`
+---
 
-## Getting Started (Backend)
-1) Create a virtualenv and install deps:
-   - `cd services/api`
-   - `python3 -m venv .venv && source .venv/bin/activate`
-   - `pip install -r requirements.txt`
+## 🚀 Quick Start (Demo)
 
-2) Run the API locally:
-   - `uvicorn app.main:app --reload`
-   - Open `http://localhost:8000/health` for a health check.
-
-## Getting Started (Frontend)
-1) Open a new terminal:
-   - `cd apps/web`
-   - `npm install`
-   - `export NEXT_PUBLIC_API_URL=http://localhost:8000` (optional; defaults to this)
-   - `npm run dev`
-   - Open `http://localhost:3000`
-
-Pages:
-- `/ingest` upload CSV and ingest
-- `/transactions` list user transactions
-- `/subscriptions` detect + list subscriptions
-- `/plaid` connect Plaid Sandbox, then import transactions
-
-## Plaid Sandbox Setup
-Set environment variables before running the API:
 ```
-export PLAID_CLIENT_ID=your_sandbox_client_id
-export PLAID_SECRET=your_sandbox_secret
-export PLAID_HOST=https://sandbox.plaid.com
-```
-Then open the frontend `/plaid` page to connect a sandbox bank and import transactions.
+# Backend
+cd services/api
+pip install -r requirements.txt
+uvicorn app.main:app --reload
 
-## Repo Structure
-```
-PANW-Smart-Financial-Coach/
-├─ apps/
-│  └─ web/                 # Next.js app (placeholder)
-├─ services/
-│  └─ api/                 # FastAPI service
-│     ├─ app/
-│     │  └─ main.py        # API entrypoint
-│     └─ requirements.txt
-├─ db/
-│  └─ schema.sql           # Initial tables for users/transactions/etc.
-└─ data/
-   └─ samples/
-      └─ transactions_sample.csv
+# Frontend
+cd apps/web
+pnpm install
+pnpm dev
 ```
 
-## Next Steps
-- Add CSV ingestion endpoint and normalization
-- Implement categorization heuristics and subscription detection
-- Scaffold Next.js dashboard and insights feed
+Then open [http://localhost:3000](http://localhost:3000).
 
-Contributing: see `CONTRIBUTING.md` for the alignment checklist and PR template to ensure every change maps to the hackathon brief in `CASE_STUDY.md`.
-See the full hackathon brief in `CASE_STUDY.md`. We reference this spec when adding features to ensure alignment with goals (AI-powered insights, personalization, security/trust, and demo readiness).
+## ✨ Features
+
+- **Transaction ingestion**: CSV upload or Plaid Sandbox integration.
+- **Auto-categorization**: MCC, regex heuristics, AI fallback.
+- **Subscription & gray-charge detector**: recurring & hidden fees.
+- **Spending dashboard**: category breakdown, income vs expense.
+- **Insights feed**: overspend alerts, trending merchants, save suggestions.
+- **Forecasting**: cash flow projection + goal progress check.
+- **Goals**: create, edit, monitor savings goals.
+- **Anomalies**: Isolation Forest & heuristics for unusual charges.
+- **Plaid integration**: sandbox accounts for safe demo.
+
+---
+
+## 🏗 Architecture
+
+| Path                 | Purpose                                                  | Tech Stack                        |
+| -------------------- | -------------------------------------------------------- | --------------------------------- |
+| `apps/web`           | Frontend UI                                              | Next.js 14, Tailwind, shadcn/ui   |
+| `services/api`       | Backend & ML services                                    | FastAPI, SQLAlchemy, scikit-learn |
+| `db/schema.sql`      | Database schema                                          | Postgres                          |
+| `services/api/app/*` | Domain logic (insights, subscriptions, anomalies, goals) | Python                            |
+
+---
+
+## 📊 Data Model
+
+Tables defined in `db/schema.sql`:
+
+- **users** – id, email, created_at
+- **accounts** – id, user_id, type, name
+- **transactions** – id, user_id, account_id, date, merchant, amount, category, flags
+- **subscriptions** – merchant, avg_amount, period, next_expected
+- **insights** – id, user_id, type, message, severity
+- **goals** – target_amount, target_date, progress
+
+Indexes: `(user_id, date)`, `(user_id, merchant)`
+
+---
+
+## 🤖 AI / Analytics
+
+- **Categorization**: heuristic rules (MCC, regex), fallback ML classifier, confidence scores.
+- **Subscription detection**: interval clustering (7/14/30/365 days), fuzzy merchant match.
+- **Gray charges**: fees, small frequent charges, duplicates.
+- **Anomalies**: Isolation Forest on merchant/category features + z-score check.
+- **Forecasting**: rolling 3-month cashflow, simple projection, gap to goal.
+- **Recurring classifier**: logistic regression model in `is_recurring_model.py`.
+
+---
+
+## ⚙️ Configuration
+
+Environment variables (`.env.example`):
+
+| Variable          | Required | Description             |
+| ----------------- | -------- | ----------------------- |
+| `DATABASE_URL`    | Yes      | Postgres connection URL |
+| `PLAID_CLIENT_ID` | Optional | Plaid Sandbox ID        |
+| `PLAID_SECRET`    | Optional | Plaid Sandbox secret    |
+| `NEXT_PUBLIC_*`   | Maybe    | Frontend configs        |
+
+---
+
+## 🛠 Development
+
+### Prereqs
+
+- Node.js 18+, pnpm
+- Python 3.10+
+- Postgres
+
+### Setup
+
+```
+# Backend
+cd services/api
+pip install -r requirements.txt
+
+# Frontend
+cd apps/web
+pnpm install
+```
+
+### Run
+
+```
+# Backend API
+uvicorn app.main:app --reload
+# Frontend
+pnpm dev
+```
+
+---
+
+## ✅ Hackathon Deliverables
+
+- Problem understanding → poor visibility & tedious manual tracking.
+- Technical rigor → real algorithms (Isolation Forest, classifiers, heuristics).
+- Creativity → explainable insights feed & save suggestions.
+- Prototype quality → working ingestion, dashboard, insights, goals.
+- AI application → categorization, anomaly detection, forecasting.
+- Trust & security → sandbox only, transparent explanations.
+
+---
+
+## 🛣 Roadmap
+
+- Real bank integrations post-hackathon.
+- Mobile app (React Native).
+- Enhanced ML categorizer & federated learning.
+- Merchant negotiation assistant (cancel, discounts).
+- Credit utilization & APR optimization.
+
+---
+
+## 📜 License
+
+No LICENSE file present. For open use, MIT is recommended.
