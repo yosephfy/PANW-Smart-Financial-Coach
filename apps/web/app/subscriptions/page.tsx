@@ -21,7 +21,7 @@ import {
 } from "recharts";
 import { Badge } from "../../components/Badge";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/backend";
 
 // Currency formatter
 const fmtCurrency = (x: number) => {

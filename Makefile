@@ -1,14 +1,17 @@
 # Convenience helper targets for local development
 # Quick refs:
-# - make run-api          # start FastAPI locally (http://localhost:8000)
-# - make train-global     # train global categorizer from CSVs under data/
-# - make predict          # call API to predict a category (set M and D)
-# - make ingest           # upload sample CSV and upsert insights
-# - make insights         # list insights for USER
+# - make start           # start both services on localhost:3000 (RECOMMENDED)
+# - make run-api         # start FastAPI on localhost:3000/backend
+# - make run-web         # start Next.js on localhost:3000/frontend  
+# - make test            # test both services
+# - make train-global    # train global categorizer from CSVs under data/
+# - make predict         # call API to predict a category (set M and D)
+# - make ingest          # upload sample CSV and upsert insights
+# - make insights        # list insights for USER
 
-.PHONY: install run-api train-demo predict-demo train train-global predict ingest insights goals-create goals-list
+.PHONY: install start run-api run-web test train-demo predict-demo train train-global predict ingest insights goals-create goals-list
 
-API ?= http://localhost:8000
+API ?= http://localhost:3000/backend
 USER ?= u_demo
 CSV  ?= data/samples/transactions_u_unlabeled1_2024_2025_unlabeled.csv
 M    ?= P&G
@@ -21,7 +24,19 @@ install:
 	.venv/bin/pip install -r services/api/requirements.txt
 
 run-api: install
-	cd services/api && ../.venv/bin/uvicorn app.main:app --reload
+	cd services/api && ../.venv/bin/uvicorn app.main:app --reload --port 8000
+
+# Start both backend and frontend services on localhost:3000
+start:
+	./start-services.sh
+
+# Start only Next.js frontend on localhost:3000/frontend
+run-web: 
+	cd apps/web && npm run dev
+
+# Test both services
+test:
+	./test-services.sh
 
 train-demo:
 	python3 -m venv .venv && .venv/bin/pip install -r services/api/requirements.txt && .venv/bin/python services/api/scripts/load_and_train.py

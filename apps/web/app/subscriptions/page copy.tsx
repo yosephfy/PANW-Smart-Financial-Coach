@@ -14,7 +14,7 @@ import {
   Cell,
 } from "recharts";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/backend";
 
 type Sub = {
   merchant: string;
