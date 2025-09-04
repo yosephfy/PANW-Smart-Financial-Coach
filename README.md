@@ -7,7 +7,7 @@ This hackathon project targets **students, young adults, freelancers and anyone 
 
 
 ## VIDEO PRESENTATION LINK:
-[https://vimeo.com/1115981585?share=copy](https://vimeo.com/1115981585?share=copy)](https://vimeo.com/1115991923?share=copy)
+(https://vimeo.com/1115991923?share=copy)
 
 
 ## Interactive DEMO:
