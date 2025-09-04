@@ -5,7 +5,7 @@ import React from "react";
 import { useUser } from "../components/Providers";
 import Link from "next/link";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 type ForecastItem = { category: string; forecast_next_month: number };
 

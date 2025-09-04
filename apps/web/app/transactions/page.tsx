@@ -15,7 +15,7 @@ import {
   Cell,
 } from "recharts";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 type Tx = {
   id: string;
@@ -33,7 +33,6 @@ type Tx = {
 
 export default function TransactionsPage() {
   const ctx = useUser();
-  const [userId, setUserId] = useState(ctx.userId || "u_demo");
   const [limit, setLimit] = useState(50);
   const [rows, setRows] = useState<Tx[]>([]);
   const [busy, setBusy] = useState(false);
@@ -75,7 +74,7 @@ export default function TransactionsPage() {
     setBusy(true);
     try {
       const res = await fetch(
-        `${API}/users/${encodeURIComponent(userId)}/transactions?limit=${limit}`
+        `${API}/me/transactions?limit=${limit}`, { headers: ctx.userId ? { 'X-User-Id': ctx.userId } : undefined }
       );
       const json = await res.json();
       setRows(Array.isArray(json) ? json : []);
@@ -87,25 +86,14 @@ export default function TransactionsPage() {
   };
 
   useEffect(() => {
-    load();
+    if (ctx.userId) load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ctx.userId, limit]);
 
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">Transactions</h2>
       <div className="flex gap-3 items-end">
-        <label className="text-sm">
-          <div className="text-slate-300">User ID</div>
-          <input
-            className="mt-1 rounded border border-slate-600 bg-slate-100 px-2 py-1"
-            value={userId}
-            onChange={(e) => {
-              setUserId(e.target.value);
-              ctx.setUserId(e.target.value);
-            }}
-          />
-        </label>
         <label className="text-sm">
           <div className="text-slate-300">Limit</div>
           <input
@@ -122,7 +110,7 @@ export default function TransactionsPage() {
         >
           {busy ? "Loading…" : "Refresh"}
         </button>
-        <AddTransactionButton userId={userId} onAdded={() => load()} />
+        <AddTransactionButton onAdded={() => load()} />
       </div>
 
       {!!categoryData.length && (
@@ -331,7 +319,7 @@ function AddTransactionButton({
         `${API}/users/${encodeURIComponent(ctx.userId)}/transactions`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...(ctx.userId ? { 'X-User-Id': ctx.userId } : {}) },
           body: JSON.stringify({
             date,
             amount: parseFloat(amount),

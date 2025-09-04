@@ -4,7 +4,7 @@ Minimal Next.js frontend to interact with the FastAPI backend.
 
 ## Quick Start
 - cd `apps/web`
-- set API URL (optional): `export NEXT_PUBLIC_API_URL=http://127.0.0.1:8000`
+- set API URL (optional): `export NEXT_PUBLIC_API_URL=http://localhost:8000`
 - install deps: `npm install`
 - run dev: `npm run dev`
 - open: http://localhost:3000

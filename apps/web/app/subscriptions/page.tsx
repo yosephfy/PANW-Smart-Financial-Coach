@@ -14,7 +14,7 @@ import {
   Cell,
 } from "recharts";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 type Sub = {
   merchant: string;
@@ -28,10 +28,10 @@ type Sub = {
 
 export default function SubscriptionsPage() {
   const ctx = useUser();
-  const [userId, setUserId] = useState(ctx.userId || "u_demo");
   const [rows, setRows] = useState<Sub[]>([]);
   const [busy, setBusy] = useState(false);
   const [detecting, setDetecting] = useState(false);
+  const [updating, setUpdating] = useState<string | null>(null);
 
   const chartData = useMemo(() => {
     return rows
@@ -44,7 +44,7 @@ export default function SubscriptionsPage() {
     setBusy(true);
     try {
       const res = await fetch(
-        `${API}/users/${encodeURIComponent(userId)}/subscriptions`
+        `${API}/me/subscriptions`, { headers: ctx.userId ? { 'X-User-Id': ctx.userId } : undefined }
       );
       const json = await res.json();
       setRows(Array.isArray(json) ? json : []);
@@ -60,8 +60,8 @@ export default function SubscriptionsPage() {
     try {
       await fetch(`${API}/subscriptions/detect`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId }),
+        headers: { "Content-Type": "application/json", ...(ctx.userId ? { 'X-User-Id': ctx.userId } : {}) },
+        body: JSON.stringify({}),
       });
       await load();
       ctx.showToast("Subscription detection completed", "success");
@@ -71,25 +71,36 @@ export default function SubscriptionsPage() {
   };
 
   useEffect(() => {
-    load();
+    if (ctx.userId) load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ctx.userId]);
+
+  const setStatus = async (merchant: string, status: 'active'|'paused'|'canceled') => {
+    if (!ctx.userId) return;
+    setUpdating(merchant);
+    try {
+      const res = await fetch(`${API}/subscriptions/${encodeURIComponent(merchant)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'X-User-Id': ctx.userId },
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(()=>null);
+        throw new Error(j?.detail || 'Update failed');
+      }
+      await load();
+      ctx.showToast(`Marked ${merchant} as ${status}`,'success');
+    } catch (e:any) {
+      ctx.showToast(e?.message || String(e), 'error');
+    } finally {
+      setUpdating(null);
+    }
+  };
 
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">Subscriptions</h2>
       <div className="flex gap-3 items-end">
-        <label className="text-sm">
-          <div className="text-slate-300">User ID</div>
-          <input
-            className="mt-1 rounded border border-slate-600 bg-slate-100 px-2 py-1"
-            value={userId}
-            onChange={(e) => {
-              setUserId(e.target.value);
-              ctx.setUserId(e.target.value);
-            }}
-          />
-        </label>
         <button
           onClick={load}
           disabled={busy}
@@ -189,11 +200,14 @@ export default function SubscriptionsPage() {
                 </td>
                 <td className="px-3 py-2">{r.last_seen}</td>
                 <td className="px-3 py-2">
-                  <Badge
-                    variant={r.status === "active" ? "success" : "warning"}
-                  >
+                  <Badge variant={r.status === "active" ? "success" : r.status === 'canceled' ? 'danger' : 'warning'}>
                     {r.status}
                   </Badge>
+                  <div className="inline-flex gap-1 ml-2">
+                    <button disabled={updating===r.merchant} onClick={()=>setStatus(r.merchant,'active')} className="px-2 py-0.5 rounded bg-slate-700">Active</button>
+                    <button disabled={updating===r.merchant} onClick={()=>setStatus(r.merchant,'paused')} className="px-2 py-0.5 rounded bg-slate-700">Pause</button>
+                    <button disabled={updating===r.merchant} onClick={()=>setStatus(r.merchant,'canceled')} className="px-2 py-0.5 rounded bg-red-700">Cancel</button>
+                  </div>
                 </td>
                 <td className="px-3 py-2">
                   {r.trial_converted ? (

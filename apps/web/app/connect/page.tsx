@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useUser } from "../../components/Providers";
-import UserLogin from "../../components/UserLogin";
 
 export default function ConnectPage() {
   const { userId } = useUser();
@@ -13,9 +12,7 @@ export default function ConnectPage() {
         Choose how you'd like to connect transactions for your account.
       </p>
 
-      <div className="mb-6">
-        <UserLogin />
-      </div>
+      {/* Requires sign-in; SignGate will redirect to /auth if not signed in */}
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="p-6 border rounded">
@@ -23,7 +20,7 @@ export default function ConnectPage() {
           <p className="text-sm mt-2 mb-4">
             Use Plaid to connect live bank accounts.
           </p>
-          <Link href="/plaid" className="btn">
+          <Link href={userId ? "/plaid" : "/auth"} className="btn">
             {userId ? "Connect Plaid" : "Sign in to enable"}
           </Link>
         </div>
@@ -33,7 +30,7 @@ export default function ConnectPage() {
           <p className="text-sm mt-2 mb-4">
             Upload a CSV file exported from your bank.
           </p>
-          <Link href="/ingest" className="btn">
+          <Link href={userId ? "/ingest" : "/auth"} className="btn">
             {userId ? "Upload CSV" : "Sign in to enable"}
           </Link>
         </div>

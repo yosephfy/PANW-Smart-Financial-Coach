@@ -5,7 +5,7 @@ import { Badge } from "../../components/Badge";
 import { useUser } from "../../components/Providers";
 import React from "react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 type Insight = {
   id: string;
@@ -35,7 +35,6 @@ function severityVariant(sev?: string) {
 
 export default function InsightsPage() {
   const ctx = useUser();
-  const [userId, setUserId] = useState(ctx.userId || "u_demo");
   const [rows, setRows] = useState<Insight[]>([]);
   const [filter, setFilter] = useState<string>("all");
   const [busy, setBusy] = useState(false);
@@ -46,9 +45,7 @@ export default function InsightsPage() {
   const load = async () => {
     setBusy(true);
     try {
-      const res = await fetch(
-        `${API}/users/${encodeURIComponent(userId)}/insights`
-      );
+      const res = await fetch(`${API}/users/me/insights`, { headers: ctx.userId ? { 'X-User-Id': ctx.userId } : undefined });
       const json = await res.json();
       setRows(Array.isArray(json) ? json : []);
     } finally {
@@ -59,10 +56,10 @@ export default function InsightsPage() {
   const generate = async () => {
     setGenBusy(true);
     try {
-      await fetch(`${API}/insights/generate`, {
+      await fetch(`${API}/insights/generate/me`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId }),
+        headers: { "Content-Type": "application/json", ...(ctx.userId ? { 'X-User-Id': ctx.userId } : {}) },
+        body: JSON.stringify({}),
       });
       await load();
       ctx.showToast("Insights generated", "success");
@@ -76,8 +73,8 @@ export default function InsightsPage() {
     try {
       await fetch(`${API}/anomaly/iforest/detect`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId, contamination: 0.08 }),
+        headers: { "Content-Type": "application/json", ...(ctx.userId ? { 'X-User-Id': ctx.userId } : {}) },
+        body: JSON.stringify({ contamination: 0.08 }),
       });
       await load();
       ctx.showToast("ML detection finished", "success");
@@ -91,12 +88,8 @@ export default function InsightsPage() {
     try {
       await fetch(`${API}/insights/rewrite`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: userId,
-          insight_id: id,
-          tone: "friendly",
-        }),
+        headers: { "Content-Type": "application/json", ...(ctx.userId ? { 'X-User-Id': ctx.userId } : {}) },
+        body: JSON.stringify({ insight_id: id, tone: "friendly" }),
       });
       await load();
       ctx.showToast("Insight rewritten", "success");
@@ -106,24 +99,13 @@ export default function InsightsPage() {
   };
 
   useEffect(() => {
-    load();
-  }, []);
+    if (ctx.userId) load();
+  }, [ctx.userId]);
 
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-semibold">Insights</h2>
       <div className="flex gap-3 items-end">
-        <label className="text-sm">
-          <div className="text-slate-300">User ID</div>
-          <input
-            className="mt-1 rounded border border-slate-600 bg-slate-100 px-2 py-1"
-            value={userId}
-            onChange={(e) => {
-              setUserId(e.target.value);
-              ctx.setUserId(e.target.value);
-            }}
-          />
-        </label>
         <button
           onClick={load}
           disabled={busy}
