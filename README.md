@@ -7,29 +7,11 @@ This hackathon project targets **students, young adults, freelancers and anyone 
 
 ## VIDEO PRESENTATION LINK:
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 (https://vimeo.com/1115991923?share=copy)
 
 ## Interactive DEMO:
 
-# [https://77f083019ea3.ngrok-free.app](https://77f083019ea3.ngrok-free.app)
-
-# [https://vimeo.com/1115981585?share=copy](https://vimeo.com/1115981585?share=copy)
-
-[https://vimeo.com/1115981585?share=copy](https://vimeo.com/1115981585?share=copy)](https://vimeo.com/1115991923?share=copy)
-
-> > > > > > > c9d39d8 (Fix video presentation link in README)
-
-## Interactive DEMO:
-<<<<<<< HEAD
-
-[https://e31edb5d3763.ngrok-free.app](https://e31edb5d3763.ngrok-free.app)
-=======
 [https://77f083019ea3.ngrok-free.app](https://77f083019ea3.ngrok-free.app)
->>>>>>> 6d1ffd9 (Change demo link to new ngrok URL)
-
-> > > > > > > 061b22b (Add video presentation and demo links to README)
 
 ---
 
