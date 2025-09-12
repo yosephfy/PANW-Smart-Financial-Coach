@@ -99,7 +99,7 @@ def generate_transaction_insights(conn: sqlite3.Connection, user_id: str, transa
     # 1. Sudden Expense Spike Detection
     # Check if this transaction is unusually large compared to recent transactions in the same category
     if tx_category and expense_amount >= 20:
-        # Get recent transactions in same category (last 30 days, excluding today)
+        # Get recent transactions in same category
         yesterday = (date.fromisoformat(tx_date) -
                      timedelta(days=1)).isoformat()
         thirty_days_ago = (date.fromisoformat(tx_date) -

@@ -1,0 +1,10 @@
+{
+  "openai": {
+    "api_key": "sk-your-openai-api-key-here",
+    "model": "gpt-4o-mini"
+  },
+  "settings": {
+    "llm_enabled": true,
+    "rewrite_timeout": 30
+  }
+}

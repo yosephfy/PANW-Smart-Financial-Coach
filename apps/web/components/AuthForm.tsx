@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useUser } from "./Providers";
 import { useRouter } from "next/navigation";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/backend";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function AuthForm() {
   const { setUserId, showToast } = useUser();

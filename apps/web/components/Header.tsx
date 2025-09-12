@@ -66,8 +66,7 @@ export default function Header() {
             {process.env.NODE_ENV === "development" && (
               <div className="hidden xl:flex items-center gap-2 px-2 py-1 rounded bg-slate-800 text-xs text-slate-400">
                 <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                API:{" "}
-                {process.env.NEXT_PUBLIC_API_URL || "localhost:3000/backend"}
+                API: {process.env.NEXT_PUBLIC_API_URL || "localhost:8000"}
               </div>
             )}
 

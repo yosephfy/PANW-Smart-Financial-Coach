@@ -85,7 +85,53 @@ def list_for_user(conn: sqlite3.Connection, user_id: str, limit: int) -> List[Di
         """,
         (user_id, limit),
     ).fetchall()
-    return [dict(r) for r in rows]
+
+    insights = [dict(r) for r in rows]
+
+    # Check if LLM is available and if there are insights without rewrites
+    if LLM_AVAILABLE and insights:
+        insights_to_rewrite = [
+            insight for insight in insights
+            if not insight.get("rewritten_title") or not insight.get("rewritten_body")
+        ]
+
+        if insights_to_rewrite:
+            print(
+                f"Rewriting {len(insights_to_rewrite)} insights that lack LLM content...")
+            # Rewrite insights that don't have LLM content
+            rewritten_insights = threaded_llm_service.rewrite_insights_batch(
+                insights_to_rewrite, tone="friendly"
+            )
+
+            # Update the database with the rewritten content
+            for rewritten in rewritten_insights:
+                if rewritten.get("rewritten_title") and rewritten.get("rewritten_body"):
+                    conn.execute(
+                        """
+                        UPDATE insights
+                        SET rewritten_title = ?, rewritten_body = ?, rewritten_at = ?
+                        WHERE user_id = ? AND id = ?
+                        """,
+                        (
+                            rewritten["rewritten_title"],
+                            rewritten["rewritten_body"],
+                            rewritten.get("rewritten_at"),
+                            user_id,
+                            rewritten["id"]
+                        ),
+                    )
+            
+            # Commit the database changes
+            conn.commit()
+
+            # Update the insights list with rewritten content
+            rewritten_by_id = {
+                insight["id"]: insight for insight in rewritten_insights}
+            for i, insight in enumerate(insights):
+                if insight["id"] in rewritten_by_id:
+                    insights[i] = rewritten_by_id[insight["id"]]
+
+    return insights
 
 
 def rewrite(conn: sqlite3.Connection, user_id: str, insight_id: str, tone: Optional[str] = None) -> Dict:

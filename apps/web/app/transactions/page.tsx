@@ -20,7 +20,7 @@ import {
   Legend,
 } from "recharts";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/backend";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 type Tx = {
   id: string;

@@ -13,7 +13,6 @@ try:
     SKLEARN_AVAILABLE = True
 except Exception:
     SKLEARN_AVAILABLE = False
-    # lightweight JSON fallback helpers when sklearn isn't installable
     import json
 
     def _save_fallback_model(path, data):
@@ -94,7 +93,7 @@ def train_for_user(conn: sqlite3.Connection, user_id: str, min_per_class: int = 
             for tok in text.lower().split():
                 token_map.setdefault(label, {}).setdefault(tok, 0)
                 token_map[label][tok] += 1
-        # prepare serializable counts (convert defaultdict)
+        # prepare serializable counts
         serial_counts = {k: int(v) for k, v in counts.items()}
         model = {"classes": list(serial_counts.keys()),
                  "counts": serial_counts, "tokens": token_map}
@@ -170,7 +169,7 @@ def predict_for_user(user_id: str, merchant: Optional[str], description: Optiona
     return {"predictions": [{"label": c, "prob": norm(s)} for c, s in pairs]}
 
 
-# -------- Global training from CSVs (user-agnostic) --------
+# -------- Global training from CSVs --------
 
 def _iter_training_csv_paths() -> List[Path]:
     base = _repo_root() / "data"

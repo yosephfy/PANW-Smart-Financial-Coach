@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 from typing import Dict
 
+from .config import get_openai_api_key, get_openai_model, is_llm_enabled
+
 try:
     from openai import OpenAI
     OPENAI_AVAILABLE = True
@@ -13,9 +15,11 @@ except Exception:
 def _client() -> OpenAI:
     if not OPENAI_AVAILABLE:
         raise RuntimeError("openai_not_installed")
-    key = os.getenv("OPENAI_API_KEY")
+    if not is_llm_enabled():
+        raise RuntimeError("llm_disabled_in_config")
+    key = get_openai_api_key()
     if not key:
-        raise RuntimeError("missing_OPENAI_API_KEY")
+        raise RuntimeError("missing_openai_api_key_in_config_or_env")
     return OpenAI(api_key=key)
 
 
@@ -28,6 +32,16 @@ SYSTEM = (
 
 
 def rewrite_insight_llm(title: str, body: str, data_json: str | None = None, tone: str | None = None) -> Dict:
+    # Check if we have an API key
+    api_key = get_openai_api_key()
+
+    if not api_key:
+        # Fallback: return a mock rewrite when no API key is configured
+        tone = tone or "friendly"
+        mock_title = f"✨ {title}" if not title.startswith("✨") else title
+        mock_body = f"Here's a {tone} insight: {body} Let me know if you need help!"
+        return {"title": mock_title[:80], "body": mock_body[:240]}
+
     client = _client()
     tone = tone or "friendly"
     user = (
@@ -39,7 +53,7 @@ def rewrite_insight_llm(title: str, body: str, data_json: str | None = None, ton
         "Keep it specific and cite numbers concisely."
     )
     resp = client.chat.completions.create(
-        model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+        model=get_openai_model(),
         messages=[
             {"role": "system", "content": SYSTEM},
             {"role": "user", "content": user},

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useUser } from "../../components/Providers";
 import React from "react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/backend";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 type APIEndpoint = {
   category: string;

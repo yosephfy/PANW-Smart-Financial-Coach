@@ -51,7 +51,6 @@ def has_model(user_id: str) -> bool:
 
 
 def _label_from_subscriptions(conn: sqlite3.Connection, user_id: str) -> Dict[str, int]:
-    # Return a set of merchants considered recurring from subscriptions table
     rows = conn.execute(
         "SELECT LOWER(merchant) AS m FROM subscriptions WHERE user_id = ? AND status = 'active'",
         (user_id,),

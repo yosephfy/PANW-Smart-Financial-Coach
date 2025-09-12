@@ -11,7 +11,7 @@
 
 .PHONY: install start run-api run-web test train-demo predict-demo train train-global predict ingest insights goals-create goals-list
 
-API ?= http://localhost:3000/backend
+API ?= http://localhost:8000
 USER ?= u_demo
 CSV  ?= data/samples/transactions_u_unlabeled1_2024_2025_unlabeled.csv
 M    ?= P&G
@@ -24,19 +24,11 @@ install:
 	.venv/bin/pip install -r services/api/requirements.txt
 
 run-api: install
-	cd services/api && ../.venv/bin/uvicorn app.main:app --reload --port 8000
+	cd services/api && ../.venv/bin/uvicorn app.main:app --reload
 
-# Start both backend and frontend services on localhost:3000
-start:
-	./start-services.sh
-
-# Start only Next.js frontend on localhost:3000/frontend
+# Start Next.js frontend on localhost:3000
 run-web: 
 	cd apps/web && npm run dev
-
-# Test both services
-test:
-	./test-services.sh
 
 train-demo:
 	python3 -m venv .venv && .venv/bin/pip install -r services/api/requirements.txt && .venv/bin/python services/api/scripts/load_and_train.py

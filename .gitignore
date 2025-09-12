@@ -61,3 +61,4 @@ node_modules/
 .next/
 CASE_STUDY.md
 CONTRIBUTING.md
+config.json

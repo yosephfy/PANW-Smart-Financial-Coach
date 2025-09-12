@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../../components/Providers";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/backend";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 type Budget = { category: string; monthly_budget: number };
 

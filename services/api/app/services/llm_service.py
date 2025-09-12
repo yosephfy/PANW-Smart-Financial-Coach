@@ -7,7 +7,10 @@ import time
 
 try:
     from ..llm import rewrite_insight_llm, OPENAI_AVAILABLE
-    LLM_AVAILABLE = OPENAI_AVAILABLE
+    from ..config import is_llm_enabled
+    # LLM is available if OpenAI is installed and LLM is enabled in config
+    # (API key check is handled in the rewrite function with fallback)
+    LLM_AVAILABLE = OPENAI_AVAILABLE and is_llm_enabled()
 except Exception:
     LLM_AVAILABLE = False
 

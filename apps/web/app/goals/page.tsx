@@ -5,7 +5,7 @@ import { useUser } from "../../components/Providers";
 import { Badge } from "../../components/Badge";
 import React from "react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/backend";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 type Plan = {
   target_date: string;
